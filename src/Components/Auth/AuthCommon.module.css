@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+
+.centerdiv {
+  margin-top: 30px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.card{
+  width: 500;
+  box-shadow: 3px 2px 2px #aaaaaa;
+}
+.heading, button {
+  color: #2069f2;
+  font-size: 2rem;
+  font-family: 'Poppins',sans-serif;
+}
+.button{
+  display: flex;
+  justify-content: center;
+  text-align: center;      
+}
+@media (max-width:580px) {
+  .card{
+    width: auto;
+  }
+  .heading{
+    font-size: small;
+  }
+}
