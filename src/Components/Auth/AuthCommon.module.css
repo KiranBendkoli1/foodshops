@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
 
 .centerdiv {
   margin-top: 30px;
@@ -8,25 +8,26 @@
   justify-content: center;
   align-items: center;
 }
-.card{
+.card {
   width: 500;
   box-shadow: 3px 2px 2px #aaaaaa;
 }
-.heading, button {
+.heading,
+button {
   color: #2069f2;
   font-size: 2rem;
-  font-family: 'Poppins',sans-serif;
+  font-family: "Poppins", sans-serif;
 }
-.button{
+.button {
   display: flex;
   justify-content: center;
-  text-align: center;      
+  text-align: center;
 }
-@media (max-width:580px) {
-  .card{
+@media (max-width: 580px) {
+  .card {
     width: auto;
   }
-  .heading{
+  .heading {
     font-size: small;
   }
 }

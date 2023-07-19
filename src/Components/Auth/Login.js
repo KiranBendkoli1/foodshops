@@ -1,15 +1,30 @@
 import React, { useState } from "react";
 import { Button, Card, Form, Input } from "antd";
 import classes from "./AuthCommon.module.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { userActions } from "../../store/userSlice";
+import { signIn } from "../../utils/auth";
 const Login = () => {
-  const [email, setEmail] = useState("");
+  // const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+  const email = useSelector((state) => state.user.email);
+  const dispatch = useDispatch();
   const [password, setPassword] = useState("");
-  const onFinishHandler = () => {};
+  const onFinishHandler = () => {
+    signIn(email, password).then(() => {
+      if (email === "admin@gmail.com") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+    });
+  };
 
   const emailChangeHandler = (event) => {
-    setEmail(event.target.value);
-    console.log(event.target.value);
+    // setEmail(event.target.value);
+    dispatch(userActions.setEmail(event.target.value));
+    // console.log(event.target.value);
   };
   const passwordChangeHandler = (event) => {
     setPassword(event.target.value);
@@ -17,10 +32,7 @@ const Login = () => {
 
   return (
     <div className={classes.centerdiv}>
-      <Card
-        bordered={true}
-        className={classes.card}        
-      >
+      <Card bordered={true} className={classes.card}>
         <h2 className={classes.heading}>Login Page</h2>
 
         <Form
@@ -57,15 +69,15 @@ const Login = () => {
           >
             <Input.Password onChange={passwordChangeHandler} value={password} />
           </Form.Item>
-          <Form.Item
-          className={classes.button}
-          >
+          <Form.Item className={classes.button}>
             <Button type="primary" htmlType="submit">
-            <Link to={"/"}>LOGIN</Link>
-            </Button> <br/>
-            
+              LOGIN
+            </Button>{" "}
+            <br />
           </Form.Item>
-          <Link exact to={"/signup"}>Does Not Have Account Click Here to Create </Link>
+          <Link exact to={"/signup"}>
+            Does Not Have Account Click Here to Create{" "}
+          </Link>
         </Form>
       </Card>
     </div>

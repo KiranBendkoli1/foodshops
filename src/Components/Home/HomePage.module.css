@@ -1,108 +1,106 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
 
-body{
-    height: 100%;
-    min-height: 100%;
+body {
+  height: 100%;
+  min-height: 100%;
 }
-.header{
-    display: flex;
-    align-items: center;
+.header {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-    height: 80px;
-    background-color: #2069f2;
-    padding: 5px;
+  height: 80px;
+  background-color: #2069f2;
+  padding: 5px;
 }
 .centerdiv {
-    margin-top: 30px;
-    width: 100%;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-.title{
-    font-family:'Poppins';
-    color: white;
+  margin-top: 30px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.content{ 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    
-}
-.footer{
-    width: 100%;
-    background-color: rgb(178, 173, 173);
-    text-align: center;
-}
-.shopcard{
-    margin: 5px;
-    width: 500px ;
-    display: flex;
-    box-shadow: 3px 2px 2px #aaaaaa;
-    justify-content: center;
-}
-.shopcard img{
-    height: 300px;
-    width: auto;
+.title {
+  font-family: "Poppins";
+  color: white;
 }
 
-.useractions{
-    display: flex;
-    justify-content: space-around;
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
-.center{
-    text-align: center;   
+.footer {
+  width: 100%;
+  background-color: rgb(178, 173, 173);
+  text-align: center;
 }
-.button{
-    display: flex;
-    justify-content: center;
-    text-align: center;      
+.shopcard {
+  margin: 5px;
+  width: 500px;
+  display: flex;
+  box-shadow: 3px 2px 2px #aaaaaa;
+  justify-content: center;
+}
+.shopcard img {
+  height: 300px;
+  width: auto;
 }
 
-.card-comment{
-    margin: 5px;
-    width: 500px ;
-    display: flex;
-    box-shadow: 3px 2px 2px #aaaaaa;
+.useractions {
+  display: flex;
+  justify-content: space-around;
 }
-.card-comment img{
-    height: 300px;
-    width: auto;
+.center {
+  text-align: center;
+}
+.button {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.card-comment {
+  margin: 5px;
+  width: 500px;
+  display: flex;
+  box-shadow: 3px 2px 2px #aaaaaa;
+}
+.card-comment img {
+  height: 300px;
+  width: auto;
 }
 
 @media (max-width: 580px) {
-    .title{
-        font-size:large;
-    }
-    .shopcard{
-        width: auto;
-    }
-    .shopcard img{
-        width: auto;
-    }
-    .commentcard{
-        width: auto;
-    }
-    .commentcard img{
-        width: auto;
-    }
-
+  .title {
+    font-size: large;
+  }
+  .shopcard {
+    width: auto;
+  }
+  .shopcard img {
+    width: auto;
+  }
+  .commentcard {
+    width: auto;
+  }
+  .commentcard img {
+    width: auto;
+  }
 }
 
-@media (max-width:350px) {
-    .title{
-        font-size: smaller;
-    }
-    
-    .commentcard{
-        width: 300px;
-    }
-    .commentcard img{
-        width: auto;
-    }
+@media (max-width: 350px) {
+  .title {
+    font-size: smaller;
+  }
+
+  .commentcard {
+    width: 300px;
+  }
+  .commentcard img {
+    width: auto;
+  }
 }

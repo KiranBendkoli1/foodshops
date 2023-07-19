@@ -10,7 +10,6 @@ const DUMMY_DATA = [
     description: "iure enim eum minima repellendus nobis corporis illum quod.",
     title: "title 1",
     likes: 45,
-    comments: [],
     id: "1",
   },
   {
@@ -55,7 +54,7 @@ const DUMMY_DATA = [
   {
     speciality: "repellendus nobis corporis illum quod.",
     createdAt: "2023-07-14T07:44:55.737Z",
-    nameOfOwener: "Yvonne Gusikowski",
+    
     image:
       "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80",
     likes: 6,

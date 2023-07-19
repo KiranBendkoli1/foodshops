@@ -1,14 +1,17 @@
 import React from "react";
 import FoodPlace from "./FoodPlace";
-import DUMMY_DATA from "../../data/dummy_data";
+import { useSelector } from "react-redux";
+import MyModal from "./MyModal";
 const FoodPlaces = () => {
+  const foodplaces = useSelector(state=>state.places.foodplaces);
+  
   return (
     <>
-     {
-        DUMMY_DATA.map((foodplace)=>{
-            return <FoodPlace foodplace={foodplace}/>;
-        })
-      }
+    <MyModal/>
+  {console.log(foodplaces)}
+      {foodplaces.map((foodplace) => {
+        return <FoodPlace foodplace={foodplace} />;
+      })}
     </>
   );
 };
