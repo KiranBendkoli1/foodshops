@@ -1,4 +1,4 @@
-import { Button, Card } from "antd";
+import { Button, Card ,Modal} from "antd";
 import {
   LikeOutlined,
   CommentOutlined,
@@ -8,11 +8,10 @@ import {
 } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import classes from "./HomePage.module.css";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import {useNavigate } from "react-router-dom";
+import { useDispatch} from "react-redux";
 import {
   fetchPlaces,
-  placeActions,
   updateDislikes,
   updateLikes,
 } from "../../store/placesSlice";
@@ -20,8 +19,12 @@ import { auth } from "../../config/firebase";
 
 const FoodPlace = (props) => {
   const dispatch = useDispatch();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   // const [userIsLiked, setUserIsLiked] = useState();
-  const user = auth.currentUser.email;
+  let user = auth.currentUser;
+  if (user) {
+    user = user.email;
+  }
   const navigate = useNavigate();
   const {
     index,
@@ -37,7 +40,7 @@ const FoodPlace = (props) => {
     comments,
     dislikes,
   } = props.foodplace;
-  const handleClick = () => {
+  const handleDetailsClick = () => {
     navigate("/details", { state: { title: title } });
   };
   const commentClickHandler = () => {
@@ -45,18 +48,38 @@ const FoodPlace = (props) => {
   };
   const addLikeHandler = () => {
     console.log({ liked });
+    if (!user) {
+      setIsModalOpen(true);
+     
+    } else {
+      dispatch(updateLikes({ id, index, likes, dislikes, user }));
+    }
     // dispatch(placeActions.addLike(index))
-    dispatch(updateLikes({ id, index, likes, dislikes, user }));
   };
   const addDislikeHandler = () => {
+    if (!user) {
+      setIsModalOpen(true);
+    } else {
+      dispatch(updateDislikes({ id, index, likes, dislikes, user }));
+    }
     // dispatch(placeActions.addDislike(index))
-    dispatch(updateDislikes({ id, index, likes, dislikes, user }));
   };
+
+  // modal functionalities
+ 
+  const handleOk = () => {
+    navigate("/login");
+    setIsModalOpen(false);
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   useEffect(() => {
     dispatch(fetchPlaces());
   }, []);
   return (
-    <div>
+    <>
       <Card className={classes.shopcard}>
         <p className={classes.center} style={{ padding: "0px", margin: "0px" }}>
           {title}
@@ -92,9 +115,18 @@ const FoodPlace = (props) => {
             {comments.length} <CommentOutlined />
           </p>
         </div>
-        <Button onClick={handleClick}>View Complete Details</Button>
+        <Button onClick={handleDetailsClick}>View Complete Details</Button>
       </Card>
-    </div>
+
+      <Modal
+        title="You need to login first"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>For like and dislike you need to login first </p>
+      </Modal>
+    </>
   );
 };
 
