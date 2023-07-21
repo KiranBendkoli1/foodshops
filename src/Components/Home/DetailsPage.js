@@ -1,44 +1,77 @@
-import React from "react";
-import { Card } from "antd";
+import React, { useEffect, useState } from "react";
+import { Card, Col, Row, Spin } from "antd";
 import {
   LikeOutlined,
   CommentOutlined,
   DislikeOutlined,
+  ShareAltOutlined,
 } from "@ant-design/icons";
-
+import { RWebShare } from "react-web-share";
 import classes from "./HomePage.module.css";
-import { Link, useLocation, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { getFoodShopById } from "../../store/placesSlice";
 const DetailsPage = (props) => {
-  // const {title} = useParams();
-  const { state } = useLocation();
-  const { title } = state;
-  const foodplaces = useSelector((state) => state.places.foodplaces);
-  console.log({ foodplaces });
-  const data = foodplaces.filter((data) => title === data.title)[0];
-  console.log({ data });
-  // return (
-  //   <div>
-  //     print
-  //   </div>
-  // )
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.places.isLoading);
+  const data = useSelector((state) => state.places.foodplace);
+
+  useEffect(() => {
+    dispatch(getFoodShopById({ id }));
+    console.log({ data });
+  }, []);
   return (
-    <div>
-      <Card className={classes.shopcard}>
-        <p  className={classes.center} style={{padding: "0px", margin:'0px'}}>{data.title}</p>
-        <div>
-          <img src={data.image} height="300px" />
+    <>
+      {isLoading ? (
+        <div className="" style={{ height: "100%", windth: "100%" }}>
+          <Spin />
         </div>
-        <p>Speciality: {data.speciality}</p>
-        <p>{data.description}</p>
-        <p>{data.location}</p>
-        <div className={classes.useractions}>
-       <p>   {data.likes} {' '}<LikeOutlined /></p>
-       <p>{data.dislikes} {' '}<DislikeOutlined /> </p>
-         <p><Link to={'/comments'}>{data.comments.length} <CommentOutlined /></Link></p>
-        </div>
-      </Card>
-    </div>
+      ) : (
+        <Card className={classes.detailcard}>
+          <Row>
+            <Col span={12}>
+              <div>
+                <img src={data.image} height="260px" />
+              </div>
+            </Col>
+            <Col span={12}>
+              <h2 className={classes.shopname}>{data?.title || ""}</h2>
+
+              <p>Speciality: {data.speciality}</p>
+              <p>{data.description}</p>
+              <p>Contact No: {data.contact}</p>
+              <p>Address: {data.location}</p>
+              <div className={classes.useractions}>
+                <p>
+                  {" "}
+                  {data.likes} <LikeOutlined />
+                </p>
+                <p>
+                  {data.dislikes} <DislikeOutlined />{" "}
+                </p>
+                <p>
+                  <Link to={`/comments/${id}`}>
+                    {data.comments?.length} <CommentOutlined />
+                  </Link>
+                </p>
+                <p>
+                  <RWebShare
+                    data={{
+                      text: `details of ${data.title}`,
+                      url: `http://localhost:3000/details/${id}`,
+                      title: data.title,
+                    }}
+                  >
+                    <ShareAltOutlined />
+                  </RWebShare>
+                </p>
+              </div>
+            </Col>
+          </Row>
+        </Card>
+      )}
+    </>
   );
 };
 

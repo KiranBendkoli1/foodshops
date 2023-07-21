@@ -27,7 +27,7 @@ const Signup = () => {
     signUp(name, email, password).then(()=>{
       navigate("/");
     })
-    
+    setPassword("");
   };
   return (
     <div className={classes.centerdiv}>
@@ -66,7 +66,7 @@ const Signup = () => {
               },
             ]}
           >
-            <Input onChange={emailChangeHandler} value={email} />
+            <Input onChange={emailChangeHandler}  type="email" htmlType="email"  value={email} />
           </Form.Item>
           <Form.Item
             label="Password"
@@ -78,7 +78,7 @@ const Signup = () => {
               },
             ]}
           >
-            <Input.Password onChange={passwordChangeHandler} value={password} />
+            <Input.Password onChange={passwordChangeHandler} type="password" htmlType="password"  value={password} />
           </Form.Item>
           <Form.Item className={classes.button}>
             <Button type="primary" htmlType="submit">

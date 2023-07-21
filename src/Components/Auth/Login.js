@@ -48,14 +48,15 @@ const Login = () => {
           <Form.Item
             label="Email Address"
             name="email"
+          
             rules={[
               {
                 required: true,
-                message: "Please input your username!",
+                message: "Please input your email address!",
               },
             ]}
           >
-            <Input onChange={emailChangeHandler} value={email} />
+            <Input onChange={emailChangeHandler} type="email" htmlType="email" value={email} />
           </Form.Item>
           <Form.Item
             label="Password"
@@ -67,7 +68,7 @@ const Login = () => {
               },
             ]}
           >
-            <Input.Password onChange={passwordChangeHandler} value={password} />
+            <Input.Password onChange={passwordChangeHandler} type="password" htmlType="password" value={password} />
           </Form.Item>
           <Form.Item className={classes.button}>
             <Button type="primary" htmlType="submit">

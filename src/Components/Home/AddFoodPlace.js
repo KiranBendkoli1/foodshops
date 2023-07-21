@@ -10,19 +10,16 @@ const AddFoodPlace = () => {
   const [speciality, setSpeciality] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
+  const [contact, setContact] = useState("");
   const [location, setLocation] = useState("");
   const onFinishHandler = () => {
     // event.preventDefault();
-    uploadFoodPlaceData(
-      title,
-      speciality,
-      description,
-      location,
-      image
-    ).then(() => {
-      navigate("/");
-    });
-   
+    uploadFoodPlaceData(title, speciality, description, location, image).then(
+      () => {
+        navigate("/");
+      }
+    );
+
     console.log("image", image);
   };
   return (
@@ -72,7 +69,26 @@ const AddFoodPlace = () => {
               value={speciality}
             />
           </Form.Item>
-        
+          <Form.Item
+            label="Contact No.:"
+            name="contact"
+            rules={[
+              {
+                required: true,
+                min:10,
+                message: "Please input contact number atleast 10 numbers",
+              },
+            ]}
+          >
+            <Input
+            type="number"
+            htmlType="number"
+            maxLength={11} // if telephone 02532571439
+            minLength={10} // if mobile 9889898988
+              onChange={(event) => setContact(event.target.value)}
+              value={contact}
+            />
+          </Form.Item>
           <Form.Item
             label="Location"
             name="location"

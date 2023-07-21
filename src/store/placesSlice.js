@@ -9,9 +9,58 @@ import {
 import { firestore } from "../config/firebase";
 const initialPlacesState = {
   foodplaces: [],
+  foodplace: {},
   isLoading: false,
   error: null,
 };
+
+export const getFoodShopById = createAsyncThunk(
+  "content/getData",
+  async (data) => {
+    const { id } = data;
+    const shopdata = await getDoc(doc(firestore, "foodshops", id));
+    let res = shopdata.data();
+    console.log(res);
+    res = { ...res, id: id };
+    console.log({ res });
+    return res;
+  }
+);
+
+export const updateData = createAsyncThunk(
+  "content/updateData",
+  async (id, values, image) => {
+    try {
+      const newValues = { ...values, image: image };
+      console.log({ newValues });
+      updateDoc(doc(firestore, "foodshops", id), newValues).then(() => {
+        console.log("Updated Successfully", { newValues });
+      });
+    } catch (error) {
+      console.log({ error });
+    }
+  }
+);
+export const deleteItem = createAsyncThunk(
+  "content/deleteItem",
+  async (data) => {
+    const { id, index, item } = data;
+    try {
+      console.log({ data });
+      const mydoc = await getDoc(doc(firestore, "foodshops", id));
+      let discounts = mydoc.data().discounts;
+      console.log({ discounts });
+      discounts = discounts.filter((discount) => discount !== item);
+      console.log({ discounts });
+      await updateDoc(doc(firestore, "foodshops", id), {
+        discounts: discounts,
+      });
+      return [index, discounts];
+    } catch (error) {
+      console.log({ error });
+    }
+  }
+);
 export const fetchPlaces = createAsyncThunk("content/fetchPlaces", async () => {
   const querySnapshot = await getDocs(collection(firestore, "foodshops"));
   const data = [];
@@ -126,8 +175,15 @@ export const addComment = createAsyncThunk(
 const placesSlice = createSlice({
   name: "places",
   initialState: initialPlacesState,
-  reducers: {},
+  reducers: {
+    // getFoodShopById(state, action) {
+    //   state.foodplace = state.foodplaces.filter(
+    //     (fs) => fs.id === action.payload
+    //   )[0];
+    // },
+  },
   extraReducers: (builder) => {
+    // fetch place
     builder.addCase(fetchPlaces.pending, (state) => {
       state.isLoading = true;
     });
@@ -139,10 +195,44 @@ const placesSlice = createSlice({
       state.isLoading = false;
       state.error = action.error.message;
     });
+    // get by id
+    builder.addCase(getFoodShopById.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getFoodShopById.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.foodplace = action.payload;
+    });
+    builder.addCase(getFoodShopById.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+    // data update
+    builder.addCase(updateData.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(updateData.fulfilled, (state, action) => {
+      state.isLoading = false;
+    });
+    builder.addCase(updateData.rejected, (state, action) => {
+      state.isLoading = false;
+    });
+    // delete discount item
+    builder.addCase(deleteItem.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(deleteItem.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.foodplaces[action.payload[0]].discounts = action.payload[1];
+    });
+    builder.addCase(deleteItem.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+    // likes
     builder.addCase(updateLikes.pending, (state) => {
       state.isLoading = true;
     });
-    // likes
     builder.addCase(updateLikes.fulfilled, (state, action) => {
       state.isLoading = false;
       state.foodplaces[action.payload[0]].likes = action.payload[1];
@@ -154,6 +244,7 @@ const placesSlice = createSlice({
       state.isLoading = false;
       state.error = action.payload.message;
     });
+    // dislikes
     builder.addCase(updateDislikes.pending, (state) => {
       state.isLoading = true;
     });
@@ -168,6 +259,7 @@ const placesSlice = createSlice({
       state.isLoading = false;
       state.error = action.error.message;
     });
+    // comments
     builder.addCase(addComment.pending, (state) => {
       state.isLoading = true;
     });

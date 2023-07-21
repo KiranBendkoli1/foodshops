@@ -1,25 +1,28 @@
-import { Button, Card ,Modal} from "antd";
+import { Button, Card, Modal } from "antd";
 import {
   LikeOutlined,
   CommentOutlined,
   DislikeOutlined,
+  ShareAltOutlined,
   LikeFilled,
   DislikeFilled,
 } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import classes from "./HomePage.module.css";
-import {useNavigate } from "react-router-dom";
-import { useDispatch} from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import {
   fetchPlaces,
   updateDislikes,
   updateLikes,
 } from "../../store/placesSlice";
 import { auth } from "../../config/firebase";
+import { RWebShare } from "react-web-share";
 
 const FoodPlace = (props) => {
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOffersModalOpen, setIsOffersModalOpen] = useState(false);
   // const [userIsLiked, setUserIsLiked] = useState();
   let user = auth.currentUser;
   if (user) {
@@ -31,9 +34,9 @@ const FoodPlace = (props) => {
     id,
     liked,
     disliked,
-    nameOfOwener,
     image,
-    description,
+    discounts,
+    location,
     title,
     likes,
     speciality,
@@ -41,16 +44,15 @@ const FoodPlace = (props) => {
     dislikes,
   } = props.foodplace;
   const handleDetailsClick = () => {
-    navigate("/details", { state: { title: title } });
+    navigate(`/details/${id}`);
   };
   const commentClickHandler = () => {
-    navigate("/comments", { state: { id: id } });
+    navigate(`/comments/${id}`);
   };
   const addLikeHandler = () => {
     console.log({ liked });
     if (!user) {
       setIsModalOpen(true);
-     
     } else {
       dispatch(updateLikes({ id, index, likes, dislikes, user }));
     }
@@ -66,7 +68,7 @@ const FoodPlace = (props) => {
   };
 
   // modal functionalities
- 
+
   const handleOk = () => {
     navigate("/login");
     setIsModalOpen(false);
@@ -75,19 +77,33 @@ const FoodPlace = (props) => {
     setIsModalOpen(false);
   };
 
+  // offer modal
+  const handleOffersClick = () => {
+    setIsOffersModalOpen(true);
+  };
+  const handleOfferOk = () => {
+    setIsOffersModalOpen(false);
+  };
+  const handleOfferCancel = () => {
+    setIsOffersModalOpen(false);
+  };
   useEffect(() => {
     dispatch(fetchPlaces());
   }, []);
   return (
     <>
-      <Card className={classes.shopcard}>
-        <p className={classes.center} style={{ padding: "0px", margin: "0px" }}>
-          {title}
-        </p>
-        <div>
+      <Card className={classes.shopcard} key={id}>
+        <h3
+          className={`${classes.center} ${classes.shopname}`}
+          style={{ padding: "0px", margin: "0px" }}
+        >
+          {title.toUpperCase()}
+        </h3>
+        <div className={classes.center}>
           <img src={image} width="260px" height={"250px"} />
         </div>
         <p>Speciality: {speciality}</p>
+        <p>Address: {location}</p>
         <div className={classes.useractions}>
           <p onClick={addLikeHandler}>
             {liked.find((e) => e === user) ? (
@@ -114,8 +130,22 @@ const FoodPlace = (props) => {
           <p onClick={commentClickHandler}>
             {comments.length} <CommentOutlined />
           </p>
+          <p>
+            <RWebShare
+              data={{
+                text: `details of ${title}`,
+                url: `http://localhost:3000/details/${id}`,
+                title: title,
+              }}
+            >
+              <ShareAltOutlined />
+            </RWebShare>
+          </p>
         </div>
-        <Button onClick={handleDetailsClick}>View Complete Details</Button>
+        <div style={{ display: "flex", justifyContent: "space-around" }}>
+          <Button onClick={handleDetailsClick}  shape="round" type="primary" ghost  >View Complete Details</Button>
+          <Button onClick={handleOffersClick}  shape="round" type="primary" ghost>View Offers</Button>
+        </div>
       </Card>
 
       <Modal
@@ -125,6 +155,24 @@ const FoodPlace = (props) => {
         onCancel={handleCancel}
       >
         <p>For like and dislike you need to login first </p>
+      </Modal>
+
+      <Modal
+        title={`Offers at ${title}`}
+        open={isOffersModalOpen}
+        onOk={handleOfferOk}
+        onCancel={handleOfferCancel}
+      >
+        {discounts.map((discount) => {
+          return (
+            <>
+              <p>{`${discount.split("|")[0]} is at ${
+                discount.split("|")[1]
+              } discount`}</p>
+              
+            </>
+          );
+        })}
       </Modal>
     </>
   );

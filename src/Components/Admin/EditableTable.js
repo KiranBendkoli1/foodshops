@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Button,
   Form,
   Input,
   InputNumber,
@@ -11,9 +12,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../config/firebase";
-import { imageActions } from "../../store/imageSlice";
+import { extraDataActions } from "../../store/extraDataSlice";
 import { updateData } from "../../utils/fun";
 import { fetchPlaces } from "../../store/placesSlice";
+import Discounts from "./Discounts";
 // const originData = [];
 // for (let i = 0; i < 100; i++) {
 //   originData.push({
@@ -26,7 +28,7 @@ import { fetchPlaces } from "../../store/placesSlice";
 const InputImage = () => {
   const dispatch = useDispatch();
   const handleImage = (event) => {
-    dispatch(imageActions.setImage(event.target.files[0]));
+    dispatch(extraDataActions.setImage(event.target.files[0]));
   };
   return (
     <>
@@ -49,7 +51,10 @@ const EditableCell = ({
   children,
   ...restProps
 }) => {
-  const inputNode =
+  const dispatch = useDispatch();
+  const itemName = useSelector((state) => state.extras.item);
+  const discount = useSelector((state) => state.extras.discount);
+  let inputNode =
     inputType === "file" ? (
       <InputImage />
     ) : inputType === "number" ? (
@@ -57,6 +62,25 @@ const EditableCell = ({
     ) : (
       <Input />
     );
+  if (dataIndex === "discounts") {
+    inputNode = (
+      <>
+        <Input
+          placeholder="Item name"
+          onChange={(e) => dispatch(extraDataActions.setItem(e.target.value))}
+          value={itemName}
+        />{" "}
+        <br />
+        <Input
+          placeholder="Discount in %"
+          onChange={(e) =>
+            dispatch(extraDataActions.setDiscount(e.target.value))
+          }
+          value={discount}
+        />
+      </>
+    );
+  }
   return (
     <td {...restProps}>
       {editing ? (
@@ -67,7 +91,7 @@ const EditableCell = ({
           }}
           rules={[
             {
-              required: true,
+              required: (dataIndex==="discounts")?false: true,
               message: `Please Input ${title}!`,
             },
           ]}
@@ -83,7 +107,9 @@ const EditableCell = ({
 const EditableTable = () => {
   const dispatch = useDispatch();
   const fetchedData = useSelector((state) => state.places.foodplaces);
-  const image = useSelector((state) => state.image.image);
+  const image = useSelector((state) => state.extras.image);
+  const item = useSelector((state) => state.extras.item);
+  const discount = useSelector((state) => state.extras.discount);
   const isLoading = useSelector((state) => state.places.isLoading);
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
@@ -93,7 +119,7 @@ const EditableTable = () => {
   useEffect(() => {
     dispatch(fetchPlaces());
     setData(fetchedData);
-  }, []);
+  }, [dispatch]);
 
   const edit = (record) => {
     form.setFieldsValue({
@@ -113,6 +139,9 @@ const EditableTable = () => {
       const imgRef = ref(storage, `foodshops/${image.name}`);
       const uploadTask = await uploadBytes(imgRef, image);
       const url = await getDownloadURL(uploadTask.ref);
+      const discountdata = `${item} | ${discount}`;
+      dispatch(extraDataActions.setItem(""));
+      dispatch(extraDataActions.setDiscount(""));
       console.log({ row });
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
@@ -123,9 +152,10 @@ const EditableTable = () => {
           ...row,
           image: url,
         });
-        updateData(id, row, url);
+        updateData(id, row, url, discountdata);
         setData(newData);
         setEditingKey("");
+      
       } else {
         newData.push(row);
         setData(newData);
@@ -136,11 +166,11 @@ const EditableTable = () => {
     }
   };
   const columns = [
-    {
-      title: "Id",
-      dataIndex: "id",
-      editable: false,
-    },
+    // {
+    //   title: "Id",
+    //   dataIndex: "id",
+    //   editable: false,
+    // },
     {
       title: "Title",
       dataIndex: "title",
@@ -176,6 +206,15 @@ const EditableTable = () => {
       title: "Dislikes",
       dataIndex: "dislikes",
       editable: true,
+    },
+    {
+      title: "Discounts",
+      dataIndex: "discounts",
+      editable: true,
+      render: (discounts, data) => {
+        console.log({ data });
+        return <Discounts discounts={discounts} index={data.index} id={data.id}/>
+      },
     },
     {
       title: "operation",
@@ -240,7 +279,7 @@ const EditableTable = () => {
               },
             }}
             bordered
-            dataSource={data}
+            dataSource={fetchedData}
             columns={mergedColumns}
             rowClassName="editable-row"
             pagination={{
