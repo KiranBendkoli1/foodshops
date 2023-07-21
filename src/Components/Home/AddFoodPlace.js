@@ -3,7 +3,6 @@ import { Card, Input, Form, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import classes from "./HomePage.module.css";
 import { uploadFoodPlaceData } from "../../utils/fun";
-import { auth } from "../../config/firebase";
 const AddFoodPlace = () => {
   // const user = auth.currentUser.email;
   const navigate = useNavigate();

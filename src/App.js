@@ -10,10 +10,10 @@ import Comments from "./Components/Home/Comments";
 import DetailsPage from "./Components/Home/DetailsPage";
 import AdminHome from "./Components/Admin/AdminHome";
 import { useDispatch, useSelector } from "react-redux";
+import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 
 const { Header, Content } = Layout;
 function App() {
- 
   return (
     <>
       <BrowserRouter>
@@ -25,10 +25,34 @@ function App() {
             <Route exact path="/" element={<HomePage />} />
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/signup" element={<Signup />} />
-            <Route exact path="/addInfo" element={<AddFoodPlace />} />
+            <Route
+              exact
+              path="/addInfo"
+              element={
+                <ProtectedRoute>
+                  <AddFoodPlace />
+                </ProtectedRoute>
+              }
+            />
             <Route exact path="/comments" element={<Comments />} />
-            <Route exact path="/details" element={<DetailsPage />} />
-            <Route exact path="/admin" element={<AdminHome/>}/>
+            <Route
+              exact
+              path="/details"
+              element={
+                <ProtectedRoute>
+                  <DetailsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              exact
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminHome />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </Content>
       </BrowserRouter>
