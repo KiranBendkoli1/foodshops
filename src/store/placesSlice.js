@@ -16,14 +16,21 @@ const initialPlacesState = {
 
 export const getFoodShopById = createAsyncThunk(
   "content/getData",
-  async (data) => {
+  async (data, thunkAPI) => {
     const { id } = data;
-    const shopdata = await getDoc(doc(firestore, "foodshops", id));
-    let res = shopdata.data();
-    console.log(res);
-    res = { ...res, id: id };
-    console.log({ res });
-    return res;
+    await thunkAPI.dispatch(fetchPlaces())
+    const foodplaces = thunkAPI.getState().places.foodplaces;
+    const foodplaceData = foodplaces.filter(place=>place.id===id)[0];
+    console.log({ foodplaceData });
+
+    return foodplaceData;
+    // const shopdata = await getDoc(doc(firestore, "foodshops", id));
+    // let res = shopdata.data();
+    // console.log(res);
+    // res = { ...res, id: id };
+    // console.log({ res });
+    // return res;
+    
   }
 );
 

@@ -1,0 +1,7 @@
+.shopcard {
+    margin: 5px;
+    width: 400px;
+    display: flex;
+    box-shadow: 3px 2px 2px #aaaaaa;
+    justify-content: center;
+  }

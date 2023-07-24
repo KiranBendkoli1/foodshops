@@ -12,9 +12,11 @@ const Login = () => {
   const dispatch = useDispatch();
   const [password, setPassword] = useState("");
   const onFinishHandler = () => {
-    signIn(email, password).then(() => {
+    signIn(email, password).then((res) => {
       if (email === "admin@gmail.com") {
         navigate("/admin");
+      }else if(res.role=="shopOwner"){
+        navigate("/ownershome")
       } else {
         navigate("/");
       }

@@ -158,11 +158,12 @@ const FoodPlace = (props) => {
       </Modal>
 
       <Modal
-        title={`Offers at ${title}`}
+        title={`Special Offers at ${title}`}
         open={isOffersModalOpen}
         onOk={handleOfferOk}
         onCancel={handleOfferCancel}
       >
+        {discounts.length===0 && <p>No offers yet</p>}
         {discounts.map((discount) => {
           return (
             <>

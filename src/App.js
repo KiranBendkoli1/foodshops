@@ -3,7 +3,7 @@ import Login from "./Components/Auth/Login";
 import Signup from "./Components/Auth/Signup";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./Components/Home/HomePage";
-import AddFoodPlace from "./Components/Home/AddFoodPlace";
+import AddFoodPlace from "./Components/ShopOwener/AddFoodPlace";
 import Navbar from "./Components/UI/Navbar";
 import classes from "./Components/Home/HomePage.module.css";
 import { Layout } from "antd";
@@ -13,6 +13,7 @@ import AdminHome from "./Components/Admin/AdminHome";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import { useDispatch } from "react-redux";
 import { fetchPlaces } from "./store/placesSlice";
+import OwnersHomepage from "./Components/ShopOwener/OwnersHomepage";
 
 const { Header, Content } = Layout;
 function App() {
@@ -32,6 +33,7 @@ useEffect(() => {
             <Route exact="true" path="/" element={<HomePage />} />
             <Route exact="true" path="/login" element={<Login />} />
             <Route exact="true" path="/signup" element={<Signup />} />
+            <Route exact="true" path="/ownershome" element={<OwnersHomepage />} />
             <Route
               exact="true"
               path="/addInfo"

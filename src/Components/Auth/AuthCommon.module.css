@@ -9,7 +9,7 @@
   align-items: center;
 }
 .card {
-  width: 500;
+  width: 600px;
   box-shadow: 3px 2px 2px #aaaaaa;
 }
 .heading,
@@ -23,6 +23,7 @@ button {
   justify-content: center;
   text-align: center;
 }
+
 @media (max-width: 580px) {
   .card {
     width: auto;

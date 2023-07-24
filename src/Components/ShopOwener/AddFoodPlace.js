@@ -1,16 +1,50 @@
 import React, { useState } from "react";
-import { Card, Input, Form, Button } from "antd";
+import { Card, Input, Form, Button, Checkbox, Upload, message } from "antd";
+import { InboxOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import classes from "./HomePage.module.css";
+
+import classes from "../Home/HomePage.module.css";
 import { uploadFoodPlaceData } from "../../utils/fun";
+import { useSelector } from "react-redux";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { storage } from "../../config/firebase";
+const { Dragger } = Upload;
+
+const props = {
+  name: "file",
+  multiple: true,
+  onChange(info) {
+    const images = [];
+    console.log({info})
+    const files = info.fileList;
+    console.log({files});
+    // console.log({ file });
+    files.forEach(file => {
+      const imgRef = ref(storage, `foodshops/${file.name}`);
+      uploadBytes(imgRef, file).then((uploadTask) => {
+        getDownloadURL(uploadTask.ref).then((url) => {
+          images.push(url);
+        });
+      });
+    })
+  },
+  
+  
+  onDrop(e) {
+    console.log("Dropped files", e.dataTransfer.files);
+  },
+};
 const AddFoodPlace = () => {
   // const user = auth.currentUser.email;
   const navigate = useNavigate();
-  const [title, setTitle] = useState("");
+  const name = useSelector((state) => state.user.name);
+  const tcontact = useSelector((state) => state.user.contact);
+
+  const [title, setTitle] = useState(name);
   const [speciality, setSpeciality] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
-  const [contact, setContact] = useState("");
+  const [contact, setContact] = useState(tcontact);
   const [location, setLocation] = useState("");
   const onFinishHandler = () => {
     // event.preventDefault();
@@ -28,7 +62,7 @@ const AddFoodPlace = () => {
         bordered={true}
         style={{ width: "500px", boxShadow: "3px 2px 2px #aaaaaa" }}
       >
-        <h2 className={classes.heading}>Add New Shop Info</h2>
+        <h2 className={classes.myheader}>Add Detail Information of {title}</h2>
         <Form
           labelCol={{
             span: 10,
@@ -39,21 +73,6 @@ const AddFoodPlace = () => {
           autoComplete="off"
           onFinish={onFinishHandler}
         >
-          <Form.Item
-            label="Enter Shop Name"
-            name="shopname"
-            rules={[
-              {
-                required: true,
-                message: "Please input shop name!",
-              },
-            ]}
-          >
-            <Input
-              onChange={(event) => setTitle(event.target.value)}
-              value={title}
-            />
-          </Form.Item>
           <Form.Item
             label="Speciality"
             name="speciality"
@@ -67,26 +86,6 @@ const AddFoodPlace = () => {
             <Input
               onChange={(event) => setSpeciality(event.target.value)}
               value={speciality}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Contact No.:"
-            name="contact"
-            rules={[
-              {
-                required: true,
-                min:10,
-                message: "Please input contact number atleast 10 numbers",
-              },
-            ]}
-          >
-            <Input
-            type="number"
-            htmlType="number"
-            maxLength={11} // if telephone 02532571439
-            minLength={10} // if mobile 9889898988
-              onChange={(event) => setContact(event.target.value)}
-              value={contact}
             />
           </Form.Item>
           <Form.Item
@@ -105,7 +104,7 @@ const AddFoodPlace = () => {
             />
           </Form.Item>
           <Form.Item
-            label="Describe place in details"
+            label="Description"
             name="description"
             rules={[
               {
@@ -120,22 +119,25 @@ const AddFoodPlace = () => {
             />
           </Form.Item>
           <Form.Item
-            label="Select Image"
-            name="image"
-            rules={[
-              {
-                required: true,
-                message: "Please url of image",
-              },
-            ]}
+            label="Select Type"
+            name="disabled"
+            valuePropName="checked"
           >
-            <Input
-              htmlType="file"
-              type="file"
-              onChange={(event) => setImage(event.target.files[0])}
-            />
+            <Checkbox>Veg</Checkbox>
+            <Checkbox>Non Veg</Checkbox>
           </Form.Item>
-
+          <Dragger {...props}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">
+              Click or drag file to this area to upload
+            </p>
+            <p className="ant-upload-hint">
+              Support for a single or bulk upload. Strictly prohibited from
+              uploading company data or other banned files.
+            </p>
+          </Dragger>
           <Form.Item className={classes.button}>
             <Button type="primary" htmlType="submit">
               Submit

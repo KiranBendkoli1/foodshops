@@ -1,5 +1,5 @@
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { collection, addDoc, doc, updateDoc,getDoc } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, getDoc } from "firebase/firestore";
 import { storage, firestore } from "../config/firebase";
 // const storage = getStorage();
 const uploadFoodPlaceData = async (
@@ -33,12 +33,18 @@ const uploadFoodPlaceData = async (
 
 const updateData = async (id, values, image, discount) => {
   try {
-    const shopdata = await getDoc(doc(firestore, "foodshops", id));
-    let discounts = shopdata.data().discounts;
-    discounts.push(discount)
-    const newValues = { ...values, image: image ,discounts:discounts};
+    let newValues = {...values};
+    if (discount.trim() !== "|") {
+      const shopdata = await getDoc(doc(firestore, "foodshops", id));
+      let discounts = shopdata.data().discounts;
+      discounts.push(discount);
+      newValues = { ...newValues, discounts: discounts };
+    }
+    if (image !== "") {
+      newValues = { ...newValues, image: image };
+    }
     console.log({ newValues });
-    updateDoc(doc(firestore, "foodshops", id), newValues).then(() => {
+    updateDoc(doc(firestore, "foodshops", id), {...newValues}).then(() => {
       console.log("Updated Successfully", { newValues });
     });
   } catch (error) {

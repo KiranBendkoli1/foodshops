@@ -66,6 +66,10 @@ body {
   color: #2069f2;
   background-color: white;
 }
+.myheader{
+  color: #2069f2;
+  background-color: white;
+}
 .useractions {
   display: flex;
   justify-content: space-around;

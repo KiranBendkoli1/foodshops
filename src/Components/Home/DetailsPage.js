@@ -30,12 +30,12 @@ const DetailsPage = (props) => {
       ) : (
         <Card className={classes.detailcard}>
           <Row>
-            <Col span={12}>
+            <Col xs={24} xl={12}>
               <div>
                 <img src={data.image} height="260px" />
               </div>
             </Col>
-            <Col span={12}>
+            <Col xs={24} xl={12}>
               <h2 className={classes.shopname}>{data?.title || ""}</h2>
 
               <p>Speciality: {data.speciality}</p>

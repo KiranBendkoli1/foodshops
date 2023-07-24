@@ -138,7 +138,7 @@ const EditableTable = () => {
       const row = await form.validateFields();
       const imgRef = ref(storage, `foodshops/${image.name}`);
       const uploadTask = await uploadBytes(imgRef, image);
-      const url = await getDownloadURL(uploadTask.ref);
+      let url = await getDownloadURL(uploadTask.ref);
       const discountdata = `${item} | ${discount}`;
       dispatch(extraDataActions.setItem(""));
       dispatch(extraDataActions.setDiscount(""));
@@ -152,6 +152,9 @@ const EditableTable = () => {
           ...row,
           image: url,
         });
+        if(image==""){
+        url = image;
+        }
         updateData(id, row, url, discountdata);
         setData(newData);
         setEditingKey("");
