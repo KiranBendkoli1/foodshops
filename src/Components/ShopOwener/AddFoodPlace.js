@@ -1,63 +1,59 @@
 import React, { useState } from "react";
-import { Card, Input, Form, Button, Checkbox, Upload, message } from "antd";
+import { Card, Input, Form, Button, Checkbox, Upload, message, Spin } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 
 import classes from "../Home/HomePage.module.css";
-import { uploadFoodPlaceData } from "../../utils/fun";
-import { useSelector } from "react-redux";
+import {uploadFoodShopData} from "../../store/placesSlice"
+import { useDispatch, useSelector } from "react-redux";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../config/firebase";
 const { Dragger } = Upload;
 
-const props = {
-  name: "file",
-  multiple: true,
-  onChange(info) {
-    const images = [];
-    console.log({info})
-    const files = info.fileList;
-    console.log({files});
-    // console.log({ file });
-    files.forEach(file => {
-      const imgRef = ref(storage, `foodshops/${file.name}`);
-      uploadBytes(imgRef, file).then((uploadTask) => {
-        getDownloadURL(uploadTask.ref).then((url) => {
-          images.push(url);
-        });
-      });
-    })
-  },
-  
-  
-  onDrop(e) {
-    console.log("Dropped files", e.dataTransfer.files);
-  },
-};
 const AddFoodPlace = () => {
   // const user = auth.currentUser.email;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const name = useSelector((state) => state.user.name);
   const tcontact = useSelector((state) => state.user.contact);
-
+  const isLoading = useSelector((state)=> state.places.isLoading)
   const [title, setTitle] = useState(name);
   const [speciality, setSpeciality] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
+  const [type, setType] = useState([]);
+  const [images, setImages] = useState();
   const [contact, setContact] = useState(tcontact);
   const [location, setLocation] = useState("");
   const onFinishHandler = () => {
     // event.preventDefault();
-    uploadFoodPlaceData(title, speciality, description, location, image).then(
-      () => {
-        navigate("/");
-      }
-    );
-
-    console.log("image", image);
+    dispatch(
+      uploadFoodShopData({ speciality, description, location, images, type })
+    ).then(() => {
+      navigate("/");
+    });
+    console.log(images);
   };
+
+  // props for upload
+  const props = {
+    name: "file",
+    multiple: true,
+    onChange(info) {
+      console.log({ info });
+      const images = info.fileList;
+      const newImages = images.map((img)=> (img.originFileObj))
+      setImages(newImages);
+      console.log({ images });
+    },
+    onDrop(e) {
+      console.log("Dropped files", e.dataTransfer.files);
+    },
+  };
+
   return (
     <div className={classes.centerdiv}>
+      { isLoading? <Spin/>:
       <Card
         bordered={true}
         style={{ width: "500px", boxShadow: "3px 2px 2px #aaaaaa" }}
@@ -118,13 +114,19 @@ const AddFoodPlace = () => {
               value={description}
             />
           </Form.Item>
-          <Form.Item
-            label="Select Type"
-            name="disabled"
-            valuePropName="checked"
-          >
-            <Checkbox>Veg</Checkbox>
-            <Checkbox>Non Veg</Checkbox>
+          <Form.Item label="Select Type" name="type" valuePropName="checked">
+            <Checkbox
+              onChange={(e) => setType([...type, e.target.checked && "Veg"])}
+            >
+              Veg
+            </Checkbox>
+            <Checkbox
+              onChange={(e) =>
+                setType([...type, e.target.checked && "Non Veg"])
+              }
+            >
+              Non Veg
+            </Checkbox>
           </Form.Item>
           <Dragger {...props}>
             <p className="ant-upload-drag-icon">
@@ -145,6 +147,7 @@ const AddFoodPlace = () => {
           </Form.Item>
         </Form>
       </Card>
+      }
     </div>
   );
 };

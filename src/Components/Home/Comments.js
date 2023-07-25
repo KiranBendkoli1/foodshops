@@ -6,6 +6,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addComment } from "../../store/placesSlice";
 import { auth } from "../../config/firebase";
+import ImageCarousel from "../UI/ImageCarousel";
 
 const Comments = (props) => {
   const { id } = useParams();
@@ -18,8 +19,8 @@ const Comments = (props) => {
   console.log({ user });
   const flag = user ? true : false;
   const foodplaces = useSelector((state) => state.places.foodplaces);
-  const data = foodplaces.filter((data) => id===data.id)[0];
-  const { index, comments, image, title } = data;
+  const data = foodplaces.filter((data) => id === data.id)[0];
+  const { index, comments, image, title, images } = data;
   useEffect(() => {
     console.log(data);
   }, []);
@@ -42,10 +43,10 @@ const Comments = (props) => {
   return (
     <Card className={classes["comments-card"]}>
       <h2>{title}</h2>
-      <img src={image} alt={title} height={"300px"} />
+      <ImageCarousel images={images} />
       <div>
         <h2>Comments...</h2>
-        {comments.map((comment,index) => {
+        {comments.map((comment, index) => {
           return (
             <p key={index}>
               <b>{comment.split("|")[0]}</b> {comment.split("|")[1]}

@@ -14,6 +14,7 @@ import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import { useDispatch } from "react-redux";
 import { fetchPlaces } from "./store/placesSlice";
 import OwnersHomepage from "./Components/ShopOwener/OwnersHomepage";
+import CompleteDetails from "./Components/ShopOwener/CompleteDetails";
 
 const { Header, Content } = Layout;
 function App() {
@@ -44,7 +45,7 @@ useEffect(() => {
               }
             />
             <Route exact="true" path="/comments/:id" element={<Comments />} />
-            <Route exact="true" path="/details/:id" element={<DetailsPage />} />
+            <Route exact="true" path="/details/:id" element={<CompleteDetails />} />
             <Route
               exact="true"
               path="/admin"

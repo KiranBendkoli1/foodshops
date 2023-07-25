@@ -136,6 +136,7 @@ const EditableTable = () => {
   const save = async (key, id) => {
     try {
       const row = await form.validateFields();
+      console.log(image)
       const imgRef = ref(storage, `foodshops/${image.name}`);
       const uploadTask = await uploadBytes(imgRef, image);
       let url = await getDownloadURL(uploadTask.ref);

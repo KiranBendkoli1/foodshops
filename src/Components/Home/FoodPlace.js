@@ -18,7 +18,8 @@ import {
 } from "../../store/placesSlice";
 import { auth } from "../../config/firebase";
 import { RWebShare } from "react-web-share";
-
+import veg from "../../assets/icons/icons8-veg-48.png";
+import nonveg from "../../assets/icons/icons8-non-veg-48.png";
 const FoodPlace = (props) => {
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,6 +36,8 @@ const FoodPlace = (props) => {
     liked,
     disliked,
     image,
+    images,
+    type,
     discounts,
     location,
     title,
@@ -93,14 +96,26 @@ const FoodPlace = (props) => {
   return (
     <>
       <Card className={classes.shopcard} key={id}>
-        <h3
-          className={`${classes.center} ${classes.shopname}`}
-          style={{ padding: "0px", margin: "0px" }}
+        <div
+          style={{
+            height: "20px",
+            display: "flex",
+            justifyContent: "space-evenly",
+          }}
         >
-          {title.toUpperCase()}
-        </h3>
-        <div className={classes.center}>
-          <img src={image} width="260px" height={"250px"} />
+          <h3
+            className={`${classes.center} ${classes.shopname}`}
+            style={{ padding: "0px", margin: "0px" }}
+          >
+            {title.toUpperCase()}
+          </h3>{" "}
+          <div>
+            {type? type.includes("Veg") && <img src={veg} style={{ width: "20px", height: "20px" }} />:""}{" "}
+            {type? type.includes("Non Veg") && <img src={nonveg} style={{ width: "20px", height: "20px" }} />:""}
+          </div>
+        </div>
+        <div className={classes.center} style={{ marginTop: "20px" }}>
+          <img src={image ? image : images[0]} width="260px" height={"250px"} />
         </div>
         <p>Speciality: {speciality}</p>
         <p>Address: {location}</p>
@@ -143,8 +158,22 @@ const FoodPlace = (props) => {
           </p>
         </div>
         <div style={{ display: "flex", justifyContent: "space-around" }}>
-          <Button onClick={handleDetailsClick}  shape="round" type="primary" ghost  >View Complete Details</Button>
-          <Button onClick={handleOffersClick}  shape="round" type="primary" ghost>View Offers</Button>
+          <Button
+            onClick={handleDetailsClick}
+            shape="round"
+            type="primary"
+            ghost
+          >
+            View Complete Details
+          </Button>
+          <Button
+            onClick={handleOffersClick}
+            shape="round"
+            type="primary"
+            ghost
+          >
+            View Offers
+          </Button>
         </div>
       </Card>
 
@@ -163,14 +192,13 @@ const FoodPlace = (props) => {
         onOk={handleOfferOk}
         onCancel={handleOfferCancel}
       >
-        {discounts.length===0 && <p>No offers yet</p>}
+        {discounts.length === 0 && <p>No offers yet</p>}
         {discounts.map((discount) => {
           return (
             <>
               <p>{`${discount.split("|")[0]} is at ${
                 discount.split("|")[1]
               } discount`}</p>
-              
             </>
           );
         })}

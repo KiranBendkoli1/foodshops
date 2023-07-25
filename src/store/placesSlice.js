@@ -3,10 +3,12 @@ import {
   collection,
   getDocs,
   doc,
+  addDoc,
   updateDoc,
   getDoc,
 } from "firebase/firestore";
-import { firestore } from "../config/firebase";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { firestore,storage } from "../config/firebase";
 const initialPlacesState = {
   foodplaces: [],
   foodplace: {},
@@ -14,13 +16,61 @@ const initialPlacesState = {
   error: null,
 };
 
+
+
+/// helping function
+const uploadImage = async (image) => {
+  const imgRef = ref(storage, `foodshops/${Date.now()}-${image.name}`);
+  const uploadTask = await uploadBytes(imgRef, image);
+  const url = await getDownloadURL(uploadTask.ref);
+  return url;
+};
+
+
+export const uploadFoodShopData = createAsyncThunk(
+  "content/uploadFoodShopData",
+  async (data, thunkAPI) => {
+    const { speciality, description, location, images, type } = data;
+    const name = thunkAPI.getState().user.name;
+    const contact = thunkAPI.getState().user.contact;
+    const imgPromise =  Array.from(images, (image) => uploadImage(image));
+    const imageRes  = await Promise.all(imgPromise);
+  
+    // images.forEach((file) => {
+    //   imgArray.push(url);
+    // });
+    console.log({imageRes})
+    let x = Math.floor(Math.random() * 100 + 1);
+    
+    const res =  {
+      key: `${x} ${name}`,
+      title: name,
+      speciality: speciality,
+      location: location,
+      description: description,
+      likes: 0,
+      dislikes: 0,
+      contact: contact,
+      liked: [],
+      discounts:[],
+      disliked: [],
+      comments: [],
+      type: type,
+      images: imageRes,
+      postedOn: new Date().toDateString(),
+    }
+    const docRef = await addDoc(collection(firestore, "foodshops"),res);
+    console.log(docRef.id);
+    return {...res, id:docRef.id};
+  }
+);
 export const getFoodShopById = createAsyncThunk(
   "content/getData",
   async (data, thunkAPI) => {
     const { id } = data;
-    await thunkAPI.dispatch(fetchPlaces())
+    await thunkAPI.dispatch(fetchPlaces());
     const foodplaces = thunkAPI.getState().places.foodplaces;
-    const foodplaceData = foodplaces.filter(place=>place.id===id)[0];
+    const foodplaceData = foodplaces.filter((place) => place.id === id)[0];
     console.log({ foodplaceData });
 
     return foodplaceData;
@@ -30,7 +80,6 @@ export const getFoodShopById = createAsyncThunk(
     // res = { ...res, id: id };
     // console.log({ res });
     // return res;
-    
   }
 );
 
@@ -211,6 +260,18 @@ const placesSlice = createSlice({
       state.foodplace = action.payload;
     });
     builder.addCase(getFoodShopById.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.error.message;
+    });
+    // upload data
+    builder.addCase(uploadFoodShopData.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(uploadFoodShopData.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.foodplaces.push(action.payload);
+    });
+    builder.addCase(uploadFoodShopData.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.error.message;
     });

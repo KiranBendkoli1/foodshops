@@ -41,7 +41,7 @@ body {
 .shopcard {
   margin: 5px;
   width: 400px;
-  height: 450px;
+  height: auto;
   display: flex;
   box-shadow: 3px 2px 2px #aaaaaa;
   justify-content: center;
