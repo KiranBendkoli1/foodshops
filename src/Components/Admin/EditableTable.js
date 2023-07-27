@@ -9,12 +9,13 @@ import {
   Table,
   Typography,
 } from "antd";
+import ImageCarousel from "../UI/ImageCarousel";
 import { useDispatch, useSelector } from "react-redux";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../config/firebase";
 import { extraDataActions } from "../../store/extraDataSlice";
 import { updateData } from "../../utils/fun";
-import { fetchPlaces } from "../../store/placesSlice";
+import { fetchPlaces,deleteDataFromDb } from "../../store/placesSlice";
 import Discounts from "./Discounts";
 // const originData = [];
 // for (let i = 0; i < 100; i++) {
@@ -133,6 +134,12 @@ const EditableTable = () => {
   const cancel = () => {
     setEditingKey("");
   };
+  const handleDelete = (key,id) => {
+    console.log(id)
+    const newData = data.filter((item) => item.key !== key);
+    dispatch(deleteDataFromDb(id));
+    setData(newData);
+  };
   const save = async (key, id) => {
     try {
       const row = await form.validateFields();
@@ -192,9 +199,9 @@ const EditableTable = () => {
     },
     {
       title: "Image",
-      dataIndex: "image",
+      dataIndex: "images",
       editable: true,
-      render: (text) => <img src={text} height={"120px"} width={"170px"} />,
+      render: (text) =>  <ImageCarousel images={text} width={"200px"} height={"160px"}/>,
     },
     {
       title: "Location",
@@ -216,13 +223,13 @@ const EditableTable = () => {
       dataIndex: "discounts",
       editable: true,
       render: (discounts, data) => {
-        console.log({ data });
+        // console.log({ data });
         return <Discounts discounts={discounts} index={data.index} id={data.id}/>
       },
     },
     {
-      title: "operation",
-      dataIndex: "operation",
+      title: "Edit",
+      dataIndex: "edit",
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
@@ -248,6 +255,16 @@ const EditableTable = () => {
           </Typography.Link>
         );
       },
+    },
+    {
+      title: 'Delete',
+      dataIndex: 'delete',
+      render: (_, record) =>
+        data.length >= 1 ? (
+          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key, record.id)}>
+            <a>Delete</a>
+          </Popconfirm>
+        ) : null,
     },
   ];
   const mergedColumns = columns.map((col) => {

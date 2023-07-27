@@ -30,7 +30,7 @@ const CompleteDetails = (props) => {
         </div>
       ) : (
         <Card style={{ height: "auto" }}>
-          <ImageCarousel images={data.images} />
+          <ImageCarousel images={data.images} width={"400px"} windth={"400px"}/>
 
           <div>
             <h2 className={classes.shopname}>{data?.title || ""}</h2>

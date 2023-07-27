@@ -15,14 +15,18 @@ import { useDispatch } from "react-redux";
 import { fetchPlaces } from "./store/placesSlice";
 import OwnersHomepage from "./Components/ShopOwener/OwnersHomepage";
 import CompleteDetails from "./Components/ShopOwener/CompleteDetails";
+import SimpleMap from "./Components/UI/SimpleMap";
+import BingMap from "./Components/UI/BingMap";
+import Leaflet from "./Components/UI/Leaflet";
+import MapComponent from "./Components/Maps/MapComponent";
 
 const { Header, Content } = Layout;
 function App() {
-  const dispatch = useDispatch()
-useEffect(() => {
-  dispatch(fetchPlaces());
-  // console.log(foodplaces);
-}, []);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchPlaces());
+    // console.log(foodplaces);
+  }, [dispatch]);
   return (
     <>
       <BrowserRouter>
@@ -34,7 +38,11 @@ useEffect(() => {
             <Route exact="true" path="/" element={<HomePage />} />
             <Route exact="true" path="/login" element={<Login />} />
             <Route exact="true" path="/signup" element={<Signup />} />
-            <Route exact="true" path="/ownershome" element={<OwnersHomepage />} />
+            <Route
+              exact="true"
+              path="/ownershome"
+              element={<OwnersHomepage />}
+            />
             <Route
               exact="true"
               path="/addInfo"
@@ -45,7 +53,11 @@ useEffect(() => {
               }
             />
             <Route exact="true" path="/comments/:id" element={<Comments />} />
-            <Route exact="true" path="/details/:id" element={<CompleteDetails />} />
+            <Route
+              exact="true"
+              path="/details/:id"
+              element={<CompleteDetails />}
+            />
             <Route
               exact="true"
               path="/admin"
@@ -54,6 +66,17 @@ useEffect(() => {
                   <AdminHome />
                 </ProtectedRoute>
               }
+            />
+
+            <Route
+              exact="true"
+              path="/map"
+              element={<Leaflet/>}
+            />
+            <Route
+            exact="true"
+            path="/gotomap/:lat/:lon"
+            element={<MapComponent/>}
             />
           </Routes>
         </Content>

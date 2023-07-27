@@ -43,7 +43,7 @@ body {
   width: 400px;
   height: auto;
   display: flex;
-  box-shadow: 3px 2px 2px #aaaaaa;
+  /* box-shadow: 3px 2px 2px #aaaaaa; */
   justify-content: center;
 }
 .shopcard img {

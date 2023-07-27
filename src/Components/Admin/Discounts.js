@@ -14,10 +14,10 @@ const Discounts = ({ discounts, index, id }) => {
     <>
       {discounts.map((discount) => {
         return (
-          <>
+          <div>
             <p>{`${discount.split("|")[0]} is at ${
               discount.split("|")[1]
-            } discount`}</p>
+            }% discount`}</p>
             <Button
               type="primary"
               danger
@@ -25,7 +25,7 @@ const Discounts = ({ discounts, index, id }) => {
               icon={<DeleteOutlined />}
               onClick={()=>deleteButtonHandler(discount)}
             ></Button>
-          </>
+          </div>
         );
       })}
     </>
