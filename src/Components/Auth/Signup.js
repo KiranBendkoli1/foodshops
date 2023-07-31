@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Button, Card, Form, Input } from "antd";
+import { Button, Card, Form, Input, Spin, Row, Col } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import classes from "./AuthCommon.module.css";
-import { userActions } from "../../store/userSlice";
-import { signUp } from "../../utils/auth";
+import { userActions, signUp } from "../../store/userSlice";
+// import { signUp } from "../../utils/auth";
 import { useDispatch, useSelector } from "react-redux";
 const Signup = () => {
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ const Signup = () => {
   const email = useSelector((state) => state.user.email);
   const name = useSelector((state) => state.user.name);
   const contact = useSelector((state) => state.user.contact);
+  const isLoading = useSelector((state) => state.user.isLoading);
   const [password, setPassword] = useState("");
 
   const emailChangeHandler = (event) => {
@@ -29,9 +30,15 @@ const Signup = () => {
 
   const onFinishHandler = () => {
     console.log("Submit executed");
-    signUp(name, email, contact, password, userType).then(() => {
-      compare(navigate("/"), navigate("/ownershome"));
+    console.log({ name, email, contact, password, userType });
+    dispatch(signUp({ name, email, contact, password, userType })).then(() => {
+      if (userType === "regular") navigate("/");
+      if (userType === "shopOwner") navigate("/ownershome");
     });
+    // signUp().then(() => {
+
+    // });
+
     setPassword("");
   };
 
@@ -39,26 +46,38 @@ const Signup = () => {
     return userType === "regular" ? user : shopOwner;
   };
 
-  return (
+  return isLoading ? (
+    <Row align="middle" style={{ height: "90vh" }}>
+      <Col>
+        <Spin
+          style={{
+            verticalAlign: "middle",
+          }}
+        />
+      </Col>
+    </Row>
+  ) : (
     <div className={classes.centerdiv}>
       {userType === "" ? (
-        <div>
-          <h2>WHY ARE YOU HERE?</h2>
+        <Card>
+          <h2  className={classes.heading}>WHY ARE YOU HERE?</h2>
           <div style={{ display: "flex", marginTop: "20px" }}>
             <Card
+              hoverable={true}
               style={{ margin: "20px" }}
               onClick={() => setUserType("regular")}
             >
               To find best foodshops near you
             </Card>
             <Card
+              hoverable={true}
               style={{ margin: "20px" }}
               onClick={() => setUserType("shopOwner")}
             >
               To list your foodshop here{" "}
             </Card>
           </div>
-        </div>
+        </Card>
       ) : (
         <Card bordered={true} className={classes.card}>
           <h2 className={classes.heading}>
@@ -139,7 +158,7 @@ const Signup = () => {
               />
             </Form.Item>
             <Form.Item className={classes.button}>
-              <Button type="primary" htmlType="submit">
+              <Button type="primary" htmlType="submit" loading={isLoading}>
                 SIGNUP
               </Button>{" "}
               <br />

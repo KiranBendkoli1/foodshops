@@ -1,26 +1,34 @@
 import React, { useState } from "react";
-import { Button, Card, Form, Input } from "antd";
+import { Button, Card, Form, Input, Spin,Row, Col } from "antd";
 import classes from "./AuthCommon.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { userActions } from "../../store/userSlice";
-import { signIn } from "../../utils/auth";
+import { firestore } from "../../config/firebase";
+import { getDoc, doc } from "firebase/firestore";
+import { userActions, signIn } from "../../store/userSlice";
+// import { signIn } from "../../utils/auth";
+
 const Login = () => {
   // const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const email = useSelector((state) => state.user.email);
+  const isLoading = useSelector((state) => state.user.isLoading);
+  const role = useSelector((state) => state.user.role);
   const dispatch = useDispatch();
   const [password, setPassword] = useState("");
-  const onFinishHandler = () => {
-    signIn(email, password).then((res) => {
+  const onFinishHandler = async() => {
+    console.log(password);
+    const res = await getDoc(doc(firestore, "roles", email));
+    dispatch(signIn({ email, password })).then(() => {
       if (email === "admin@gmail.com") {
         navigate("/admin");
-      }else if(res.role=="shopOwner"){
-        navigate("/ownershome")
-      } else {
+      } else if (res.data().role === "regular") {
         navigate("/");
-      }
+      } else if (res.data().role === "shopOwner") {
+        navigate("/ownershome");
+      } 
     });
+    console.log(email);
   };
 
   const emailChangeHandler = (event) => {
@@ -32,6 +40,15 @@ const Login = () => {
     setPassword(event.target.value);
   };
 
+  // return isLoading ? (
+  //   <Row align="middle" style={{height:"90vh"}}>
+  //   <Col>
+  //    <Spin style={{
+  //       verticalAlign: 'middle',
+  //     }}/>
+  //   </Col>
+  // </Row>
+  // ) : 
   return (
     <div className={classes.centerdiv}>
       <Card bordered={true} className={classes.card}>
@@ -50,7 +67,6 @@ const Login = () => {
           <Form.Item
             label="Email Address"
             name="email"
-          
             rules={[
               {
                 required: true,
@@ -58,7 +74,12 @@ const Login = () => {
               },
             ]}
           >
-            <Input onChange={emailChangeHandler} type="email" htmlType="email" value={email} />
+            <Input
+              onChange={emailChangeHandler}
+              type="email"
+              htmlType="email"
+              value={email}
+            />
           </Form.Item>
           <Form.Item
             label="Password"
@@ -70,10 +91,16 @@ const Login = () => {
               },
             ]}
           >
-            <Input.Password onChange={passwordChangeHandler} type="password" htmlType="password" value={password} />
+            <Input.Password
+              onChange={passwordChangeHandler}
+              type="password"
+              htmlType="password"
+              value={password}
+            />
           </Form.Item>
           <Form.Item className={classes.button}>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" loading={isLoading}
+            >
               LOGIN
             </Button>{" "}
             <br />

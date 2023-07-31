@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Button,
   Form,
   Input,
   InputNumber,
@@ -14,18 +13,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../config/firebase";
 import { extraDataActions } from "../../store/extraDataSlice";
-import { updateData } from "../../utils/fun";
-import { fetchPlaces,deleteDataFromDb } from "../../store/placesSlice";
+import {
+  fetchPlaces,
+  deleteDataFromDb,
+  updateData,
+} from "../../store/placesSlice";
 import Discounts from "./Discounts";
-// const originData = [];
-// for (let i = 0; i < 100; i++) {
-//   originData.push({
-//     key: i.toString(),
-//     name: `Edward ${i}`,
-//     age: 32,
-//     address: `London Park no. ${i}`,
-//   });
-// }
+
 const InputImage = () => {
   const dispatch = useDispatch();
   const handleImage = (event) => {
@@ -92,7 +86,7 @@ const EditableCell = ({
           }}
           rules={[
             {
-              required: (dataIndex==="discounts")?false: true,
+              required: dataIndex === "discounts" ? false : true,
               message: `Please Input ${title}!`,
             },
           ]}
@@ -134,8 +128,8 @@ const EditableTable = () => {
   const cancel = () => {
     setEditingKey("");
   };
-  const handleDelete = (key,id) => {
-    console.log(id)
+  const handleDelete = (key, id) => {
+    console.log(id);
     const newData = data.filter((item) => item.key !== key);
     dispatch(deleteDataFromDb(id));
     setData(newData);
@@ -143,7 +137,7 @@ const EditableTable = () => {
   const save = async (key, id) => {
     try {
       const row = await form.validateFields();
-      console.log(image)
+      console.log(image);
       const imgRef = ref(storage, `foodshops/${image.name}`);
       const uploadTask = await uploadBytes(imgRef, image);
       let url = await getDownloadURL(uploadTask.ref);
@@ -160,13 +154,20 @@ const EditableTable = () => {
           ...row,
           image: url,
         });
-        if(image==""){
-        url = image;
+        if (image == "") {
+          url = image;
         }
-        updateData(id, row, url, discountdata);
+        const data = {
+          index,
+          id,
+          values: row,
+          image: url,
+          discount: discountdata,
+        };
+        console.log(data);
+        dispatch(updateData(data));
         setData(newData);
         setEditingKey("");
-      
       } else {
         newData.push(row);
         setData(newData);
@@ -201,7 +202,9 @@ const EditableTable = () => {
       title: "Image",
       dataIndex: "images",
       editable: true,
-      render: (text) =>  <ImageCarousel images={text} width={"200px"} height={"160px"}/>,
+      render: (text) => (
+        <ImageCarousel images={text} width={"200px"} height={"160px"} />
+      ),
     },
     {
       title: "Location",
@@ -221,10 +224,12 @@ const EditableTable = () => {
     {
       title: "Discounts",
       dataIndex: "discounts",
-      editable: true,
+      editable: false,
       render: (discounts, data) => {
         // console.log({ data });
-        return <Discounts discounts={discounts} index={data.index} id={data.id}/>
+        return (
+          <Discounts discounts={discounts} index={data.index} id={data.id} />
+        );
       },
     },
     {
@@ -257,11 +262,14 @@ const EditableTable = () => {
       },
     },
     {
-      title: 'Delete',
-      dataIndex: 'delete',
+      title: "Delete",
+      dataIndex: "delete",
       render: (_, record) =>
         data.length >= 1 ? (
-          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key, record.id)}>
+          <Popconfirm
+            title="Sure to delete?"
+            onConfirm={() => handleDelete(record.key, record.id)}
+          >
             <a>Delete</a>
           </Popconfirm>
         ) : null,

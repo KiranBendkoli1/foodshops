@@ -30,8 +30,6 @@ import { useNavigate } from "react-router-dom";
 import classes from "../Home/HomePage.module.css";
 import { uploadFoodShopData } from "../../store/placesSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { storage } from "../../config/firebase";
 
 const { Dragger } = Upload;
 const {BaseLayer} = LayersControl;
@@ -48,6 +46,7 @@ const AddFoodPlace = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const name = useSelector((state) => state.user.name);
+  const email = useSelector((state) => state.user.email);
   const tcontact = useSelector((state) => state.user.contact);
   const isLoading = useSelector((state) => state.places.isLoading);
   const [title, setTitle] = useState(name);
@@ -61,9 +60,9 @@ const AddFoodPlace = () => {
   const onFinishHandler = () => {
     // event.preventDefault();
     dispatch(
-      uploadFoodShopData({ speciality, description,selectPosition, location, images, type })
+      uploadFoodShopData({ email, speciality, description, selectPosition, location, images, type })
     ).then(() => {
-      navigate("/");
+      navigate("/ownershome");
     });
     console.log(images);
   };
@@ -87,7 +86,13 @@ const AddFoodPlace = () => {
   return (
     <div className={classes.centerdiv}>
       {isLoading ? (
-        <Spin />
+       <Row align="middle" style={{height:"90vh"}}>
+       <Col>
+        <Spin style={{
+           verticalAlign: 'middle',
+         }}/>
+       </Col>
+     </Row>
       ) : (
         <Col>
         <Row style={{display:'flex', justifyContent:"center", textAlign:"center"}}>

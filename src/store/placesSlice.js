@@ -7,6 +7,7 @@ import {
   deleteDoc,
   updateDoc,
   getDoc,
+  setDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { firestore, storage } from "../config/firebase";
@@ -28,7 +29,16 @@ const uploadImage = async (image) => {
 export const uploadFoodShopData = createAsyncThunk(
   "content/uploadFoodShopData",
   async (data, thunkAPI) => {
-    const { speciality, description,selectPositon, location, images, type } = data;
+    const {
+      email,
+      speciality,
+      description,
+      selectPosition,
+      location,
+      images,
+      type,
+    } = data;
+    console.log(data);
     const name = thunkAPI.getState().user.name;
     const contact = thunkAPI.getState().user.contact;
     const imgPromise = Array.from(images, (image) => uploadImage(image));
@@ -43,10 +53,11 @@ export const uploadFoodShopData = createAsyncThunk(
     const res = {
       key: `${x} ${name}`,
       title: name,
+      email: email,
       speciality: speciality,
       location: location,
       description: description,
-      selectPositon:selectPositon,
+      selectPosition: selectPosition,
       likes: 0,
       dislikes: 0,
       contact: contact,
@@ -58,9 +69,14 @@ export const uploadFoodShopData = createAsyncThunk(
       images: imageRes,
       postedOn: new Date().toDateString(),
     };
-    const docRef = await addDoc(collection(firestore, "foodshops"), res);
-    console.log(docRef.id);
-    return { ...res, id: docRef.id };
+    console.log(res);
+    try {
+      const docRef = await setDoc(doc(firestore, "foodshops", email), res);
+      console.log(docRef.id);
+      return { ...res, id: docRef.id };
+    } catch (error) {
+      console.error(error);
+    }
   }
 );
 export const getFoodShopById = createAsyncThunk(
@@ -82,18 +98,24 @@ export const getFoodShopById = createAsyncThunk(
   }
 );
 
+// update data function
 export const updateData = createAsyncThunk(
   "content/updateData",
-  async (id, values, image, discount) => {
+  async (data, thunkAPI) => {
+    const { index, id, values, image, discount } = data;
+    console.log(data);
+    let result;
     let discounts;
+    thunkAPI.dispatch(fetchPlaces());
     try {
       let newValues = { ...values };
       if (discount.trim() !== "|") {
         const shopdata = await getDoc(doc(firestore, "foodshops", id));
+        result = shopdata.data();
         discounts = shopdata.data().discounts;
         discounts.push(discount);
         newValues = { ...newValues, discounts: discounts };
-        return [id, discounts];
+        result = { ...result, discounts: discounts, id: id, index: index };
       }
       if (image !== "") {
         newValues = { ...newValues, image: image };
@@ -102,11 +124,15 @@ export const updateData = createAsyncThunk(
       updateDoc(doc(firestore, "foodshops", id), { ...newValues }).then(() => {
         console.log("Updated Successfully", { newValues });
       });
+      console.log(result);
+      return [index, result];
     } catch (error) {
       console.log({ error });
     }
   }
 );
+
+// delete discount item
 export const deleteItem = createAsyncThunk(
   "content/deleteItem",
   async (data) => {
@@ -121,12 +147,15 @@ export const deleteItem = createAsyncThunk(
       await updateDoc(doc(firestore, "foodshops", id), {
         discounts: discounts,
       });
+      console.log({ index, discounts });
       return [index, discounts];
     } catch (error) {
       console.log({ error });
     }
   }
 );
+
+// fetch data
 export const fetchPlaces = createAsyncThunk("content/fetchPlaces", async () => {
   const querySnapshot = await getDocs(collection(firestore, "foodshops"));
   const data = [];
@@ -141,6 +170,7 @@ export const fetchPlaces = createAsyncThunk("content/fetchPlaces", async () => {
   return data;
 });
 
+// update likes
 export const updateLikes = createAsyncThunk(
   "content/updateLikes",
   async (data) => {
@@ -178,6 +208,8 @@ export const updateLikes = createAsyncThunk(
     }
   }
 );
+
+// update dislikes
 export const updateDislikes = createAsyncThunk(
   "content/updateDislikes",
   async (data) => {
@@ -218,6 +250,7 @@ export const updateDislikes = createAsyncThunk(
   }
 );
 
+// add comment
 export const addComment = createAsyncThunk(
   "content/addComment",
   async (data) => {
@@ -242,7 +275,7 @@ export const deleteDataFromDb = createAsyncThunk(
   "content/delete",
   async (id, thunkAPI) => {
     // const { id } = data;
-    console.log({id})
+    console.log({ id });
     let foodplaces;
     try {
       await deleteDoc(doc(firestore, "foodshops", id));
@@ -320,9 +353,8 @@ const placesSlice = createSlice({
     });
     builder.addCase(updateData.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.foodplaces.filter(
-        (place) => place.id === action.payload[0]
-      )[0].discounts = action.payload[1];
+      state.foodplace = action.payload[1];
+      state.foodplaces[action.payload[0]] = action.payload[1];
     });
     builder.addCase(updateData.rejected, (state, action) => {
       state.isLoading = false;
@@ -333,6 +365,7 @@ const placesSlice = createSlice({
     });
     builder.addCase(deleteItem.fulfilled, (state, action) => {
       state.isLoading = false;
+      state.foodplace.discounts = action.payload[1];
       state.foodplaces[action.payload[0]].discounts = action.payload[1];
     });
     builder.addCase(deleteItem.rejected, (state, action) => {

@@ -7,7 +7,7 @@ import {
   LikeFilled,
   DislikeFilled,
 } from "@ant-design/icons";
-import directionIcon from "../../assets/icons/traffic-sign.png"
+import directionIcon from "../../assets/icons/traffic-sign.png";
 import React, { useEffect, useState } from "react";
 import classes from "./HomePage.module.css";
 import { useNavigate } from "react-router-dom";
@@ -97,7 +97,7 @@ const FoodPlace = (props) => {
   }, []);
   return (
     <>
-      <Card  hoverable className={classes.shopcard} key={id}>
+      <Card hoverable className={classes.shopcard} key={id}>
         <div
           style={{
             height: "20px",
@@ -112,8 +112,16 @@ const FoodPlace = (props) => {
             {title.toUpperCase()}
           </h3>{" "}
           <div>
-            {type? type.includes("Veg") && <img src={veg} style={{ width: "20px", height: "20px" }} />:""}{" "}
-            {type? type.includes("Non Veg") && <img src={nonveg} style={{ width: "20px", height: "20px" }} />:""}
+            {type
+              ? type.includes("Veg") && (
+                  <img src={veg} style={{ width: "20px", height: "20px" }} />
+                )
+              : ""}{" "}
+            {type
+              ? type.includes("Non Veg") && (
+                  <img src={nonveg} style={{ width: "20px", height: "20px" }} />
+                )
+              : ""}
           </div>
         </div>
         <div className={classes.center} style={{ marginTop: "20px" }}>
@@ -158,9 +166,19 @@ const FoodPlace = (props) => {
               <ShareAltOutlined />
             </RWebShare>
           </p>
-          {selectPosition && <p onClick={()=>{navigate(`/gotomap/${selectPosition[0]}/${selectPosition[1]}`)}}>
-            <img src={directionIcon} alt="icon" style={{width:"14px", height:"14px"}} />
-          </p>}
+          {selectPosition && (
+            <p
+              onClick={() => {
+                navigate(`/gotomap/${selectPosition[0]}/${selectPosition[1]}/${location}`);
+              }}
+            >
+              <img
+                src={directionIcon}
+                alt="icon"
+                style={{ width: "14px", height: "14px" }}
+              />
+            </p>
+          )}
         </div>
         <div style={{ display: "flex", justifyContent: "space-around" }}>
           <Button

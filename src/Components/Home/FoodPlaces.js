@@ -30,6 +30,8 @@ const FoodPlaces = () => {
         mode="multiple"
         style={{
           width: "50%",
+          marginTop:"10px",
+          marginBottom:"10px"
         }}
         placeholder="select location"
         onChange={handleChange}
@@ -45,7 +47,7 @@ const FoodPlaces = () => {
           );
         })}
       </Select>
-      <Row>
+      <Row align={"center"}>
         {foodplaces
           .filter(
             (foodplace) =>

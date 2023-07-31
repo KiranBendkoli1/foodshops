@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Menu } from "antd";
-import { LogoutOutlined } from "@ant-design/icons";
+import { LoginOutlined, LogoutOutlined } from "@ant-design/icons";
 import classes from "../Home/HomePage.module.css";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../utils/auth";
@@ -13,24 +13,33 @@ const Navbar = () => {
       navigate("/login");
     });
   };
+  const loginHandler = () => {
+    navigate("/login");
+  };
   return (
     <>
       <h1 className={classes.title}>Food Places</h1>
-     {
-      user &&  <Menu
-      mode="horizontal"
-      style={{ background: "#2069f2", float: "right", color: "white" }}
-    >
-      <Menu.Item key="">{user? user.email: ""}</Menu.Item>
-      <Menu.Item key="Logout">
-        {" "}
-        <Button onClick={logoutHandler}>
-          <LogoutOutlined />
-          Logout
+      {user && (
+        <Menu
+          mode="horizontal"
+          style={{ background: "#2069f2", float: "right", color: "white" }}
+        >
+          <Menu.Item key="">{user ? user.email : ""}</Menu.Item>
+          <Menu.Item key="Logout">
+            {" "}
+            <Button onClick={logoutHandler}>
+              <LogoutOutlined />
+              Logout
+            </Button>
+          </Menu.Item>
+        </Menu>
+      )}
+      {!user && (
+        <Button onClick={loginHandler}>
+          <LoginOutlined />
+          Login/SignUp
         </Button>
-      </Menu.Item>
-    </Menu>
-     }
+      )}
     </>
   );
 };

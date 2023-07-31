@@ -8,15 +8,12 @@ import Navbar from "./Components/UI/Navbar";
 import classes from "./Components/Home/HomePage.module.css";
 import { Layout } from "antd";
 import Comments from "./Components/Home/Comments";
-import DetailsPage from "./Components/Home/DetailsPage";
 import AdminHome from "./Components/Admin/AdminHome";
 import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 import { useDispatch } from "react-redux";
 import { fetchPlaces } from "./store/placesSlice";
 import OwnersHomepage from "./Components/ShopOwener/OwnersHomepage";
 import CompleteDetails from "./Components/ShopOwener/CompleteDetails";
-import SimpleMap from "./Components/UI/SimpleMap";
-import BingMap from "./Components/UI/BingMap";
 import Leaflet from "./Components/UI/Leaflet";
 import MapComponent from "./Components/Maps/MapComponent";
 
@@ -35,16 +32,12 @@ function App() {
         </Header>
         <Content className={classes.content}>
           <Routes>
-            <Route exact="true" path="/" element={<HomePage />} />
-            <Route exact="true" path="/login" element={<Login />} />
-            <Route exact="true" path="/signup" element={<Signup />} />
+            <Route exact path="/" element={<HomePage />} />
+            <Route exact path="/login" element={<Login />} />
+            <Route exact path="/signup" element={<Signup />} />
+            <Route exact path="/ownershome" element={<OwnersHomepage />} />
             <Route
-              exact="true"
-              path="/ownershome"
-              element={<OwnersHomepage />}
-            />
-            <Route
-              exact="true"
+              exact
               path="/addInfo"
               element={
                 <ProtectedRoute>
@@ -52,14 +45,10 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route exact="true" path="/comments/:id" element={<Comments />} />
+            <Route exact path="/comments/:id" element={<Comments />} />
+            <Route exact path="/details/:id" element={<CompleteDetails />} />
             <Route
-              exact="true"
-              path="/details/:id"
-              element={<CompleteDetails />}
-            />
-            <Route
-              exact="true"
+              exact
               path="/admin"
               element={
                 <ProtectedRoute>
@@ -68,16 +57,8 @@ function App() {
               }
             />
 
-            <Route
-              exact="true"
-              path="/map"
-              element={<Leaflet/>}
-            />
-            <Route
-            exact="true"
-            path="/gotomap/:lat/:lon"
-            element={<MapComponent/>}
-            />
+            <Route exact path="/map" element={<Leaflet />} />
+            <Route exact path="/gotomap/:lat/:lon/:loc" element={<MapComponent />} />
           </Routes>
         </Content>
       </BrowserRouter>

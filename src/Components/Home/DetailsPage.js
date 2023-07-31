@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Spin } from "antd";
+import directionIcon from "../../assets/icons/traffic-sign.png";
 import {
   LikeOutlined,
   CommentOutlined,
@@ -24,9 +25,13 @@ const DetailsPage = (props) => {
   return (
     <>
       {isLoading ? (
-        <div className="" style={{ height: "100%", windth: "100%" }}>
-          <Spin />
-        </div>
+        <Row align="middle" style={{height:"90vh"}}>
+        <Col>
+         <Spin style={{
+            verticalAlign: 'middle',
+          }}/>
+        </Col>
+      </Row>
       ) : (
         <Card className={classes.detailcard}>
           <Row>
@@ -66,6 +71,19 @@ const DetailsPage = (props) => {
                     <ShareAltOutlined />
                   </RWebShare>
                 </p>
+                {data.selectPosition && (
+            <p
+              onClick={() => {
+                navigate(`/gotomap/${data.selectPosition[0]}/${data.selectPosition[1]}/${data.location}`);
+              }}
+            >
+              <img
+                src={directionIcon}
+                alt="icon"
+                style={{ width: "14px", height: "14px" }}
+              />
+            </p>
+          )}
               </div>
             </Col>
           </Row>

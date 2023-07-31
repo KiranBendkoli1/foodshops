@@ -25,9 +25,13 @@ const CompleteDetails = (props) => {
   return (
     <>
       {isLoading ? (
-        <div className="" style={{ height: "100%", windth: "100%" }}>
-          <Spin />
-        </div>
+        <Row align="middle" style={{height:"90vh"}}>
+        <Col>
+         <Spin style={{
+            verticalAlign: 'middle',
+          }}/>
+        </Col>
+      </Row>
       ) : (
         <Card style={{ height: "auto" }}>
           <ImageCarousel images={data.images} width={"400px"} windth={"400px"}/>

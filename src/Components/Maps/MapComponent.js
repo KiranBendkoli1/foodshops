@@ -15,9 +15,9 @@ import LocationMarker from "./LocationMarker";
 const { BaseLayer } = LayersControl;
 
 const MapComponent = (props) => {
-  const { currentPosition, mywidth, myheight } = props;
-  const { lat, lon } = useParams();
-  console.log(lat, lon);
+  const { currentPosition, mywidth, myheight, address } = props;
+  const { lat, lon,loc } = useParams();
+  // console.log(lat, lon);
   let selectPosition = [lat, lon];
   if (lat === undefined) {
     selectPosition = currentPosition;
@@ -31,6 +31,7 @@ const MapComponent = (props) => {
   });
   return (
     <>
+    {/* <p>Destination: {address? address:loc}</p> */}
       <MapContainer
         center={selectPosition}
         zoom={15}
@@ -67,7 +68,9 @@ const MapComponent = (props) => {
               // [19.997454, 73.789803]
             }
             icon={myIcon}
-          ><Popup>You Destination</Popup></Marker>
+          >
+            <Popup>Destination: {address? address:loc}</Popup>
+          </Marker>
         )}
         <LocationMarker />
         <ResetCenterView selectPosition={selectPosition} />
