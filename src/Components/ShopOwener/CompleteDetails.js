@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Card, Col, Row, Spin } from "antd";
+import React, { useEffect } from "react";
+import { Card, Skeleton } from "antd";
 import {
   LikeOutlined,
   CommentOutlined,
@@ -21,20 +21,18 @@ const CompleteDetails = (props) => {
   useEffect(() => {
     dispatch(getFoodShopById({ id }));
     // console.log({ data });
-  }, [dispatch]);
+  }, [id]);
   return (
     <>
       {isLoading ? (
-        <Row align="middle" style={{height:"90vh"}}>
-        <Col>
-         <Spin style={{
-            verticalAlign: 'middle',
-          }}/>
-        </Col>
-      </Row>
+        <Skeleton />
       ) : (
         <Card style={{ height: "auto" }}>
-          <ImageCarousel images={data.images} width={"400px"} windth={"400px"}/>
+          <ImageCarousel
+            images={data.images}
+            width={"400px"}
+            windth={"400px"}
+          />
 
           <div>
             <h2 className={classes.shopname}>{data?.title || ""}</h2>

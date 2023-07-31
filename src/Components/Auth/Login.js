@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Card, Form, Input, Spin,Row, Col } from "antd";
+import { Button, Card, Form, Input } from "antd";
 import classes from "./AuthCommon.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,11 +9,9 @@ import { userActions, signIn } from "../../store/userSlice";
 // import { signIn } from "../../utils/auth";
 
 const Login = () => {
-  // const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const email = useSelector((state) => state.user.email);
   const isLoading = useSelector((state) => state.user.isLoading);
-  const role = useSelector((state) => state.user.role);
   const dispatch = useDispatch();
   const [password, setPassword] = useState("");
   const onFinishHandler = async() => {
@@ -32,23 +30,13 @@ const Login = () => {
   };
 
   const emailChangeHandler = (event) => {
-    // setEmail(event.target.value);
     dispatch(userActions.setEmail(event.target.value));
-    // console.log(event.target.value);
   };
   const passwordChangeHandler = (event) => {
     setPassword(event.target.value);
   };
 
-  // return isLoading ? (
-  //   <Row align="middle" style={{height:"90vh"}}>
-  //   <Col>
-  //    <Spin style={{
-  //       verticalAlign: 'middle',
-  //     }}/>
-  //   </Col>
-  // </Row>
-  // ) : 
+
   return (
     <div className={classes.centerdiv}>
       <Card bordered={true} className={classes.card}>

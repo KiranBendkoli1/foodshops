@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import markerIcon from "../../assets/icons/icons8-location-48.png";
 import { SearchOutlined } from "@ant-design/icons";
 import "leaflet/dist/leaflet.css";
-import { MapContainer,LayersControl, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import { Icon, latLng } from "leaflet";
+import { MapContainer,LayersControl, TileLayer, Marker, } from "react-leaflet";
+import { Icon } from "leaflet";
 import { ResetCenterView, NOMINATIM_BASE_URL } from "../UI/Leaflet";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import axios from "axios";
@@ -21,7 +21,6 @@ import {
   Skeleton,
   Divider,
   Upload,
-  message,
   Spin,
 } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
@@ -47,15 +46,15 @@ const AddFoodPlace = () => {
   const dispatch = useDispatch();
   const name = useSelector((state) => state.user.name);
   const email = useSelector((state) => state.user.email);
-  const tcontact = useSelector((state) => state.user.contact);
+  // const tcontact = useSelector((state) => state.user.contact);
   const isLoading = useSelector((state) => state.places.isLoading);
   const [title, setTitle] = useState(name);
   const [speciality, setSpeciality] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState("");
+  // const [image, setImage] = useState("");
   const [type, setType] = useState([]);
   const [images, setImages] = useState();
-  const [contact, setContact] = useState(tcontact);
+  // const [contact, setContact] = useState(tcontact);
   const [location, setLocation] = useState("");
   const onFinishHandler = () => {
     // event.preventDefault();
@@ -70,6 +69,7 @@ const AddFoodPlace = () => {
   // props for upload
   const props = {
     name: "file",
+    accept:"image/*",
     multiple: true,
     onChange(info) {
       console.log({ info });
@@ -159,10 +159,7 @@ const AddFoodPlace = () => {
 
                   const queryString = new URLSearchParams(params).toString();
                   console.log(queryString);
-                  const requestOptions = {
-                    method: "GET",
-                    redirect: "follow",
-                  };
+                 
                   const res = await axios(
                     `${NOMINATIM_BASE_URL}${queryString}`
                   );

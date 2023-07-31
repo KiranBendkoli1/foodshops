@@ -2,7 +2,7 @@ import React from "react";
 import { Button, } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { deleteItem } from "../../store/placesSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { auth } from "../../config/firebase";
 const Discounts = ({ discounts, id,index }) => {
 

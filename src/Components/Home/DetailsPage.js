@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Card, Col, Row, Spin } from "antd";
+import React, { useEffect } from "react";
+import { Card, Col, Row } from "antd";
 import directionIcon from "../../assets/icons/traffic-sign.png";
 import {
   LikeOutlined,
@@ -27,9 +27,7 @@ const DetailsPage = (props) => {
       {isLoading ? (
         <Row align="middle" style={{height:"90vh"}}>
         <Col>
-         <Spin style={{
-            verticalAlign: 'middle',
-          }}/>
+        <Skeleton />
         </Col>
       </Row>
       ) : (

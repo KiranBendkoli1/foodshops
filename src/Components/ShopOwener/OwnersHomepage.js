@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, Spin, Modal, Form, Input, Row, Col } from "antd";
+import { Button,  Modal, Form, Input, Row, Col,Skeleton } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import classes from "../Auth/AuthCommon.module.css"
 import { Link } from "react-router-dom";
 import Discounts from "../Admin/Discounts";
 import { getUserData } from "../../store/userSlice";
 import {
-  fetchPlaces,
   updateData,
   getFoodShopById,
 } from "../../store/placesSlice";
@@ -76,27 +75,20 @@ const OwnersHomepage = () => {
   return (
     <>
       {isLoading ? (
-        <Row align="middle" style={{ height: "90vh" }}>
-          <Col>
-            <Spin
-              style={{
-                verticalAlign: "middle",
-              }}
-            />
-          </Col>
-        </Row>
+          <Skeleton />
       ) : (
         <>
           <Row style={{ width: "100%" }}>
             <Col span={10} offset={2}>
              <div  style={{ display: "flex", justifyContent:'space-between', margin:"2px 20px" }}>
              <h1 className={classes.heading}>{name}</h1>  <p  style={{ display: "flex" }}>
-                    <p>Type: </p> {"  "}
+                   {shop && <p>Type: </p>} {"  "}
                     <p>
                       {shop && shop.type
                         ? shop.type.includes("Veg") && (
                             <img
                               src={veg}
+                              alt="veg"
                               style={{ width: "20px", height: "20px" }}
                             />
                           )
@@ -105,6 +97,7 @@ const OwnersHomepage = () => {
                         ? shop.type.includes("Non Veg") && (
                             <img
                               src={nonveg}
+                              alt="non-veg"
                               style={{ width: "20px", height: "20px" }}
                             />
                           )
