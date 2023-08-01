@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/react-gh-pages/static/css/main.44ac9478.css",
-    "main.js": "/react-gh-pages/static/js/main.6431e9b2.js",
-    "index.html": "/react-gh-pages/index.html",
-    "main.44ac9478.css.map": "/react-gh-pages/static/css/main.44ac9478.css.map",
-    "main.6431e9b2.js.map": "/react-gh-pages/static/js/main.6431e9b2.js.map"
+    "main.css": "/foodshops/static/css/main.44ac9478.css",
+    "main.js": "/foodshops/static/js/main.860e0127.js",
+    "index.html": "/foodshops/index.html",
+    "main.44ac9478.css.map": "/foodshops/static/css/main.44ac9478.css.map",
+    "main.860e0127.js.map": "/foodshops/static/js/main.860e0127.js.map"
   },
   "entrypoints": [
     "static/css/main.44ac9478.css",
-    "static/js/main.6431e9b2.js"
+    "static/js/main.860e0127.js"
   ]
 }
