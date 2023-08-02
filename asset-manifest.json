@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/foodshops/static/css/main.44ac9478.css",
-    "main.js": "/foodshops/static/js/main.0aa1cb3a.js",
+    "main.js": "/foodshops/static/js/main.aa7c3197.js",
     "index.html": "/foodshops/index.html",
     "main.44ac9478.css.map": "/foodshops/static/css/main.44ac9478.css.map",
-    "main.0aa1cb3a.js.map": "/foodshops/static/js/main.0aa1cb3a.js.map"
+    "main.aa7c3197.js.map": "/foodshops/static/js/main.aa7c3197.js.map"
   },
   "entrypoints": [
     "static/css/main.44ac9478.css",
-    "static/js/main.0aa1cb3a.js"
+    "static/js/main.aa7c3197.js"
   ]
 }
