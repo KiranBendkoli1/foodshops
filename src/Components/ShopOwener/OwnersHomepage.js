@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Button,  Modal, Form, Input, Row, Col,Skeleton } from "antd";
+import { Button, Modal, Form, Input, Row, Col, Skeleton } from "antd";
+import {
+  LikeOutlined,
+  CommentOutlined,
+  DislikeOutlined,
+} from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import classes from "../Auth/AuthCommon.module.css"
+import classes from "../Auth/AuthCommon.module.css";
 import { Link } from "react-router-dom";
 import Discounts from "../Admin/Discounts";
 import { getUserData } from "../../store/userSlice";
-import {
-  updateData,
-  getFoodShopById,
-} from "../../store/placesSlice";
+import { updateData, getFoodShopById } from "../../store/placesSlice";
 import ImageCarousel from "../UI/ImageCarousel";
 // import { updateData } from "../../utils/fun";
 import veg from "../../assets/icons/icons8-veg-48.png";
@@ -20,6 +22,7 @@ const OwnersHomepage = () => {
   const [inputItemName, setInputItemName] = useState("");
   const [inputDiscount, setInputDiscount] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   // const [isOfferSubmitted, setIsOfferSubmitted] = useState(false);
   const email = useSelector((state) => state.user.email);
   const name = useSelector((state) => state.user.name);
@@ -59,10 +62,10 @@ const OwnersHomepage = () => {
         image: "",
         discount: `${inputItemName}|${inputDiscount}`,
       };
-      dispatch(updateData(data)).then(()=>{
-    setInputDiscount("");
-    setInputItemName("");
-      })
+      dispatch(updateData(data)).then(() => {
+        setInputDiscount("");
+        setInputItemName("");
+      });
     }
     form.resetFields();
     // setIsOfferSubmitted(true);
@@ -72,39 +75,53 @@ const OwnersHomepage = () => {
     setIsModalOpen(false);
   };
 
+  const handleCommentsOk = () => {
+    setIsCommentsOpen(false);
+  };
+  const handleCommentsCancel = () => {
+    setIsCommentsOpen(false);
+  };
+
   return (
     <>
       {isLoading ? (
-          <Skeleton />
+        <Skeleton />
       ) : (
         <>
-          <Row style={{ width: "100%" }}>
+          <Row style={{ width: "100%" }} className={classes.text}>
             <Col span={10} offset={2}>
-             <div  style={{ display: "flex", justifyContent:'space-between', margin:"2px 20px" }}>
-             <h1 className={classes.heading}>{name}</h1>  <p  style={{ display: "flex" }}>
-                   {shop && <p>Type: </p>} {"  "}
-                    <p>
-                      {shop && shop.type
-                        ? shop.type.includes("Veg") && (
-                            <img
-                              src={veg}
-                              alt="veg"
-                              style={{ width: "20px", height: "20px" }}
-                            />
-                          )
-                        : ""}{" "}
-                      {shop && shop.type
-                        ? shop.type.includes("Non Veg") && (
-                            <img
-                              src={nonveg}
-                              alt="non-veg"
-                              style={{ width: "20px", height: "20px" }}
-                            />
-                          )
-                        : ""}
-                    </p>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  margin: "2px 20px",
+                }}
+              >
+                <h1 className={classes.heading}>{name}</h1>{" "}
+                <p style={{ display: "flex" }}>
+                  {shop && <p>Type: </p>} {"  "}
+                  <p>
+                    {shop && shop.type
+                      ? shop.type.includes("Veg") && (
+                          <img
+                            src={veg}
+                            alt="veg"
+                            style={{ width: "20px", height: "20px" }}
+                          />
+                        )
+                      : ""}{" "}
+                    {shop && shop.type
+                      ? shop.type.includes("Non Veg") && (
+                          <img
+                            src={nonveg}
+                            alt="non-veg"
+                            style={{ width: "20px", height: "20px" }}
+                          />
+                        )
+                      : ""}
                   </p>
-             </div>
+                </p>
+              </div>
               {shop === undefined ? (
                 <Button>
                   <Link to={"/addInfo"}>Add Shop Details</Link>
@@ -112,9 +129,28 @@ const OwnersHomepage = () => {
               ) : (
                 <div>
                   <p>Speciality: {shop.speciality}</p>
-                 
+
                   <p>Description: {shop.description}</p>
                   <p>Address: {shop.location} </p>
+                  <div className={classes.useractions}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-around",
+                      }}
+                    >
+                      <p>
+                        {" "}
+                        {shop.likes} <LikeOutlined />
+                      </p>
+                      <p>
+                        {shop.dislikes} <DislikeOutlined />{" "}
+                      </p>
+                      <p  onClick={()=>setIsCommentsOpen(true)}>
+                        {data.comments?.length} <CommentOutlined />
+                      </p>
+                    </div>
+                  </div>
                   <ImageCarousel images={shop.images} width={"500px"} />
                   <h4>Contact Details</h4>
                   <p>
@@ -157,7 +193,7 @@ const OwnersHomepage = () => {
               />
             )}{" "}
             <Form
-             form={form}
+              form={form}
               name="basic"
               labelCol={{
                 span: 8,
@@ -210,6 +246,21 @@ const OwnersHomepage = () => {
                 />
               </Form.Item>
             </Form>
+          </Modal>
+          <Modal
+            title="Comments"
+            open={isCommentsOpen}
+            onOk={handleCommentsOk}
+            onCancel={handleCommentsCancel}
+          >
+            {shop.comments && shop.comments.map((comment) => {
+              return (
+                <p key={comment}>
+                  <b>{comment.split("|")[0]}</b> {comment.split("|")[1]}
+                  <br />
+                </p>
+              );
+            })}
           </Modal>
         </>
       )}

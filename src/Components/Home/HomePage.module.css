@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
-
+@import '../../theme.css';
 body {
   height: 100%;
   min-height: 100%;
@@ -9,7 +9,7 @@ body {
   align-items: center;
   justify-content: space-between;
   height: 80px;
-  background-color: #2069f2;
+  background-color: var(--primary);
   padding: 5px;
 }
 .centerdiv {
@@ -23,9 +23,11 @@ body {
 
 .title {
   font-family: "Poppins";
-  color: white;
+  color: var(--secondary);
 }
-
+.navmenu{
+  background-color: var(--primary);
+}
 .content {
   display: flex;
   flex-direction: column;
@@ -38,12 +40,14 @@ body {
   background-color: rgb(178, 173, 173);
   text-align: center;
 }
+.background{
+  background-color: var(--background);
+}
 .shopcard {
   margin: 5px;
   width: 400px;
   height: auto;
   display: flex;
-  /* box-shadow: 3px 2px 2px #aaaaaa; */
   justify-content: center;
 }
 .shopcard img {
@@ -51,24 +55,24 @@ body {
   width: 250px;
   width: auto;
 }
-.detailcard{
+.detailcard {
   margin: 5px;
   width: 70%;
   display: flex;
-  box-shadow: 3px 2px 2px #aaaaaa;
+  box-shadow: 3px 2px 2px var(--shadow);
   justify-content: center;
 }
 .detailcard img {
   width: 500px;
   width: auto;
 }
-.shopname{
-  color: #2069f2;
-  background-color: white;
+.shopname {
+  color: var(--primary);
+  /* background-color: var(--background); */
 }
-.myheader{
-  color: #2069f2;
-  background-color: white;
+.myheader {
+  color: var(--primary);
+  background-color: var(--background);
 }
 .useractions {
   display: flex;
@@ -87,20 +91,20 @@ body {
   margin: 5px;
   width: 500px;
   display: flex;
-  box-shadow: 3px 2px 2px #aaaaaa;
+  box-shadow: 3px 2px 2px var(--shadow);
 }
 .card-comment img {
   height: 300px;
   width: auto;
 }
-.form{
+.form {
   min-width: 500px;
 }
 @media (max-width: 580px) {
   .title {
     font-size: large;
   }
-  .form{
+  .form {
     min-width: auto;
   }
   .shopcard {

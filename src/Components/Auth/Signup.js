@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Card, Form, Input, Spin, Row, Col } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import classes from "./AuthCommon.module.css";
 import { userActions, signUp } from "../../store/userSlice";
 // import { signUp } from "../../utils/auth";
 import { useDispatch, useSelector } from "react-redux";
+import { ThemeContext } from "../../context/theme-context";
+import { auth } from "../../config/firebase";
 const Signup = () => {
   const navigate = useNavigate();
+  const themeContext = useContext(ThemeContext);
   const dispatch = useDispatch();
   const [userType, setUserType] = useState("");
   const email = useSelector((state) => state.user.email);
@@ -32,6 +35,7 @@ const Signup = () => {
     console.log("Submit executed");
     console.log({ name, email, contact, password, userType });
     dispatch(signUp({ name, email, contact, password, userType })).then(() => {
+      localStorage.setItem("role", userType);
       if (userType === "regular") navigate("/");
       if (userType === "shopOwner") navigate("/ownershome");
     });
@@ -45,22 +49,34 @@ const Signup = () => {
   const compare = (user, shopOwner) => {
     return userType === "regular" ? user : shopOwner;
   };
+  const conditionalSignup = () => {
+    const type = localStorage.getItem("role");
+    if (auth.currentUser && type === "regular" && auth.currentUser)
+      navigate("/");
+    if (auth.currentUser && type === "shopOwner") navigate("/ownershome");
+  };
+
+  useEffect(() => {
+    conditionalSignup();
+  }, []);
 
   return isLoading ? (
-    <Row align="middle" style={{ height: "90vh" }}>
-      <Col>
-        <Spin
-          style={{
-            verticalAlign: "middle",
-          }}
-        />
-      </Col>
-    </Row>
+    <div >
+      <Row align="middle" style={{ height: "90vh" }}>
+        <Col>
+          <Spin
+            style={{
+              verticalAlign: "middle",
+            }}
+          />
+        </Col>
+      </Row>
+    </div>
   ) : (
-    <div className={classes.centerdiv}>
+    <div className={`${classes.centerdiv} ${classes.container}`}  >
       {userType === "" ? (
-        <Card>
-          <h2  className={classes.heading}>WHY ARE YOU HERE?</h2>
+        <Card className={classes.card}>
+          <h2 className={classes.heading}>WHY ARE YOU HERE?</h2>
           <div style={{ display: "flex", marginTop: "20px" }}>
             <Card
               hoverable={true}

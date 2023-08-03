@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
+@import '../../theme.css';
 
 .centerdiv {
   margin-top: 30px;
@@ -8,15 +9,22 @@
   justify-content: center;
   align-items: center;
 }
+.text{
+  color: var(--text);
+}
 .card {
   width: 600px;
-  box-shadow: 3px 2px 2px #aaaaaa;
+  box-shadow: 3px 2px 2px var(--shadow);
 }
 .heading,
 button {
-  color: #2069f2;
+  color: var(--primary);
   font-size: 2rem;
   font-family: "Poppins", sans-serif;
+}
+.container{
+  height: 81.8vh;
+  background-color: var(--background);
 }
 .button {
   display: flex;

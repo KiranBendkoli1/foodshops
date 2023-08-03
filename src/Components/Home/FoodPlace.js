@@ -1,17 +1,20 @@
-import { Button, Card, Modal } from "antd";
+import { Button, Card, Form, Input, Modal } from "antd";
 import {
   LikeOutlined,
   CommentOutlined,
   DislikeOutlined,
   ShareAltOutlined,
+  SendOutlined,
   LikeFilled,
   DislikeFilled,
 } from "@ant-design/icons";
+import { addComment } from "../../store/placesSlice";
 import directionIcon from "../../assets/icons/traffic-sign.png";
 import React, { useEffect, useState } from "react";
 import classes from "./HomePage.module.css";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import ImageCarousel from "../UI/ImageCarousel";
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchPlaces,
   updateDislikes,
@@ -25,7 +28,9 @@ const FoodPlace = (props) => {
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOffersModalOpen, setIsOffersModalOpen] = useState(false);
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   // const [userIsLiked, setUserIsLiked] = useState();
+  const isLoading = useSelector((state)=>state.places.isLoading);
   let user = auth.currentUser;
   if (user) {
     user = user.email;
@@ -51,9 +56,9 @@ const FoodPlace = (props) => {
   const handleDetailsClick = () => {
     navigate(`/details/${id}`);
   };
-  const commentClickHandler = () => {
-    navigate(`/comments/${id}`);
-  };
+  // const commentClickHandler = () => {
+  //   navigate(`/comments/${id}`);
+  // };
   const addLikeHandler = () => {
     console.log({ liked });
     if (!user) {
@@ -92,6 +97,19 @@ const FoodPlace = (props) => {
   const handleOfferCancel = () => {
     setIsOffersModalOpen(false);
   };
+
+  // comments modal
+  const handleCommentsOk = () => {
+    setIsCommentsOpen(false);
+  };
+  const handleCommentsCancel = () => {
+    setIsCommentsOpen(false);
+  };
+  const postCommentHandler = (values) => {
+    dispatch(addComment({ id, user, comments, index, values }));
+    navigate("/");
+  };
+
   useEffect(() => {
     dispatch(fetchPlaces());
   }, []);
@@ -130,20 +148,20 @@ const FoodPlace = (props) => {
         <p>Speciality: {speciality}</p>
         <p>Address: {location}</p>
         <div className={classes.useractions}>
-          <p onClick={addLikeHandler}>
+          <p onClick={addLikeHandler} style={{ fontSize: '120%'}}>
             {liked.find((e) => e === user) ? (
-              <>
+              < >
                 {likes} <LikeFilled />
               </>
             ) : (
-              <>
+              < >
                 {likes} <LikeOutlined />
               </>
             )}
           </p>
-          <p onClick={addDislikeHandler}>
+          <p onClick={addDislikeHandler} style={{ fontSize: '120%'}}>
             {disliked.find((e) => e === user) ? (
-              <>
+              < >
                 {dislikes} <DislikeFilled />
               </>
             ) : (
@@ -152,14 +170,14 @@ const FoodPlace = (props) => {
               </>
             )}
           </p>
-          <p onClick={commentClickHandler}>
+          <p onClick={() => setIsCommentsOpen(true)} style={{ fontSize: '120%'}}>
             {comments.length} <CommentOutlined />
           </p>
-          <p>
+          <p style={{ fontSize: '120%'}}>
             <RWebShare
               data={{
                 text: `details of ${title}`,
-                url: `http://localhost:3000/details/${id}`,
+                url: `${window.location.href}details/${id}`,
                 title: title,
               }}
             >
@@ -167,15 +185,17 @@ const FoodPlace = (props) => {
             </RWebShare>
           </p>
           {selectPosition && (
-            <p
+            <p style={{ fontSize: '120%'}}
               onClick={() => {
-                navigate(`/gotomap/${selectPosition[0]}/${selectPosition[1]}/${location}`);
+                navigate(
+                  `/gotomap/${selectPosition[0]}/${selectPosition[1]}/${location}`
+                );
               }}
             >
               <img
                 src={directionIcon}
                 alt="icon"
-                style={{ width: "14px", height: "14px" }}
+                style={{ width: "18px", height: "18px" }}
               />
             </p>
           )}
@@ -218,13 +238,76 @@ const FoodPlace = (props) => {
         {discounts.length === 0 && <p>No offers yet</p>}
         {discounts.map((discount) => {
           return (
-            <>
+            <div key={discount}>
               <p>{`${discount.split("|")[0]} is at ${
                 discount.split("|")[1]
               } discount`}</p>
-            </>
+            </div>
           );
         })}
+      </Modal>
+
+      <Modal
+        title=""
+        open={isCommentsOpen}
+        footer={null}
+        onOk={handleCommentsOk}
+        onCancel={handleCommentsCancel}
+      >
+        <div className={classes["comments-card"]}>
+          <h2>{title}</h2>
+          <ImageCarousel images={images} />
+          <div>
+            <h2>Comments...</h2>
+            {comments.map((comment) => {
+              return (
+                <p key={comment}>
+                  <b>{comment.split("|")[0]}</b> {comment.split("|")[1]}
+                  <br />
+                </p>
+              );
+            })}
+            <Form
+              wrapperCol={{
+                span: 16,
+              }}
+              onFinish={postCommentHandler}
+            >
+              <Form.Item
+                label="comment"
+                name="comment"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input comment!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item>
+                <Button
+                  type={user ? "primary" : "disabled"}
+                  htmlType={user ? "submit" : "reset"}
+                  onClick={() =>
+                    user ? setIsModalOpen(false) : setIsModalOpen(true)
+                  }
+                  loading ={isLoading}
+                >
+                  <SendOutlined /> Post Comment
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
+          <Modal
+            title="You need to login first"
+            open={isModalOpen}
+            onOk={handleOk}
+            onCancel={handleCancel}
+          >
+            <p>For Commenting Here you need to login first </p>
+          </Modal>
+        </div>
       </Modal>
     </>
   );

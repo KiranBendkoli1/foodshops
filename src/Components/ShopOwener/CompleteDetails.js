@@ -23,7 +23,7 @@ const CompleteDetails = (props) => {
     // console.log({ data });
   }, [id]);
   return (
-    <>
+    <div >
       {isLoading ? (
         <Skeleton />
       ) : (
@@ -57,7 +57,7 @@ const CompleteDetails = (props) => {
                 <RWebShare
                   data={{
                     text: `details of ${data.title}`,
-                    url: `http://localhost:3000/details/${id}`,
+                    url: `${window.location.href}details/${id}`,
                     title: data.title,
                   }}
                 >
@@ -68,7 +68,7 @@ const CompleteDetails = (props) => {
           </div>
         </Card>
       )}
-    </>
+    </div>
   );
 };
 

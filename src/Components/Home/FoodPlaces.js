@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import FoodPlace from "./FoodPlace";
 import { useSelector, useDispatch } from "react-redux";
+import classes from "./HomePage.module.css";
 import { useEffect } from "react";
 import { Col, Row, Select, Space } from "antd";
 import { fetchPlaces } from "../../store/placesSlice";
 import {} from "antd";
+import { ThemeContext } from "../../context/theme-context";
 const { Option } = Select;
 
 const FoodPlaces = () => {
@@ -15,9 +17,9 @@ const FoodPlaces = () => {
   const locations = foodplaces.map((place) => place.location);
   const searchableItems = names.concat(locations);
   const dispatch = useDispatch();
-
+  const themeContext = useContext(ThemeContext);
   const handleChange = (value) => {
-    setSearch(value.toString())
+    setSearch(value.toString());
     console.log(`selected ${value}`);
   };
   useEffect(() => {
@@ -27,11 +29,12 @@ const FoodPlaces = () => {
   return (
     <>
       <Select
+        align={"center"}
         mode="multiple"
         style={{
           width: "50%",
-          marginTop:"10px",
-          marginBottom:"10px"
+          marginTop: "10px",
+          marginBottom: "10px",
         }}
         placeholder="select location"
         onChange={handleChange}
@@ -47,6 +50,7 @@ const FoodPlaces = () => {
           );
         })}
       </Select>
+
       <Row align={"center"}>
         {foodplaces
           .filter(
@@ -56,7 +60,7 @@ const FoodPlaces = () => {
           )
           .map((foodplace) => {
             return (
-              <Col>
+              <Col key={foodplace.id}>
                 <FoodPlace foodplace={foodplace} key={foodplace.id} />
               </Col>
             );
