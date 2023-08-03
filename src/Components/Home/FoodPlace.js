@@ -24,13 +24,17 @@ import { auth } from "../../config/firebase";
 import { RWebShare } from "react-web-share";
 import veg from "../../assets/icons/icons8-veg-48.png";
 import nonveg from "../../assets/icons/icons8-non-veg-48.png";
+import useModal from "../../hooks/useModal";
 const FoodPlace = (props) => {
   const dispatch = useDispatch();
+  const [isLikesOpen, openLikesModal, closeLikesModal] = useModal();
+  const [isOfferModalOpen, openOfferModal, closeOfferModal] = useModal();
+  const [isCommentsModalOpen, openCommentsModal, closeCommentsModal] = useModal();
+  const [isCommentsWarningOpen, openCommentsWarningModal, closeCommentsWarningModal] = useModal();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isOffersModalOpen, setIsOffersModalOpen] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   // const [userIsLiked, setUserIsLiked] = useState();
-  const isLoading = useSelector((state)=>state.places.isLoading);
+  const isLoading = useSelector((state) => state.places.isLoading);
   let user = auth.currentUser;
   if (user) {
     user = user.email;
@@ -62,7 +66,7 @@ const FoodPlace = (props) => {
   const addLikeHandler = () => {
     console.log({ liked });
     if (!user) {
-      setIsModalOpen(true);
+      openLikesModal();
     } else {
       dispatch(updateLikes({ id, index, likes, dislikes, user }));
     }
@@ -70,41 +74,16 @@ const FoodPlace = (props) => {
   };
   const addDislikeHandler = () => {
     if (!user) {
-      setIsModalOpen(true);
+      openLikesModal();
     } else {
       dispatch(updateDislikes({ id, index, likes, dislikes, user }));
     }
     // dispatch(placeActions.addDislike(index))
   };
 
-  // modal functionalities
 
-  const handleOk = () => {
-    navigate("/login");
-    setIsModalOpen(false);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
 
-  // offer modal
-  const handleOffersClick = () => {
-    setIsOffersModalOpen(true);
-  };
-  const handleOfferOk = () => {
-    setIsOffersModalOpen(false);
-  };
-  const handleOfferCancel = () => {
-    setIsOffersModalOpen(false);
-  };
 
-  // comments modal
-  const handleCommentsOk = () => {
-    setIsCommentsOpen(false);
-  };
-  const handleCommentsCancel = () => {
-    setIsCommentsOpen(false);
-  };
   const postCommentHandler = (values) => {
     dispatch(addComment({ id, user, comments, index, values }));
     navigate("/");
@@ -148,20 +127,20 @@ const FoodPlace = (props) => {
         <p>Speciality: {speciality}</p>
         <p>Address: {location}</p>
         <div className={classes.useractions}>
-          <p onClick={addLikeHandler} style={{ fontSize: '120%'}}>
+          <p onClick={addLikeHandler} style={{ fontSize: "120%" }}>
             {liked.find((e) => e === user) ? (
-              < >
+              <>
                 {likes} <LikeFilled />
               </>
             ) : (
-              < >
+              <>
                 {likes} <LikeOutlined />
               </>
             )}
           </p>
-          <p onClick={addDislikeHandler} style={{ fontSize: '120%'}}>
+          <p onClick={addDislikeHandler} style={{ fontSize: "120%" }}>
             {disliked.find((e) => e === user) ? (
-              < >
+              <>
                 {dislikes} <DislikeFilled />
               </>
             ) : (
@@ -170,10 +149,13 @@ const FoodPlace = (props) => {
               </>
             )}
           </p>
-          <p onClick={() => setIsCommentsOpen(true)} style={{ fontSize: '120%'}}>
+          <p
+            onClick={openCommentsModal}
+            style={{ fontSize: "120%" }}
+          >
             {comments.length} <CommentOutlined />
           </p>
-          <p style={{ fontSize: '120%'}}>
+          <p style={{ fontSize: "120%" }}>
             <RWebShare
               data={{
                 text: `details of ${title}`,
@@ -185,7 +167,8 @@ const FoodPlace = (props) => {
             </RWebShare>
           </p>
           {selectPosition && (
-            <p style={{ fontSize: '120%'}}
+            <p
+              style={{ fontSize: "120%" }}
               onClick={() => {
                 navigate(
                   `/gotomap/${selectPosition[0]}/${selectPosition[1]}/${location}`
@@ -210,7 +193,7 @@ const FoodPlace = (props) => {
             View Complete Details
           </Button>
           <Button
-            onClick={handleOffersClick}
+            onClick={openOfferModal}
             shape="round"
             type="primary"
             ghost
@@ -222,18 +205,21 @@ const FoodPlace = (props) => {
 
       <Modal
         title="You need to login first"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        open={isLikesOpen}
+        onOk={() => {
+          navigate("/login");
+          closeLikesModal();
+        }}
+        onCancel={()=>closeLikesModal()}
       >
         <p>For like and dislike you need to login first </p>
       </Modal>
 
       <Modal
         title={`Special Offers at ${title}`}
-        open={isOffersModalOpen}
-        onOk={handleOfferOk}
-        onCancel={handleOfferCancel}
+        open={isOfferModalOpen}
+        onOk={closeOfferModal}
+        onCancel={closeOfferModal}
       >
         {discounts.length === 0 && <p>No offers yet</p>}
         {discounts.map((discount) => {
@@ -249,10 +235,10 @@ const FoodPlace = (props) => {
 
       <Modal
         title=""
-        open={isCommentsOpen}
+        open={isCommentsModalOpen}
         footer={null}
-        onOk={handleCommentsOk}
-        onCancel={handleCommentsCancel}
+        onOk={closeCommentsModal}
+        onCancel={closeCommentsModal}
       >
         <div className={classes["comments-card"]}>
           <h2>{title}</h2>
@@ -289,26 +275,29 @@ const FoodPlace = (props) => {
                 <Button
                   type={user ? "primary" : "disabled"}
                   htmlType={user ? "submit" : "reset"}
-                  onClick={() =>
-                    user ? setIsModalOpen(false) : setIsModalOpen(true)
-                  }
-                  loading ={isLoading}
+                  onClick={()=>{!user && openCommentsWarningModal()}}
+                  loading={isLoading}
                 >
                   <SendOutlined /> Post Comment
                 </Button>
               </Form.Item>
             </Form>
           </div>
-          <Modal
-            title="You need to login first"
-            open={isModalOpen}
-            onOk={handleOk}
-            onCancel={handleCancel}
-          >
-            <p>For Commenting Here you need to login first </p>
-          </Modal>
         </div>
       </Modal>
+
+      <Modal
+        title="You need to login first"
+        open={isCommentsWarningOpen}
+        onOk={() => {
+          navigate("/login");
+          closeCommentsWarningModal();
+        }}
+        onCancel={()=>closeCommentsWarningModal()}
+      >
+        <p>For posting comments you need to login first </p>
+      </Modal>
+
     </>
   );
 };
