@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useCallback, useState } from "react";
 
 export const ThemeContext = createContext({
   theme: "light",
@@ -6,10 +6,10 @@ export const ThemeContext = createContext({
 
 const ThemeContextProvider = ({ children }) => {
   const [theme, setTheme] = useState("light" );
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setTheme(theme === "light" ? "dark" : "light" );
     
-  };
+  });
   return <ThemeContext.Provider value={{theme, toggleTheme}}>{children}</ThemeContext.Provider>;
 };
 

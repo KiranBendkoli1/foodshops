@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Card, Col, Row } from "antd";
 import directionIcon from "../../assets/icons/traffic-sign.png";
 import {
@@ -40,7 +40,6 @@ const DetailsPage = (props) => {
             </Col>
             <Col xs={24} xl={12}>
               <h2 className={classes.shopname}>{data?.title || ""}</h2>
-
               <p>Speciality: {data.speciality}</p>
               <p>{data.description}</p>
               <p>Contact No: {data.contact}</p>

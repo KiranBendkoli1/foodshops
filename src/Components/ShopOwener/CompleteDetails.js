@@ -20,10 +20,9 @@ const CompleteDetails = (props) => {
 
   useEffect(() => {
     dispatch(getFoodShopById({ id }));
-    // console.log({ data });
   }, [id]);
   return (
-    <div >
+    <div className={classes.background}>
       {isLoading ? (
         <Skeleton />
       ) : (

@@ -1,15 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback,useEffect, useState } from "react";
 import { Button, Card, Form, Input, Spin, Row, Col } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import classes from "./AuthCommon.module.css";
 import { userActions, signUp } from "../../store/userSlice";
-// import { signUp } from "../../utils/auth";
 import { useDispatch, useSelector } from "react-redux";
-import { ThemeContext } from "../../context/theme-context";
 import { auth } from "../../config/firebase";
 const Signup = () => {
   const navigate = useNavigate();
-  const themeContext = useContext(ThemeContext);
   const dispatch = useDispatch();
   const [userType, setUserType] = useState("");
   const email = useSelector((state) => state.user.email);
@@ -18,20 +15,20 @@ const Signup = () => {
   const isLoading = useSelector((state) => state.user.isLoading);
   const [password, setPassword] = useState("");
 
-  const emailChangeHandler = (event) => {
+  const emailChangeHandler = useCallback((event) => {
     dispatch(userActions.setEmail(event.target.value));
-  };
-  const passwordChangeHandler = (event) => {
+  }, [dispatch]);
+  const passwordChangeHandler = useCallback((event) => {
     setPassword(event.target.value);
-  };
-  const nameChangeHandler = (event) => {
+  }, [dispatch]);
+  const nameChangeHandler = useCallback((event) => {
     dispatch(userActions.setName(event.target.value));
-  };
-  const contactChangeHandler = (event) => {
+  }, [dispatch]);
+  const contactChangeHandler = useCallback((event) => {
     dispatch(userActions.setContact(event.target.value));
-  };
+  }, [dispatch]);
 
-  const onFinishHandler = () => {
+  const onFinishHandler = useCallback(() => {
     console.log("Submit executed");
     console.log({ name, email, contact, password, userType });
     dispatch(signUp({ name, email, contact, password, userType })).then(() => {
@@ -39,29 +36,25 @@ const Signup = () => {
       if (userType === "regular") navigate("/");
       if (userType === "shopOwner") navigate("/ownershome");
     });
-    // signUp().then(() => {
-
-    // });
-
     setPassword("");
-  };
+  }, [userType, name, email, contact, password]);
 
-  const compare = (user, shopOwner) => {
+  const compare = useCallback((user, shopOwner) => {
     return userType === "regular" ? user : shopOwner;
-  };
-  const conditionalSignup = () => {
+  }, [userType]);
+  const conditionalSignup = useCallback(() => {
     const type = localStorage.getItem("role");
     if (auth.currentUser && type === "regular" && auth.currentUser)
       navigate("/");
     if (auth.currentUser && type === "shopOwner") navigate("/ownershome");
-  };
+  },[]);
 
   useEffect(() => {
     conditionalSignup();
   }, []);
 
   return isLoading ? (
-    <div >
+    <div>
       <Row align="middle" style={{ height: "90vh" }}>
         <Col>
           <Spin
@@ -73,7 +66,7 @@ const Signup = () => {
       </Row>
     </div>
   ) : (
-    <div className={`${classes.centerdiv} ${classes.container}`}  >
+    <div className={`${classes.centerdiv} ${classes.container}`}>
       {userType === "" ? (
         <Card className={classes.card}>
           <h2 className={classes.heading}>WHY ARE YOU HERE?</h2>

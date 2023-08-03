@@ -42,6 +42,7 @@ body {
 }
 .background{
   background-color: var(--background);
+  min-height: 86.7vh;
 }
 .shopcard {
   margin: 5px;

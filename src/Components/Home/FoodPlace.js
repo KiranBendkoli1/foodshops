@@ -1,3 +1,4 @@
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Button, Card, Form, Input, Modal } from "antd";
 import {
   LikeOutlined,
@@ -10,7 +11,6 @@ import {
 } from "@ant-design/icons";
 import { addComment } from "../../store/placesSlice";
 import directionIcon from "../../assets/icons/traffic-sign.png";
-import React, { useEffect, useState } from "react";
 import classes from "./HomePage.module.css";
 import { useNavigate } from "react-router-dom";
 import ImageCarousel from "../UI/ImageCarousel";
@@ -29,16 +29,16 @@ const FoodPlace = (props) => {
   const dispatch = useDispatch();
   const [isLikesOpen, openLikesModal, closeLikesModal] = useModal();
   const [isOfferModalOpen, openOfferModal, closeOfferModal] = useModal();
-  const [isCommentsModalOpen, openCommentsModal, closeCommentsModal] = useModal();
-  const [isCommentsWarningOpen, openCommentsWarningModal, closeCommentsWarningModal] = useModal();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
-  // const [userIsLiked, setUserIsLiked] = useState();
+  const [isCommentsModalOpen, openCommentsModal, closeCommentsModal] =
+    useModal();
+  const [
+    isCommentsWarningOpen,
+    openCommentsWarningModal,
+    closeCommentsWarningModal,
+  ] = useModal();
   const isLoading = useSelector((state) => state.places.isLoading);
-  let user = auth.currentUser;
-  if (user) {
-    user = user.email;
-  }
+  let user = useMemo(() => auth.currentUser, []);
+  user = useMemo(() => user && user.email, [user]);
   const navigate = useNavigate();
   const {
     index,
@@ -57,41 +57,58 @@ const FoodPlace = (props) => {
     comments,
     dislikes,
   } = props.foodplace;
-  const handleDetailsClick = () => {
+  const handleDetailsClick = useCallback(() => {
     navigate(`/details/${id}`);
-  };
-  // const commentClickHandler = () => {
-  //   navigate(`/comments/${id}`);
-  // };
-  const addLikeHandler = () => {
+  }, [id, navigate]);
+  const addLikeHandler = useCallback(() => {
     console.log({ liked });
     if (!user) {
       openLikesModal();
     } else {
       dispatch(updateLikes({ id, index, likes, dislikes, user }));
     }
-    // dispatch(placeActions.addLike(index))
-  };
-  const addDislikeHandler = () => {
+  }, [id, index, likes, dislikes, user, dispatch, liked, openLikesModal]);
+  const addDislikeHandler = useCallback(() => {
     if (!user) {
       openLikesModal();
     } else {
       dispatch(updateDislikes({ id, index, likes, dislikes, user }));
     }
-    // dispatch(placeActions.addDislike(index))
-  };
+  }, [id, index, likes, dislikes, user, dispatch, openLikesModal]);
 
+  const postCommentHandler = useCallback(
+    (values) => {
+      dispatch(addComment({ id, user, comments, index, values }));
+      navigate("/");
+    },
+    [id, user, comments, index,dispatch, navigate]
+  );
+  const discountsMap = useMemo(() => {
+    return discounts.map((discount) => {
+      return (
+        <div key={discount}>
+          <p>{`${discount.split("|")[0]} is at ${
+            discount.split("|")[1]
+          } discount`}</p>
+        </div>
+      );
+    });
+  }, [discounts]);
 
-
-
-  const postCommentHandler = (values) => {
-    dispatch(addComment({ id, user, comments, index, values }));
-    navigate("/");
-  };
+  const commentsMap = useMemo(() => {
+    return comments.map((comment) => {
+      return (
+        <p key={comment}>
+          <b>{comment.split("|")[0]}</b> {comment.split("|")[1]}
+          <br />
+        </p>
+      );
+    });
+  }, [comments]);
 
   useEffect(() => {
     dispatch(fetchPlaces());
-  }, []);
+  }, [dispatch]);
   return (
     <>
       <Card hoverable className={classes.shopcard} key={id}>
@@ -111,18 +128,18 @@ const FoodPlace = (props) => {
           <div>
             {type
               ? type.includes("Veg") && (
-                  <img src={veg} style={{ width: "20px", height: "20px" }} />
+                  <img src={veg} alt="veg" style={{ width: "20px", height: "20px" }} />
                 )
               : ""}{" "}
             {type
               ? type.includes("Non Veg") && (
-                  <img src={nonveg} style={{ width: "20px", height: "20px" }} />
+                  <img src={nonveg} alt="non-veg" style={{ width: "20px", height: "20px" }} />
                 )
               : ""}
           </div>
         </div>
         <div className={classes.center} style={{ marginTop: "20px" }}>
-          <img src={image ? image : images[0]} width="260px" height={"250px"} />
+          <img src={image ? image : images[0]} alt="post" width="260px" height={"250px"} />
         </div>
         <p>Speciality: {speciality}</p>
         <p>Address: {location}</p>
@@ -149,10 +166,7 @@ const FoodPlace = (props) => {
               </>
             )}
           </p>
-          <p
-            onClick={openCommentsModal}
-            style={{ fontSize: "120%" }}
-          >
+          <p onClick={openCommentsModal} style={{ fontSize: "120%" }}>
             {comments.length} <CommentOutlined />
           </p>
           <p style={{ fontSize: "120%" }}>
@@ -192,12 +206,7 @@ const FoodPlace = (props) => {
           >
             View Complete Details
           </Button>
-          <Button
-            onClick={openOfferModal}
-            shape="round"
-            type="primary"
-            ghost
-          >
+          <Button onClick={openOfferModal} shape="round" type="primary" ghost>
             View Offers
           </Button>
         </div>
@@ -210,7 +219,7 @@ const FoodPlace = (props) => {
           navigate("/login");
           closeLikesModal();
         }}
-        onCancel={()=>closeLikesModal()}
+        onCancel={closeLikesModal}
       >
         <p>For like and dislike you need to login first </p>
       </Modal>
@@ -222,15 +231,7 @@ const FoodPlace = (props) => {
         onCancel={closeOfferModal}
       >
         {discounts.length === 0 && <p>No offers yet</p>}
-        {discounts.map((discount) => {
-          return (
-            <div key={discount}>
-              <p>{`${discount.split("|")[0]} is at ${
-                discount.split("|")[1]
-              } discount`}</p>
-            </div>
-          );
-        })}
+        {discountsMap}
       </Modal>
 
       <Modal
@@ -245,14 +246,7 @@ const FoodPlace = (props) => {
           <ImageCarousel images={images} />
           <div>
             <h2>Comments...</h2>
-            {comments.map((comment) => {
-              return (
-                <p key={comment}>
-                  <b>{comment.split("|")[0]}</b> {comment.split("|")[1]}
-                  <br />
-                </p>
-              );
-            })}
+            {commentsMap}
             <Form
               wrapperCol={{
                 span: 16,
@@ -275,7 +269,9 @@ const FoodPlace = (props) => {
                 <Button
                   type={user ? "primary" : "disabled"}
                   htmlType={user ? "submit" : "reset"}
-                  onClick={()=>{!user && openCommentsWarningModal()}}
+                  onClick={() => {
+                    !user && openCommentsWarningModal();
+                  }}
                   loading={isLoading}
                 >
                   <SendOutlined /> Post Comment
@@ -293,11 +289,10 @@ const FoodPlace = (props) => {
           navigate("/login");
           closeCommentsWarningModal();
         }}
-        onCancel={()=>closeCommentsWarningModal()}
+        onCancel={closeCommentsWarningModal}
       >
         <p>For posting comments you need to login first </p>
       </Modal>
-
     </>
   );
 };

@@ -1,21 +1,24 @@
-import React from "react";
-import { Button, } from "antd";
+import React, { memo, useCallback } from "react";
+import { Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { deleteItem } from "../../store/placesSlice";
 import { useDispatch } from "react-redux";
 import { auth } from "../../config/firebase";
-const Discounts = ({ discounts, id,index }) => {
-
+const Discounts = ({ discounts, id, index }) => {
   const dispatch = useDispatch();
-  // const isLoading = useSelector(state => state.places.isLoading);
-  const deleteButtonHandler = (item) => {
-    console.log({ item });
-    const data = { id, index,  item };
-    dispatch(deleteItem(data));
-  };
+  const deleteButtonHandler = useCallback(
+    (item) => {
+      console.log({ item });
+      const data = { id, index, item };
+      dispatch(deleteItem(data));
+    },
+    [id, index]
+  );
+
   return (
     <>
-      {discounts.map((discount,index) => {
+      {console.log("discounts loaded")}
+      {discounts.map((discount, index) => {
         return (
           <div key={index}>
             <p>{`${discount.split("|")[0]} is at ${
@@ -40,4 +43,4 @@ const Discounts = ({ discounts, id,index }) => {
   );
 };
 
-export default Discounts;
+export default memo(Discounts);

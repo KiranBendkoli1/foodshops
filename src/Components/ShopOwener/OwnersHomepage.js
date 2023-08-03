@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, Modal, Form, Input, Row, Col, Skeleton } from "antd";
 import {
   LikeOutlined,
@@ -12,47 +12,32 @@ import Discounts from "../Admin/Discounts";
 import { getUserData } from "../../store/userSlice";
 import { updateData, getFoodShopById } from "../../store/placesSlice";
 import ImageCarousel from "../UI/ImageCarousel";
-// import { updateData } from "../../utils/fun";
 import veg from "../../assets/icons/icons8-veg-48.png";
 import nonveg from "../../assets/icons/icons8-non-veg-48.png";
 import MapComponent from "../Maps/MapComponent";
+import useModal from "../../hooks/useModal";
 const OwnersHomepage = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const [inputItemName, setInputItemName] = useState("");
   const [inputDiscount, setInputDiscount] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
-  // const [isOfferSubmitted, setIsOfferSubmitted] = useState(false);
+  const [isCommentsModalOpen, openCommentsModal, closeCommentsModal] =
+    useModal();
+  const [isDiscountModalOpen, openDiscountModal, closeDiscountModal] =
+    useModal();
   const email = useSelector((state) => state.user.email);
   const name = useSelector((state) => state.user.name);
   const contact = useSelector((state) => state.user.contact);
   const shop = useSelector((state) => state.places.foodplace);
   const isLoading = useSelector((state) => state.user.isLoading);
-  // console.log(foodplaces);
-  // console.log({ name, email });
-  // const placeData = foodplaces.filter((place) => place.title === name);
-  // console.log({ placeData });
-  const data = { email: email, colname: "shopOwners" };
-  // useEffect(()=>{
-
-  // })
-  const idData = { id: email };
+  const data = useMemo(() => ({ email: email, colname: "shopOwners" }), []);
+  const idData = useMemo(() => ({ id: email }), []);
   useEffect(() => {
     dispatch(getUserData(data));
     dispatch(getFoodShopById(idData));
   }, []);
 
-  // const onFinish = (values) => {
-  //   console.log("Success:", values);
-  //   updateData(placeData.id, {}, "", `${values.name}|${values.discount}`);
-  //   setIsModalOpen(false);
-  // };
-
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOk = () => {
+  const handleOk = useCallback(() => {
     if (inputItemName !== "" && inputDiscount !== 0) {
       console.log(`${inputItemName}|${inputDiscount}`);
       const data = {
@@ -68,19 +53,7 @@ const OwnersHomepage = () => {
       });
     }
     form.resetFields();
-    // setIsOfferSubmitted(true);
-    setIsModalOpen(false);
-  };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCommentsOk = () => {
-    setIsCommentsOpen(false);
-  };
-  const handleCommentsCancel = () => {
-    setIsCommentsOpen(false);
-  };
+  });
 
   return (
     <>
@@ -146,7 +119,7 @@ const OwnersHomepage = () => {
                       <p>
                         {shop.dislikes} <DislikeOutlined />{" "}
                       </p>
-                      <p  onClick={()=>setIsCommentsOpen(true)}>
+                      <p onClick={openCommentsModal}>
                         {data.comments?.length} <CommentOutlined />
                       </p>
                     </div>
@@ -158,7 +131,7 @@ const OwnersHomepage = () => {
                     Telephone/Mobile No: {contact}
                   </p>
                   <div style={{ display: "flex" }}>
-                    <Button onClick={showModal}>
+                    <Button onClick={openDiscountModal}>
                       <Link>Add Discount Offers</Link>
                     </Button>
                   </div>
@@ -181,11 +154,14 @@ const OwnersHomepage = () => {
 
           <Modal
             title="Add Discount Offer"
-            open={isModalOpen}
-            onOk={handleOk}
-            onCancel={handleCancel}
+            open={isDiscountModalOpen}
+            onOk={() => {
+              handleOk();
+              closeDiscountModal();
+            }}
+            onCancel={() => closeDiscountModal()}
           >
-            {shop !== undefined && (
+            {shop !== undefined && shop.discounts !== undefined && (
               <Discounts
                 discounts={shop.discounts}
                 index={shop.index}
@@ -249,18 +225,19 @@ const OwnersHomepage = () => {
           </Modal>
           <Modal
             title="Comments"
-            open={isCommentsOpen}
-            onOk={handleCommentsOk}
-            onCancel={handleCommentsCancel}
+            open={isCommentsModalOpen}
+            onOk={() => closeCommentsModal()}
+            onCancel={() => closeCommentsModal()}
           >
-            {shop.comments && shop.comments.map((comment) => {
-              return (
-                <p key={comment}>
-                  <b>{comment.split("|")[0]}</b> {comment.split("|")[1]}
-                  <br />
-                </p>
-              );
-            })}
+            {shop.comments &&
+              shop.comments.map((comment) => {
+                return (
+                  <p key={comment}>
+                    <b>{comment.split("|")[0]}</b> {comment.split("|")[1]}
+                    <br />
+                  </p>
+                );
+              })}
           </Modal>
         </>
       )}
@@ -269,5 +246,3 @@ const OwnersHomepage = () => {
 };
 
 export default OwnersHomepage;
-
-// currently after login we have

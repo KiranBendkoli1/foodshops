@@ -1,31 +1,33 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import FoodPlace from "./FoodPlace";
 import { useSelector, useDispatch } from "react-redux";
-import classes from "./HomePage.module.css";
 import { useEffect } from "react";
 import { Col, Row, Select, Space } from "antd";
 import { fetchPlaces } from "../../store/placesSlice";
-import {} from "antd";
-import { ThemeContext } from "../../context/theme-context";
 const { Option } = Select;
 
 const FoodPlaces = () => {
   const [search, setSearch] = useState("");
   let foodplaces = useSelector((state) => state.places.foodplaces);
-  const isLoading = useSelector((state) => state.places.isLoading);
-  const names = foodplaces.map((place) => place.title);
-  const locations = foodplaces.map((place) => place.location);
-  const searchableItems = names.concat(locations);
+  const names = useMemo(
+    () => foodplaces.map((place) => place.title),
+    [foodplaces]
+  );
+  const locations = useMemo(
+    () => foodplaces.map((place) => place.location),
+    [foodplaces]
+  );
+  const searchableItems = useMemo(
+    () => names.concat(locations),
+    [names, locations]
+  );
   const dispatch = useDispatch();
-  const themeContext = useContext(ThemeContext);
-  const handleChange = (value) => {
+  const handleChange = useCallback((value) => {
     setSearch(value.toString());
-    console.log(`selected ${value}`);
-  };
+  }, []);
   useEffect(() => {
     dispatch(fetchPlaces());
-    console.log(foodplaces);
-  }, []);
+  }, [dispatch]);
   return (
     <>
       <Select
@@ -33,7 +35,7 @@ const FoodPlaces = () => {
         mode="multiple"
         style={{
           width: "50%",
-          marginTop: "10px",
+          marginTop: "12px",
           marginBottom: "10px",
         }}
         placeholder="select location"
@@ -50,7 +52,6 @@ const FoodPlaces = () => {
           );
         })}
       </Select>
-
       <Row align={"center"}>
         {foodplaces
           .filter(

@@ -154,7 +154,7 @@ const EditableTable = () => {
           ...row,
           image: url,
         });
-        if (image == "") {
+        if (image === "") {
           url = image;
         }
         const data = {
@@ -281,7 +281,8 @@ const EditableTable = () => {
     }
     return {
       ...col,
-      onCell: (record) => ({
+      onCell: (record) => {
+        return {
         record,
         inputType:
           col.dataIndex === "image"
@@ -292,7 +293,7 @@ const EditableTable = () => {
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
-      }),
+      }},
     };
   });
   return (

@@ -87,14 +87,7 @@ export const getFoodShopById = createAsyncThunk(
     const foodplaces = thunkAPI.getState().places.foodplaces;
     const foodplaceData = foodplaces.filter((place) => place.id === id)[0];
     console.log({ foodplaceData });
-
     return foodplaceData;
-    // const shopdata = await getDoc(doc(firestore, "foodshops", id));
-    // let res = shopdata.data();
-    // console.log(res);
-    // res = { ...res, id: id };
-    // console.log({ res });
-    // return res;
   }
 );
 
@@ -109,22 +102,24 @@ export const updateData = createAsyncThunk(
     thunkAPI.dispatch(fetchPlaces());
     try {
       let newValues = { ...values };
+      const shopdata = await getDoc(doc(firestore, "foodshops", id));
+      result = shopdata.data();
+      result = { ...result, id: id, index: index };
       if (discount.trim() !== "|") {
-        const shopdata = await getDoc(doc(firestore, "foodshops", id));
-        result = shopdata.data();
         discounts = shopdata.data().discounts;
         discounts.push(discount);
         newValues = { ...newValues, discounts: discounts };
-        result = { ...result, discounts: discounts, id: id, index: index };
+        result = { ...result, discounts: discounts };
       }
       if (image !== "") {
         newValues = { ...newValues, image: image };
       }
+      result = {...result, ...newValues};
       console.log({ newValues });
-      updateDoc(doc(firestore, "foodshops", id), { ...newValues }).then(() => {
-        console.log("Updated Successfully", { newValues });
+      updateDoc(doc(firestore, "foodshops", id), result).then(() => {
+        console.log("Updated Successfully", { result });
       });
-      console.log(result);
+      console.log({ result });
       return [index, result];
     } catch (error) {
       console.log({ error });

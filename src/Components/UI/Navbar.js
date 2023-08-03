@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { memo, useCallback, useContext } from "react";
 import { Button, Menu } from "antd";
 import { LoginOutlined, LogoutOutlined } from "@ant-design/icons";
 import classes from "../Home/HomePage.module.css";
@@ -12,31 +12,31 @@ import { ThemeContext } from "../../context/theme-context";
 const Navbar = () => {
   const user = auth.currentUser;
   const navigate = useNavigate();
-  const logoutHandler = () => {
+  const logoutHandler = useCallback(() => {
     logout().then(() => {
       navigate("/login");
     });
-  };
-  const loginHandler = () => {
+  },[]);
+  const loginHandler = useCallback(() => {
     navigate("/login");
-  };
+  }, []);
   const themeContext = useContext(ThemeContext);
   return (
     <>
       <h1 className={classes.title}>Food Places</h1>
-      <p style={{display:'flex'}}>
-     <Switch
-      onChange={themeContext.toggleTheme}
-        checkedChildren={<img src={sun} width={"19px"} height={"19px"}/>}
-        unCheckedChildren={<img src={moon}  width={"17px"} height={"17px"} />}
-        defaultChecked
-      />
-    {console.log(themeContext.theme)}
+      <p style={{ display: "flex" }}>
+        <Switch
+          onChange={themeContext.toggleTheme}
+          checkedChildren={<img src={sun} width={"19px"} height={"19px"} />}
+          unCheckedChildren={<img src={moon} width={"17px"} height={"17px"} />}
+          defaultChecked
+        />
+        {console.log(themeContext.theme)}
         {user && (
           <Menu
             mode="horizontal"
             className={classes.navmenu}
-            style={{ float: "right"}}
+            style={{ float: "right" }}
           >
             <Menu.Item key="">{user ? user.email : ""}</Menu.Item>
             <Menu.Item key="Logout">
@@ -59,4 +59,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default memo(Navbar);
