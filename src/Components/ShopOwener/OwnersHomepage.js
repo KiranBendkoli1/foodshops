@@ -9,8 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import classes from "../Auth/AuthCommon.module.css";
 import { Link } from "react-router-dom";
 import Discounts from "../Admin/Discounts";
-import { getUserData } from "../../store/userSlice";
-import { updateData, getFoodShopById } from "../../store/placesSlice";
+import { updateData, getFoodShopByEmail } from "../../store/placesSlice";
 import ImageCarousel from "../UI/ImageCarousel";
 import veg from "../../assets/icons/icons8-veg-48.png";
 import nonveg from "../../assets/icons/icons8-non-veg-48.png";
@@ -25,27 +24,26 @@ const OwnersHomepage = () => {
     useModal();
   const [isDiscountModalOpen, openDiscountModal, closeDiscountModal] =
     useModal();
-  const email = useSelector((state) => state.user.email);
-  const name = useSelector((state) => state.user.name);
-  const contact = useSelector((state) => state.user.contact);
+  // const user = useSelector((state) => state.user.user);
+  let user = useMemo(() => localStorage.getItem("user"), []);
+  user = useMemo(() => JSON.parse(user), [user]);
+
   const shop = useSelector((state) => state.places.foodplace);
   const isLoading = useSelector((state) => state.user.isLoading);
-  const data = useMemo(() => ({ email: email, colname: "shopOwners" }), []);
-  const idData = useMemo(() => ({ id: email }), []);
   useEffect(() => {
-    dispatch(getUserData(data));
-    dispatch(getFoodShopById(idData));
+    const email = user.email;
+    dispatch(getFoodShopByEmail({ email }));
   }, []);
 
   const handleOk = useCallback(() => {
     if (inputItemName !== "" && inputDiscount !== 0) {
-      console.log(`${inputItemName}|${inputDiscount}`);
+      // console.log(`${inputItemName}|${inputDiscount}`);
       const data = {
         index: shop.index,
-        id: shop.id,
+        id: shop._id,
         values: {},
         image: "",
-        discount: `${inputItemName}|${inputDiscount}`,
+        discount: { item: inputItemName, discount: inputDiscount },
       };
       dispatch(updateData(data)).then(() => {
         setInputDiscount("");
@@ -54,7 +52,7 @@ const OwnersHomepage = () => {
     }
     form.resetFields();
   });
-
+  // console.log({ shop });
   return (
     <>
       {isLoading ? (
@@ -70,7 +68,7 @@ const OwnersHomepage = () => {
                   margin: "2px 20px",
                 }}
               >
-                <h1 className={classes.heading}>{name}</h1>{" "}
+                <h1 className={classes.heading}>{user.name}</h1>{" "}
                 <p style={{ display: "flex" }}>
                   {shop && <p>Type: </p>} {"  "}
                   <p>
@@ -95,7 +93,7 @@ const OwnersHomepage = () => {
                   </p>
                 </p>
               </div>
-              {shop === undefined ? (
+              {!shop  ? (
                 <Button>
                   <Link to={"/addInfo"}>Add Shop Details</Link>
                 </Button>
@@ -104,7 +102,7 @@ const OwnersHomepage = () => {
                   <p>Speciality: {shop.speciality}</p>
 
                   <p>Description: {shop.description}</p>
-                  <p>Address: {shop.location} </p>
+                  <p>Address: {shop.address} </p>
                   <div className={classes.useractions}>
                     <div
                       style={{
@@ -120,15 +118,15 @@ const OwnersHomepage = () => {
                         {shop.dislikes} <DislikeOutlined />{" "}
                       </p>
                       <p onClick={openCommentsModal}>
-                        {data.comments?.length} <CommentOutlined />
+                        {shop.comments?.length} <CommentOutlined />
                       </p>
                     </div>
                   </div>
                   <ImageCarousel images={shop.images} width={"500px"} />
                   <h4>Contact Details</h4>
                   <p>
-                    Email Address : {email} <br />
-                    Telephone/Mobile No: {contact}
+                    Email Address : {user.email} <br />
+                    Telephone/Mobile No: {user.contact}
                   </p>
                   <div style={{ display: "flex" }}>
                     <Button onClick={openDiscountModal}>
@@ -139,7 +137,7 @@ const OwnersHomepage = () => {
               )}
             </Col>
             <Col span={12} style={{ marginTop: "200px" }}>
-              {shop !== undefined && (
+              {shop && (
                 <MapComponent
                   currentPosition={
                     shop === undefined ? [] : shop.selectPosition
@@ -161,11 +159,12 @@ const OwnersHomepage = () => {
             }}
             onCancel={() => closeDiscountModal()}
           >
-            {shop !== undefined && shop.discounts !== undefined && (
+            
+            {shop  && shop.discounts !== undefined && (
               <Discounts
                 discounts={shop.discounts}
                 index={shop.index}
-                id={shop.id}
+                id={shop._id}
               />
             )}{" "}
             <Form
@@ -229,11 +228,11 @@ const OwnersHomepage = () => {
             onOk={() => closeCommentsModal()}
             onCancel={() => closeCommentsModal()}
           >
-            {shop.comments &&
+            {shop && shop.comments &&
               shop.comments.map((comment) => {
                 return (
                   <p key={comment}>
-                    <b>{comment.split("|")[0]}</b> {comment.split("|")[1]}
+                    <b>{comment.user}</b> {comment.comment}
                     <br />
                   </p>
                 );

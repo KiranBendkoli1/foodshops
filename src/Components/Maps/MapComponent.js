@@ -26,7 +26,7 @@ const MapComponent = (props) => {
         ? (data = [19.997454, 73.789803])
         : data;
     return data;
-  });
+  },[]);
   const myIcon = new Icon({
     iconUrl: markerIcon,
     iconSize: [38, 38],

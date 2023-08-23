@@ -1,53 +1,66 @@
-import React, { useCallback,useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Button, Card, Form, Input, Spin, Row, Col } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import classes from "./AuthCommon.module.css";
-import { userActions, signUp } from "../../store/userSlice";
+import { signUp } from "../../store/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { auth } from "../../config/firebase";
+import { toast } from "react-toastify";
 const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [userType, setUserType] = useState("");
-  const email = useSelector((state) => state.user.email);
-  const name = useSelector((state) => state.user.name);
-  const contact = useSelector((state) => state.user.contact);
   const isLoading = useSelector((state) => state.user.isLoading);
-  const [password, setPassword] = useState("");
+  // const user = useSelector((state) => state.user.user);
+  // useMemo(() => localStorage.setItem("user", JSON.stringify(user)), [user]);
 
-  const emailChangeHandler = useCallback((event) => {
-    dispatch(userActions.setEmail(event.target.value));
-  }, [dispatch]);
-  const passwordChangeHandler = useCallback((event) => {
-    setPassword(event.target.value);
-  }, [dispatch]);
-  const nameChangeHandler = useCallback((event) => {
-    dispatch(userActions.setName(event.target.value));
-  }, [dispatch]);
-  const contactChangeHandler = useCallback((event) => {
-    dispatch(userActions.setContact(event.target.value));
-  }, [dispatch]);
+  const nameRef = useRef();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const contactRef = useRef();
 
   const onFinishHandler = useCallback(() => {
-    console.log("Submit executed");
-    console.log({ name, email, contact, password, userType });
-    dispatch(signUp({ name, email, contact, password, userType })).then(() => {
-      localStorage.setItem("role", userType);
-      if (userType === "regular") navigate("/");
-      if (userType === "shopOwner") navigate("/ownershome");
-    });
-    setPassword("");
-  }, [userType, name, email, contact, password]);
+    // console.log("Submit executed");
+    const name = nameRef.current.input.value;
+    const email = emailRef.current.input.value;
+    const contact = contactRef.current.input.value;
+    const password = passwordRef.current.input.value;
+    // console.log({ name, email, contact, password, userType });
+    dispatch(signUp({ name, email, contact, password, userType })).then(
+      async (data) => {
+        console.log(data);
+        // console.log(res);
+        const res = await data.payload;
+        if (res.status === "failure") {
+          toast.error(res.message);
+        } else if (res.status === "success") {
+          // console.log(user);
+          toast.success(res.message);
+          const user = res.data;
+          localStorage.setItem("user", JSON.stringify(user));
+          if (userType === "regular") navigate("/");
+          if (userType === "shopOwner") navigate("/ownershome");
+        }
+      }
+    );
+  }, [userType, nameRef, emailRef, contactRef, passwordRef]);
 
-  const compare = useCallback((user, shopOwner) => {
-    return userType === "regular" ? user : shopOwner;
-  }, [userType]);
+  const compare = useCallback(
+    (user, shopOwner) => {
+      return userType === "regular" ? user : shopOwner;
+    },
+    [userType]
+  );
   const conditionalSignup = useCallback(() => {
-    const type = localStorage.getItem("role");
-    if (auth.currentUser && type === "regular" && auth.currentUser)
-      navigate("/");
-    if (auth.currentUser && type === "shopOwner") navigate("/ownershome");
-  },[]);
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.role === "regular") navigate("/");
+    if (user && user.role === "shopOwner") navigate("/ownershome");
+  }, []);
 
   useEffect(() => {
     conditionalSignup();
@@ -113,7 +126,7 @@ const Signup = () => {
                 },
               ]}
             >
-              <Input onChange={nameChangeHandler} value={name} />
+              <Input ref={nameRef} />
             </Form.Item>
             <Form.Item
               label="Email Address: "
@@ -125,12 +138,7 @@ const Signup = () => {
                 },
               ]}
             >
-              <Input
-                onChange={emailChangeHandler}
-                type="email"
-                htmlType="email"
-                value={email}
-              />
+              <Input type="email" htmlType="email" ref={emailRef} />
             </Form.Item>
             <Form.Item
               label="Contact Number: "
@@ -142,12 +150,7 @@ const Signup = () => {
                 },
               ]}
             >
-              <Input
-                onChange={contactChangeHandler}
-                type="number"
-                htmlType="number"
-                value={contact}
-              />
+              <Input type="text" htmlType="text" ref={contactRef} />
             </Form.Item>
             <Form.Item
               label="Password"
@@ -160,10 +163,9 @@ const Signup = () => {
               ]}
             >
               <Input.Password
-                onChange={passwordChangeHandler}
                 type="password"
                 htmlType="password"
-                value={password}
+                ref={passwordRef}
               />
             </Form.Item>
             <Form.Item className={classes.button}>

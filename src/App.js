@@ -16,7 +16,10 @@ import CompleteDetails from "./Components/ShopOwener/CompleteDetails";
 import MapComponent from "./Components/Maps/MapComponent";
 import PrivateRoutes from "./Components/ProtectedRoute/PrivateRoutes";
 import { ThemeContext } from "./context/theme-context";
+import axios from "axios";
 import "./index.css";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
 const { Header, Content } = Layout;
 const { defaultAlgorithm, darkAlgorithm } = theme;
 function App() {
@@ -33,6 +36,18 @@ function App() {
       }}
     >
       <div data-theme={themeContext.theme}>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme={themeContext.theme}
+        ></ToastContainer>
         <BrowserRouter basename={process.env.PUBLIC_URL}>
           <Header className={classes.header}>
             <Navbar />
@@ -44,16 +59,14 @@ function App() {
               <Route exact path="/signup" element={<Signup />} />
               <Route exact path="/comments/:id" element={<Comments />} />
               <Route exact path="/details/:id" element={<CompleteDetails />} />
-              <Route element={<PrivateRoutes />}>
-                <Route exact path="/admin" element={<AdminHome />} />
-                <Route exact path="/ownershome" element={<OwnersHomepage />} />
-                <Route exact path="/addInfo" element={<AddFoodPlace />} />
-                <Route
-                  exact
-                  path="/gotomap/:lat/:lon/:loc"
-                  element={<MapComponent />}
-                />
-              </Route>
+              <Route exact path="/admin" element={<AdminHome />} />
+              <Route exact path="/ownershome" element={<OwnersHomepage />} />
+              <Route exact path="/addInfo" element={<AddFoodPlace />} />
+              <Route
+                exact
+                path="/gotomap/:lat/:lon/:loc"
+                element={<MapComponent />}
+              />
             </Routes>
           </Content>
         </BrowserRouter>

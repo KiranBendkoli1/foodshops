@@ -1,22 +1,23 @@
-import React, { memo, useCallback, useContext } from "react";
+import React, { memo, useCallback, useContext, useDebugValue } from "react";
 import { Button, Menu } from "antd";
 import { LoginOutlined, LogoutOutlined } from "@ant-design/icons";
 import classes from "../Home/HomePage.module.css";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../utils/auth";
-import { auth } from "../../config/firebase";
 import sun from "../../assets/icons/brightness.png";
 import moon from "../../assets/icons/moon.png";
 import { Switch } from "antd";
 import { ThemeContext } from "../../context/theme-context";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../../store/userSlice";
 const Navbar = () => {
-  const user = auth.currentUser;
+  const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const logoutHandler = useCallback(() => {
-    logout().then(() => {
+    dispatch(logout()).then(() => {
       navigate("/login");
     });
-  },[]);
+  }, []);
   const loginHandler = useCallback(() => {
     navigate("/login");
   }, []);
@@ -25,7 +26,8 @@ const Navbar = () => {
     <>
       <h1 className={classes.title}>Food Places</h1>
       <p style={{ display: "flex" }}>
-        <Switch
+        <Switch 
+        style={{margin:'5px'}}
           onChange={themeContext.toggleTheme}
           checkedChildren={<img src={sun} width={"19px"} height={"19px"} />}
           unCheckedChildren={<img src={moon} width={"17px"} height={"17px"} />}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import markerIcon from "../../assets/icons/icons8-location-48.png";
 import { SearchOutlined } from "@ant-design/icons";
 import "leaflet/dist/leaflet.css";
@@ -42,18 +42,31 @@ const AddFoodPlace = () => {
   });
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const name = useSelector((state) => state.user.name);
-  const email = useSelector((state) => state.user.email);
+  let user = useMemo(() => localStorage.getItem("user"), []);
+  user = useMemo(() => JSON.parse(user), [user]);
+  const contact = useMemo(() => user.contact, [user]);
+  const email = useMemo(() => user.email, [user]);
   const isLoading = useSelector((state) => state.places.isLoading);
-  const [title, setTitle] = useState(name);
+  const [title, setTitle] = useState(user.name);
   const [speciality, setSpeciality] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState([]);
   const [images, setImages] = useState();
   const [location, setLocation] = useState("");
   const onFinishHandler = () => {
+    console.log({ title,
+      contact,
+      email,
+      speciality,
+      description,
+      selectPosition,
+      location,
+      images,
+      type,})
     dispatch(
       uploadFoodShopData({
+        title,
+        contact,
         email,
         speciality,
         description,
@@ -65,7 +78,7 @@ const AddFoodPlace = () => {
     ).then(() => {
       navigate("/ownershome");
     });
-    console.log(images);
+    // console.log(images);
   };
 
   const props = {
@@ -73,11 +86,11 @@ const AddFoodPlace = () => {
     accept: "image/*",
     multiple: true,
     onChange(info) {
-      console.log({ info });
+      // console.log({ info });
       const images = info.fileList;
       const newImages = images.map((img) => img.originFileObj);
       setImages(newImages);
-      console.log({ images });
+      // console.log({ images });
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
@@ -105,7 +118,7 @@ const AddFoodPlace = () => {
               textAlign: "center",
             }}
           >
-            <h2 className={classes.myheader} style={{ textAlign: "center" }}>
+            <h2 className={classes.shopname } style={{ textAlign: "center" }}>
               Add Detail Information of {title}
             </h2>
           </Row>
@@ -172,7 +185,7 @@ const AddFoodPlace = () => {
                           const res = await axios(
                             `${NOMINATIM_BASE_URL}${queryString}`
                           );
-                          console.log(res.data);
+                          // console.log(res.data);
                           setData(res.data);
                         }}
                       >
@@ -286,7 +299,7 @@ const AddFoodPlace = () => {
                     )}
                   />
                 </InfiniteScroll>
-                {console.log(selectPosition)}
+                {/* {console.log(selectPosition)}  */}
               </div>
               <MapContainer
                 center={selectPosition}

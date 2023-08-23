@@ -74,7 +74,7 @@ const Leaflet = () => {
                 redirect: "follow",
               };
               const res = await axios(`${NOMINATIM_BASE_URL}${queryString}`);
-              console.log(res.data);
+              // console.log(res.data);
               setData(res.data);
             }}
           >

@@ -163,7 +163,7 @@ const TabledData = () => {
               onClick={() => {
                 setEditRow(record.key);
                 setId(record.id);
-                console.log({ record });
+                // console.log({ record });
                 form.setFieldsValue({
                   key: record.key,
                   title: record.title,
@@ -188,7 +188,7 @@ const TabledData = () => {
   ];
 
   const onFinish = async (values) => {
-    console.log({ values });
+    // console.log({ values });
     const imgRef = ref(storage, `foodshops/${image.name}`);
     const uploadTask = await uploadBytes(imgRef, image);
     const url = await getDownloadURL(uploadTask.ref);
@@ -200,7 +200,7 @@ const TabledData = () => {
       image: url.toString(),
       key: editRow,
     });
-    console.log({temp})
+    // console.log({temp})
     setDataSource(updatedDataSource);
     setEditRow(null);
     setId("");
