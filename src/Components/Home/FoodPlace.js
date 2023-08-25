@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback,  useMemo } from "react";
 import { Button, Card, Form, Input, Modal } from "antd";
 import {
   LikeOutlined,
@@ -9,18 +9,16 @@ import {
   LikeFilled,
   DislikeFilled,
 } from "@ant-design/icons";
-import { addComment } from "../../store/placesSlice";
-import directionIcon from "../../assets/icons/traffic-sign.png";
 import classes from "./HomePage.module.css";
 import { useNavigate } from "react-router-dom";
 import ImageCarousel from "../UI/ImageCarousel";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchPlaces,
   updateDislikes,
   updateLikes,
+  addComment,
 } from "../../store/placesSlice";
-import { auth } from "../../config/firebase";
+import { FaDirections } from "react-icons/fa";
 import { RWebShare } from "react-web-share";
 import veg from "../../assets/icons/icons8-veg-48.png";
 import nonveg from "../../assets/icons/icons8-non-veg-48.png";
@@ -62,7 +60,6 @@ const FoodPlace = (props) => {
     navigate(`/details/${id}`);
   }, [id, navigate]);
   const addLikeHandler = useCallback(() => {
-    // console.log({ liked });
     if (!user) {
       openLikesModal();
     } else {
@@ -105,9 +102,6 @@ const FoodPlace = (props) => {
     });
   }, [comments]);
 
-  useEffect(() => {
-    dispatch(fetchPlaces());
-  }, [dispatch]);
   return (
     <>
       <Card hoverable className={classes.shopcard} key={id}>
@@ -156,7 +150,11 @@ const FoodPlace = (props) => {
         <p>Speciality: {speciality}</p>
         <p>Address: {address}</p>
         <div className={classes.useractions}>
-          <p onClick={addLikeHandler} style={{ fontSize: "120%" }}>
+          <p
+            onClick={addLikeHandler}
+            className={classes.icons}
+            style={{ fontSize: "120%" }}
+          >
             {liked.find((e) => user && e === user.email) ? (
               <>
                 {likes} <LikeFilled />
@@ -167,7 +165,11 @@ const FoodPlace = (props) => {
               </>
             )}
           </p>
-          <p onClick={addDislikeHandler} style={{ fontSize: "120%" }}>
+          <p
+            onClick={addDislikeHandler}
+            className={classes.icons}
+            style={{ fontSize: "120%" }}
+          >
             {disliked.find((e) => user && e === user.email) ? (
               <>
                 {dislikes} <DislikeFilled />
@@ -178,7 +180,11 @@ const FoodPlace = (props) => {
               </>
             )}
           </p>
-          <p onClick={openCommentsModal} style={{ fontSize: "120%" }}>
+          <p
+            onClick={openCommentsModal}
+            className={classes.icons}
+            style={{ fontSize: "120%" }}
+          >
             {comments.length} <CommentOutlined />
           </p>
           <p style={{ fontSize: "120%" }}>
@@ -189,7 +195,7 @@ const FoodPlace = (props) => {
                 title: title,
               }}
             >
-              <ShareAltOutlined />
+              <ShareAltOutlined className={classes.icons} />
             </RWebShare>
           </p>
           {selectPosition && (
@@ -201,11 +207,7 @@ const FoodPlace = (props) => {
                 );
               }}
             >
-              <img
-                src={directionIcon}
-                alt="icon"
-                style={{ width: "18px", height: "18px" }}
-              />
+              <FaDirections className={classes.icons} />
             </p>
           )}
         </div>
@@ -213,12 +215,15 @@ const FoodPlace = (props) => {
           <Button
             onClick={handleDetailsClick}
             shape="round"
-            type="primary"
-            ghost
+            className={classes.icons}
           >
             View Complete Details
           </Button>
-          <Button onClick={openOfferModal} shape="round" type="primary" ghost>
+          <Button
+            onClick={openOfferModal}
+            shape="round"
+            className={classes.icons}
+          >
             View Offers
           </Button>
         </div>

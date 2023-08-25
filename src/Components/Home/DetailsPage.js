@@ -43,7 +43,7 @@ const DetailsPage = (props) => {
               <p>Speciality: {data.speciality}</p>
               <p>{data.description}</p>
               <p>Contact No: {data.contact}</p>
-              <p>Address: {data.location}</p>
+              <p>Address: {data.address}</p>
               <div className={classes.useractions}>
                 <p>
                   {" "}
@@ -71,7 +71,7 @@ const DetailsPage = (props) => {
                 {data.selectPosition && (
             <p
               onClick={() => {
-                navigate(`/gotomap/${data.selectPosition[0]}/${data.selectPosition[1]}/${data.location}`);
+                navigate(`/gotomap/${data.selectPosition[0]}/${data.selectPosition[1]}/${data.address}`);
               }}
             >
               <img

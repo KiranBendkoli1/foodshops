@@ -130,14 +130,14 @@ const TabledData = () => {
       },
     },
     {
-      title: "Location",
-      key: "location",
-      dataIndex: "location",
+      title: "Address",
+      key: "address",
+      dataIndex: "address",
       render: (text, record) => {
         if (editRow === record.key) {
           return (
             <Form.Item
-              name="location"
+              name="address"
               rules={[
                 {
                   required: true,
@@ -169,7 +169,7 @@ const TabledData = () => {
                   title: record.title,
                   speciality: record.speciality,
                   description: record.description,
-                  location: record.location,
+                  address: record.address,
                   image: record.image,
                   likes: record.likes,
                   dislikes: record.dislikes,
@@ -194,7 +194,7 @@ const TabledData = () => {
     const url = await getDownloadURL(uploadTask.ref);
     updateData(id, values, url);
     const updatedDataSource = [...dataSource];
-    console.log({updatedDataSource})
+    // console.log({updatedDataSource})
     const temp = updatedDataSource.splice(editRow, 1, {
       ...values,
       image: url.toString(),

@@ -1,10 +1,12 @@
-import React, { memo, useCallback } from "react";
+import React, { memo, useCallback ,useMemo} from "react";
 import { Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { deleteItem } from "../../store/placesSlice";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 const Discounts = ({ discounts, id, index }) => {
-  const user = useSelector((state) => state.user.user);
+  
+  let user = localStorage.getItem("user");
+  user = useMemo(() => JSON.parse(user), [user]);
   const dispatch = useDispatch();
   const deleteButtonHandler = useCallback(
     (item) => {
@@ -12,7 +14,7 @@ const Discounts = ({ discounts, id, index }) => {
       const data = { id, index, item };
       dispatch(deleteItem(data));
     },
-    [id, index]
+    [id, index, dispatch]
   );
 
   return (
@@ -21,7 +23,6 @@ const Discounts = ({ discounts, id, index }) => {
         return (
           <div key={index}>
             <p>{`${discount.item} is at ${discount.discount}% discount`}</p>
-            {console.log(user)}
             {user && user.email === "admin@admin.com" ? (
               <></>
             ) : (

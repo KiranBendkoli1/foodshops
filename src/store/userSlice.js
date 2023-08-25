@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 import { signInApi, signUpApi } from "../api/AuthAPI";
+import { toast } from "react-toastify";
 const initialUserState = {
   isLoading: "",
   user: {},
@@ -9,6 +10,7 @@ const initialUserState = {
 export const signUp = createAsyncThunk("content/signup", async (data) => {
   const { name, email, contact, password, userType } = data;
   const result = await signUpApi(name, email, contact, password, userType);
+  if (result.data === null) return {};
   return result;
 });
 
@@ -20,7 +22,7 @@ export const signIn = createAsyncThunk("content/signIn", async (data) => {
 
 export const logout = createAsyncThunk("content/logout", async () => {
   localStorage.removeItem("user");
-  console.log("User logged out");
+  toast.success("User logged out successfully");
   return null;
 });
 

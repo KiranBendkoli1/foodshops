@@ -4,14 +4,16 @@
   --secondary: #fdfdfd;
   --text: #000000;
   --shadow: #aaaaaa;
+  --header: #0f6ef4;
 }
 
 [data-theme="dark"] {
   --background: #373636;
-  --primary: #513f93;
+  --primary: #5bc3ef;
   --secondary: #d5dae9;
   --text: #efe4e4;
-  --shadow: rgb(120, 112, 112);
+  --header: #2c2727;
+  --shadow: #aaaaaa;
 }
 
 * {
