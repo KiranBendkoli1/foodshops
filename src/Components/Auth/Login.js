@@ -17,13 +17,13 @@ const Login = () => {
     const password = passwordRef.current.input.value;
     dispatch(signIn({ email, password })).then(async (data) => {
       console.log(data);
-      // console.log(res);
       const res = await data.payload;
       if (res.status === "failure") {
         toast.error(res.message)
+        return res.message;
       } else if (res.status === "success") {
-        // console.log(user);
         toast.success(res.message)
+
         const user = res.data;
         localStorage.setItem("user", JSON.stringify(user));
         if (user && user.role === "admin") {
@@ -33,9 +33,9 @@ const Login = () => {
         } else if (user && user.role === "shopOwner") {
           navigate("/ownershome");
         }
+        return res.message;
       }
     });
-    // console.log(email);
   }, [navigate, dispatch, emailRef, passwordRef]);
 
   const conditionalLogin = useCallback(() => {
@@ -69,6 +69,7 @@ const Login = () => {
           <Form.Item
             label="Email Address"
             name="email"
+            htmlFor="email"
             rules={[
               {
                 required: true,
@@ -76,10 +77,11 @@ const Login = () => {
               },
             ]}
           >
-            <Input ref={emailRef} type="email" htmlType="email" />
+            <Input ref={emailRef} name="email" type="email" htmlType="email" placeholder="email adderss" />
           </Form.Item>
           <Form.Item
             label="Password"
+            htmlFor="password"
             name="password"
             rules={[
               {
@@ -90,7 +92,9 @@ const Login = () => {
           >
             <Input.Password
               ref={passwordRef}
+              name="password"
               type="password"
+              placeholder="password"
               htmlType="password"
             />
           </Form.Item>

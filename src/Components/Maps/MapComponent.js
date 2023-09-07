@@ -32,7 +32,6 @@ const MapComponent = (props) => {
   });
   return (
     <>
-      {/* <p>Destination: {address? address:loc}</p> */}
       <MapContainer
         center={selectPosition}
         zoom={15}

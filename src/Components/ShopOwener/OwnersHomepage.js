@@ -37,7 +37,6 @@ const OwnersHomepage = () => {
 
   const handleOk = useCallback(() => {
     if (inputItemName !== "" && inputDiscount !== 0) {
-      // console.log(`${inputItemName}|${inputDiscount}`);
       const data = {
         index: shop.index,
         id: shop._id,
@@ -52,7 +51,6 @@ const OwnersHomepage = () => {
     }
     form.resetFields();
   },[]);
-  // console.log({ shop });
   return (
     <>
       {isLoading ? (

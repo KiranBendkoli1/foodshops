@@ -54,15 +54,7 @@ const AddFoodPlace = () => {
   const [images, setImages] = useState();
   const [address, setAddress] = useState("");
   const onFinishHandler = () => {
-    // console.log({ title,
-    //   contact,
-    //   email,
-    //   speciality,
-    //   description,
-    //   selectPosition,
-    //   address,
-    //   images,
-    //   type,})
+
     dispatch(
       uploadFoodShopData({
         title,
@@ -78,7 +70,6 @@ const AddFoodPlace = () => {
     ).then(() => {
       navigate("/ownershome");
     });
-    // console.log(images);
   };
 
   const props = {
@@ -86,11 +77,9 @@ const AddFoodPlace = () => {
     accept: "image/*",
     multiple: true,
     onChange(info) {
-      // console.log({ info });
       const images = info.fileList;
       const newImages = images.map((img) => img.originFileObj);
       setImages(newImages);
-      // console.log({ images });
     },
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
@@ -180,12 +169,10 @@ const AddFoodPlace = () => {
                           const queryString = new URLSearchParams(
                             params
                           ).toString();
-                          // console.log(queryString);
 
                           const res = await axios(
                             `${NOMINATIM_BASE_URL}${queryString}`
                           );
-                          // console.log(res.data);
                           setData(res.data);
                         }}
                       >
@@ -286,7 +273,6 @@ const AddFoodPlace = () => {
                       <List.Item
                         key={item.place_id}
                         onClick={() => {
-                          // console.log({ item });
                           setAddress(item.display_name);
                           setSelectPositon([item.lat, item.lon]);
                         }}
@@ -299,7 +285,6 @@ const AddFoodPlace = () => {
                     )}
                   />
                 </InfiniteScroll>
-                {/* {console.log(selectPosition)}  */}
               </div>
               <MapContainer
                 center={selectPosition}
@@ -331,7 +316,6 @@ const AddFoodPlace = () => {
                   <Marker
                     position={
                       selectPosition
-                      // [19.997454, 73.789803]
                     }
                     icon={myIcon}
                   ></Marker>

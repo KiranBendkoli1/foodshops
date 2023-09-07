@@ -23,7 +23,7 @@ button {
   font-family: "Poppins", sans-serif;
 }
 .container{
-  height: 81.8vh;
+  min-height: calc(100vh - 110px);
   background-color: var(--background);
 }
 .button {

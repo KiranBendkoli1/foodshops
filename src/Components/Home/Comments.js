@@ -16,14 +16,9 @@ const Comments = (props) => {
   if (user) {
     user = user.email;
   }
-  // console.log({ user });
-  const flag = user ? true : false;
   const foodplaces = useSelector((state) => state.places.foodplaces);
   const data = foodplaces.filter((data) => id === data.id)[0];
   const { index, comments, image, title, images } = data;
-  useEffect(() => {
-    // console.log(data);
-  }, []);
   const postCommentHandler = (values) => {
     dispatch(addComment({ id, user, comments, index, values }));
     navigate("/");

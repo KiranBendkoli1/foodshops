@@ -24,7 +24,5 @@ code {
 .bg {
   background-color: var(--background);
   background-size: contain;
-  /* height: 90vh; */
-  /* display: flex;
-  flex:1; */
+
 }
