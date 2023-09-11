@@ -121,7 +121,7 @@ const OwnersHomepage = () => {
                       </p>
                     </div>
                   </div>
-                  <ImageCarousel images={shop.images} width={width < 500 ? width/ 1.5 : "500px"} height={width < 500 ? "240px" : "350px"} />
+                  <ImageCarousel images={shop.images} width={width < 500 ? width / 1.5 : "500px"} height={width < 500 ? "240px" : "350px"} />
                   <h4>Contact Details</h4>
                   <p>
                     Email Address : {user.email} <br />
@@ -135,11 +135,11 @@ const OwnersHomepage = () => {
                 </div>
               )}
             </Col>
-            <Col xs={24} xl={12} style={{ marginTop: width<500?"20px" :"200px" }}>
-              {shop && (
+            <Col xs={24} xl={12} style={{ marginTop: width < 500 ? "20px" : "200px" }}>
+              {shop.selectPosition && (
                 <MapComponent
                   currentPosition={
-                    shop === undefined ? [] : shop.selectPosition
+                    shop !== undefined ? shop.selectPosition : []
                   }
                   mywidth={width < 500 ? width / 1.5 : "400px"}
                   myheight={"340px"}

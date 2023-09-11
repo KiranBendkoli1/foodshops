@@ -207,7 +207,7 @@ const EditableTable = () => {
       dataIndex: "description",
       editable: true,
       render: (text) => (
-        <>{width < 500 ? `${text.slice(0, 50)}...` : `${text.slice(0,100)}...`}</>
+        <div style={{width:"150px"}}>{width < 500 ? `${text.slice(0, 50)}...` : `${text.slice(0,100)}...`}</div>
       )
     },
     {
@@ -324,7 +324,7 @@ const EditableTable = () => {
             dataSource={fetchedData}
             columns={mergedColumns}
             rowClassName="editable-row"
-            scroll={{ x: 800 }}
+            scroll={{ x: 1200 }}
             pagination={{
               pageSize: 3,
               onChange: cancel,
