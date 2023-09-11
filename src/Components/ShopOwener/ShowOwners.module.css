@@ -1,10 +1,9 @@
 @import '../../theme.css';
 
 .shopcard {
-    margin: 5px;
-    width: 400px;
-    display: flex;
-    box-shadow: 3px 2px 2px var(--shadow);
-    justify-content: center;
-  }
-  
+  margin: 5px;
+  width: 400px;
+  display: flex;
+  box-shadow: 3px 2px 2px var(--shadow);
+  justify-content: center;
+}

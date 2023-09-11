@@ -23,6 +23,7 @@ import {
   updateDislikes,
   updateLikes,
 } from "../../store/placesSlice";
+import useWindowDimensions from "../../hooks/useWindowDimensions";
 const CompleteDetails = (props) => {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ const CompleteDetails = (props) => {
     openCommentsWarningModal,
     closeCommentsWarningModal,
   ] = useModal();
+  const [width, height] = useWindowDimensions();
   const isLoading = useSelector((state) => state.places.isLoading);
   const data = useSelector((state) => state.places.foodplace);
   let user = useMemo(() => localStorage.getItem("user"), []);
@@ -98,18 +100,18 @@ const CompleteDetails = (props) => {
     dispatch(getFoodShopById({ id }));
   }, [id]);
   return (
-    <div className={classes.background}>
+    <div className={classes.background} style={{ padding: "5px" }}>
       {!data ? (
         <Spin />
       ) : (
-        <Card style={{ height: "auto", maxWidth: "800px" }}>
-          <ImageCarousel images={images} width={"400px"} windth={"400px"} />
+        <Card style={{ height: "auto", maxWidth: "800px", width: width < 500 ? width : "800px" }}>
+          <ImageCarousel images={images} width={width < 500 ? width / 1.5 : "400px"} height={height / 1.2} />
           <div>
             <h2 className={classes.shopname}>{data?.title || ""}</h2>
-            <p>Speciality: {speciality}</p>
-            <p>{description}</p>
-            <p>Contact No: {contact}</p>
-            <p>Address: {address}</p>
+            <p><u>Speciality:</u> {speciality}</p>
+            <p style={{ textAlign: "justify", textJustify: "inter-word" }}><u>Description:</u> {description}</p>
+            <p><u>Contact No:</u> {contact}</p>
+            <p><u>Address: </u>{address}</p>
             <div className={classes.useractions}>
               <p
                 onClick={addLikeHandler}

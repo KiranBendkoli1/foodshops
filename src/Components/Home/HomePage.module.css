@@ -30,6 +30,7 @@ body {
 }
 .navmenu{
   background-color: var(--header);
+
 }
 .content {
   display: flex;
@@ -127,12 +128,15 @@ body {
   .commentcard img {
     width: auto;
   }
+  .header{
+    padding:  0px 10px;
+  }
+  /* .content{
+    padding: 0px 10px;
+  } */
 }
 
 @media (max-width: 350px) {
-  .title {
-    font-size: smaller;
-  }
 
   .commentcard {
     width: 300px;

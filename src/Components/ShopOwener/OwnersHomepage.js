@@ -15,11 +15,13 @@ import veg from "../../assets/icons/icons8-veg-48.png";
 import nonveg from "../../assets/icons/icons8-non-veg-48.png";
 import MapComponent from "../Maps/MapComponent";
 import useModal from "../../hooks/useModal";
+import useWindowDimensions from "../../hooks/useWindowDimensions";
 const OwnersHomepage = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const [inputItemName, setInputItemName] = useState("");
   const [inputDiscount, setInputDiscount] = useState("");
+  const [width, height] = useWindowDimensions();
   const [isCommentsModalOpen, openCommentsModal, closeCommentsModal] =
     useModal();
   const [isDiscountModalOpen, openDiscountModal, closeDiscountModal] =
@@ -50,20 +52,20 @@ const OwnersHomepage = () => {
       });
     }
     form.resetFields();
-  },[]);
+  }, []);
   return (
     <>
       {isLoading ? (
         <Skeleton />
       ) : (
         <>
-          <Row style={{ width: "100%" }} className={classes.text}>
-            <Col span={10} offset={2}>
+          <Row style={{ width: "100%", padding: "10px" }} className={classes.text}>
+            <Col xs={24} xl={12} >
               <div
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  margin: "2px 20px",
+                  margin: "2px 8px",
                 }}
               >
                 <h1 className={classes.heading}>{user.name}</h1>{" "}
@@ -72,35 +74,34 @@ const OwnersHomepage = () => {
                   <p>
                     {shop && shop.type
                       ? shop.type.includes("Veg") && (
-                          <img
-                            src={veg}
-                            alt="veg"
-                            style={{ width: "20px", height: "20px" }}
-                          />
-                        )
+                        <img
+                          src={veg}
+                          alt="veg"
+                          style={{ width: "20px", height: "20px" }}
+                        />
+                      )
                       : ""}{" "}
                     {shop && shop.type
                       ? shop.type.includes("Non Veg") && (
-                          <img
-                            src={nonveg}
-                            alt="non-veg"
-                            style={{ width: "20px", height: "20px" }}
-                          />
-                        )
+                        <img
+                          src={nonveg}
+                          alt="non-veg"
+                          style={{ width: "20px", height: "20px" }}
+                        />
+                      )
                       : ""}
                   </p>
                 </p>
               </div>
-              {!shop  ? (
+              {!shop ? (
                 <Button>
                   <Link to={"/addInfo"}>Add Shop Details</Link>
                 </Button>
               ) : (
                 <div>
-                  <p>Speciality: {shop.speciality}</p>
-
-                  <p>Description: {shop.description}</p>
-                  <p>Address: {shop.address} </p>
+                  <p ><u>Speciality:</u> {shop.speciality}</p>
+                  <p style={{ textAlign: "justify", textJustify: "inter-word" }}><u>Description:</u> {shop.description}</p>
+                  <p><u>Address: </u>{shop.address} </p>
                   <div className={classes.useractions}>
                     <div
                       style={{
@@ -120,7 +121,7 @@ const OwnersHomepage = () => {
                       </p>
                     </div>
                   </div>
-                  <ImageCarousel images={shop.images} width={"500px"} />
+                  <ImageCarousel images={shop.images} width={width < 500 ? width/ 1.5 : "500px"} height={width < 500 ? "240px" : "350px"} />
                   <h4>Contact Details</h4>
                   <p>
                     Email Address : {user.email} <br />
@@ -134,14 +135,14 @@ const OwnersHomepage = () => {
                 </div>
               )}
             </Col>
-            <Col span={12} style={{ marginTop: "200px" }}>
+            <Col xs={24} xl={12} style={{ marginTop: width<500?"20px" :"200px" }}>
               {shop && (
                 <MapComponent
                   currentPosition={
                     shop === undefined ? [] : shop.selectPosition
                   }
-                  mywidth="400px"
-                  myheight="340px"
+                  mywidth={width < 500 ? width / 1.5 : "400px"}
+                  myheight={"340px"}
                   address={shop === undefined ? [] : shop.address}
                 />
               )}
@@ -157,8 +158,8 @@ const OwnersHomepage = () => {
             }}
             onCancel={() => closeDiscountModal()}
           >
-            
-            {shop  && shop.discounts !== undefined && (
+
+            {shop && shop.discounts !== undefined && (
               <Discounts
                 discounts={shop.discounts}
                 index={shop.index}
