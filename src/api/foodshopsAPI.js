@@ -38,12 +38,8 @@ export const uploadFoodShopDataApi = async (data) => {
     const response = await axios.post(
       `${api_url}/foodshops/`,
       data
-      //   {
-      //     headers: { "Content-Type": "multipart/form-data" },
-      //   }
     );
     const resData = await response.data;
-    // console.log(resData);
     return resData;
   } catch (error) {
     return error.response.data;

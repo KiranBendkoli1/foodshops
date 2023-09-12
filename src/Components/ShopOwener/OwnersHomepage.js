@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Button, Modal, Form, Input, Row, Col, Skeleton } from "antd";
 import {
   LikeOutlined,
@@ -19,8 +19,10 @@ import useWindowDimensions from "../../hooks/useWindowDimensions";
 const OwnersHomepage = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const [inputItemName, setInputItemName] = useState("");
-  const [inputDiscount, setInputDiscount] = useState("");
+  // const [inputItemName, setInputItemName] = useState("");
+  // const [inputDiscount, setInputDiscount] = useState("");
+  const itemRef = useRef();
+  const discountRef = useRef();
   const [width, height] = useWindowDimensions();
   const [isCommentsModalOpen, openCommentsModal, closeCommentsModal] =
     useModal();
@@ -31,24 +33,24 @@ const OwnersHomepage = () => {
   user = useMemo(() => JSON.parse(user), [user]);
 
   const shop = useSelector((state) => state.places.foodplace);
-  const isLoading = useSelector((state) => state.user.isLoading);
+  const isLoading = useSelector((state) => state.places.isLoading);
   useEffect(() => {
     const email = user.email;
     dispatch(getFoodShopByEmail({ email }));
   }, []);
 
   const handleOk = useCallback(() => {
-    if (inputItemName !== "" && inputDiscount !== 0) {
+    const item = itemRef.current.input.value;
+    const discount = discountRef.current.input.value;
+    if ( item !== "" && discount !== 0) {
       const data = {
         index: shop.index,
         id: shop._id,
         values: {},
         image: "",
-        discount: { item: inputItemName, discount: inputDiscount },
+        discount: { item: item, discount: discount },
       };
       dispatch(updateData(data)).then(() => {
-        setInputDiscount("");
-        setInputItemName("");
       });
     }
     form.resetFields();
@@ -194,8 +196,9 @@ const OwnersHomepage = () => {
                 ]}
               >
                 <Input
-                  value={inputItemName}
-                  onChange={(e) => setInputItemName(e.target.value)}
+                  ref={itemRef}
+                // value={inputItemName}
+                // onChange={(e) => setInputItemName(e.target.value)}
                 />
               </Form.Item>
 
@@ -215,8 +218,9 @@ const OwnersHomepage = () => {
                   min="5"
                   max="100"
                   step="5"
-                  value={inputDiscount}
-                  onChange={(e) => setInputDiscount(e.target.value)}
+                  ref={discountRef}
+                // value={inputDiscount}
+                // onChange={(e) => setInputDiscount(e.target.value)}
                 />
               </Form.Item>
             </Form>

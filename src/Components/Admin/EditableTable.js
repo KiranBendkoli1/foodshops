@@ -137,7 +137,6 @@ const EditableTable = () => {
     setEditingKey("");
   };
   const handleDelete = (key, id) => {
-    // console.log(id);
     const newData = data.filter((item) => item.key !== key);
     dispatch(deleteDataFromDb(id));
     setData(newData);
@@ -152,7 +151,6 @@ const EditableTable = () => {
       const discountdata = `${item} | ${discount}`;
       dispatch(extraDataActions.setItem(""));
       dispatch(extraDataActions.setDiscount(""));
-      // console.log({ row });
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
       if (index > -1) {
@@ -172,7 +170,6 @@ const EditableTable = () => {
           image: url,
           discount: discountdata,
         };
-        // console.log(data);
         dispatch(updateData(data));
         setData(newData);
         setEditingKey("");

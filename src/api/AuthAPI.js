@@ -10,7 +10,6 @@ export const signInApi = async (email, password) => {
         password,
       }
     );
-    console.log(response);
     const result = await response.data;
     return result;
   } catch (error) {

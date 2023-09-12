@@ -104,37 +104,29 @@ export const updateData = createAsyncThunk(
   "content/updateData",
   async (data, thunkAPI) => {
     const { index, id, values, discount } = data;
-    // // console.log(data);
     let result;
-    // thunkAPI.dispatch(fetchPlaces());
     const foodplaces = thunkAPI.getState().places.foodplaces;
     try {
-      let newValues = { ...values };
       const getResponse = await getFoodShopByIdApi(id);
       result = getResponse.data;
-      result = { ...result, ...newValues, id: id, index: index };
-      // console.log(result);
-
-      if (discount.item !== undefined) {
-        result.discounts[result.discounts.length] = {
-          item: discount.item,
-          discount: discount.discount,
-        };
-      }
-      // // console.log({ newValues });
+      console.log(result)
+      result = { ...result, ...values, id: id, index: index };
+      result.discounts[result.discounts.length] = (discount.item !== undefined) && discount;
+      console.log(result)
       const updatedFoodPlaces = foodplaces.map((place) =>
         place._id === id ? result : place
       );
+      console.log(result)
       const response = await updateFoodShopByIdApi(id, result);
       if (response.status === "success") {
         toast.success(response.message);
       } else {
         toast.error(response.message);
       }
-      // console.log({ result });
+      console.log([updatedFoodPlaces, result])
       return [updatedFoodPlaces, result];
     } catch (error) {
-      console.log({ error });
+      toast.error(error.message);
     }
   }
 );
@@ -194,7 +186,6 @@ export const updateLikes = createAsyncThunk(
       const result = response.data;
       let liked = result.liked;
       let disliked = result.disliked;
-      // console.log(liked);
       if (liked.find((e) => e === user.email)) {
         uLikes = likes !== 0 ? likes - 1 : likes;
         liked = liked.filter((e) => e !== user.email);
@@ -372,8 +363,8 @@ const placesSlice = createSlice({
     });
     builder.addCase(updateData.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.foodplace = action.payload[1];
       state.foodplaces = action.payload[0];
+      state.foodplace = action.payload[1];
       // state.foodplaces.filter((place) => place._id === action.payload[0])[0] =
       //   action.payload[1];
     });
