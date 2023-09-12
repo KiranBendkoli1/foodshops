@@ -122,8 +122,8 @@ const usePlaceStore = create((set, get) => ({
       result = getResponse.data;
       console.log(result);
       result = { ...result, ...values, id: id, index: index };
-      result.discounts[result.discounts.length] =
-        discount.item !== undefined && discount;
+      if (discount.item !== undefined)
+        result.discounts[result.discounts.length] = discount;
       console.log(result);
       const updatedFoodPlaces = foodplaces.map((place) =>
         place._id === id ? result : place
