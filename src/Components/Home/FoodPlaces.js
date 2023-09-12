@@ -1,14 +1,16 @@
 import React, { useCallback, useMemo, useState } from "react";
 import FoodPlace from "./FoodPlace";
-import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { Col, Row, Select, Space } from "antd";
-import { fetchPlaces } from "../../store/placesSlice";
+import usePlaceStore from "../../zstore/place";
 const { Option } = Select;
 
 const FoodPlaces = () => {
   const [search, setSearch] = useState("");
-  let foodplaces = useSelector((state) => state.places.foodplaces);
+  const { foodplaces, fetchPlaces } = usePlaceStore((state) => ({
+    foodplaces: state.foodplaces,
+    fetchPlaces: state.fetchPlaces,
+  }));
   const names = useMemo(
     () => foodplaces.map((place) => place.title),
     [foodplaces]
@@ -21,13 +23,12 @@ const FoodPlaces = () => {
     () => names.concat(locations),
     [names, locations]
   );
-  const dispatch = useDispatch();
   const handleChange = useCallback((value) => {
     setSearch(value.toString());
   }, []);
   useEffect(() => {
-    dispatch(fetchPlaces());
-  },[dispatch]);
+    fetchPlaces();
+  }, [foodplaces]);
   return (
     <>
       <Select
@@ -72,5 +73,3 @@ const FoodPlaces = () => {
 };
 
 export default FoodPlaces;
-
-

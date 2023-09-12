@@ -1,4 +1,4 @@
-import React, { useCallback,  useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Button, Card, Form, Input, Modal } from "antd";
 import {
   LikeOutlined,
@@ -12,19 +12,13 @@ import {
 import classes from "./HomePage.module.css";
 import { useNavigate } from "react-router-dom";
 import ImageCarousel from "../UI/ImageCarousel";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  updateDislikes,
-  updateLikes,
-  addComment,
-} from "../../store/placesSlice";
 import { FaDirections } from "react-icons/fa";
 import { RWebShare } from "react-web-share";
 import veg from "../../assets/icons/icons8-veg-48.png";
 import nonveg from "../../assets/icons/icons8-non-veg-48.png";
 import useModal from "../../hooks/useModal";
+import usePlaceStore from "../../zstore/place";
 const FoodPlace = (props) => {
-  const dispatch = useDispatch();
   const [isLikesOpen, openLikesModal, closeLikesModal] = useModal();
   const [isOfferModalOpen, openOfferModal, closeOfferModal] = useModal();
   const [isCommentsModalOpen, openCommentsModal, closeCommentsModal] =
@@ -34,12 +28,20 @@ const FoodPlace = (props) => {
     openCommentsWarningModal,
     closeCommentsWarningModal,
   ] = useModal();
-  const isLoading = useSelector((state) => state.places.isLoading);
+
+  const { isLoading, updateLikes, updateDislikes, addComment } = usePlaceStore(
+    (state) => ({
+      isLoading: state.isLoading,
+      updateLikes: state.updateLikes,
+      updateDislikes: state.updateDislikes,
+      addComment: state.addComment,
+    })
+  );
   let user = useMemo(() => localStorage.getItem("user"), []);
   user = useMemo(() => JSON.parse(user), [user]);
   const navigate = useNavigate();
   const {
-    index,
+   
     id,
     liked,
     disliked,
@@ -62,23 +64,23 @@ const FoodPlace = (props) => {
     if (!user) {
       openLikesModal();
     } else {
-      dispatch(updateLikes({ id, index, likes, dislikes, user }));
+      updateLikes({ id,  likes, dislikes, user });
     }
-  }, [id, index, likes, dislikes, user, dispatch, liked, openLikesModal]);
+  }, [id, likes, dislikes, user, liked, openLikesModal]);
   const addDislikeHandler = useCallback(() => {
     if (!user) {
       openLikesModal();
     } else {
-      dispatch(updateDislikes({ id, index, likes, dislikes, user }));
+      updateDislikes({ id, likes, dislikes, user });
     }
-  }, [id, index, likes, dislikes, user, dispatch, openLikesModal]);
+  }, [id, likes, dislikes, user, openLikesModal]);
 
   const postCommentHandler = useCallback(
     (values) => {
-      dispatch(addComment({ id, user, comments, index, values }));
+      addComment({ id, user, comments,  values });
       navigate("/");
     },
-    [id, user, comments, index, dispatch, navigate]
+    [id, user, comments,  navigate]
   );
   const discountsMap = useMemo(() => {
     return discounts.map((discount) => {
@@ -288,7 +290,7 @@ const FoodPlace = (props) => {
                   onClick={() => {
                     !user && openCommentsWarningModal();
                   }}
-                  loading={isLoading}
+                  // loading={isLoading}
                 >
                   <SendOutlined /> Post Comment
                 </Button>

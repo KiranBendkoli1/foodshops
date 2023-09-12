@@ -8,8 +8,8 @@ import Navbar from "./Components/UI/Navbar";
 import classes from "./Components/Home/HomePage.module.css";
 import { Layout, theme, ConfigProvider } from "antd";
 import AdminHome from "./Components/Admin/AdminHome";
-import { useDispatch } from "react-redux";
-import { fetchPlaces } from "./store/placesSlice";
+// import { useDispatch } from "react-redux";
+// import { fetchPlaces } from "./store/placesSlice";
 import OwnersHomepage from "./Components/ShopOwener/OwnersHomepage";
 import CompleteDetails from "./Components/ShopOwener/CompleteDetails";
 import MapComponent from "./Components/Maps/MapComponent";
@@ -18,15 +18,16 @@ import { ThemeContext } from "./context/theme-context";
 import "./index.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import usePlaceStore from "./zstore/place";
 const { Header, Content } = Layout;
 const { defaultAlgorithm, darkAlgorithm } = theme;
 
 function App() {
   const themeContext = useContext(ThemeContext);
-  const dispatch = useDispatch();
+  const fetchPlaces = usePlaceStore(state =>state.fetchPlaces);
   useEffect(() => {
-    dispatch(fetchPlaces());
-  }, [dispatch]);
+    fetchPlaces();
+  }, []);
   return <ConfigProvider
     theme={{
       algorithm:

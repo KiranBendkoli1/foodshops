@@ -2,28 +2,25 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { Button, Card, Form, Input } from "antd";
 import classes from "./AuthCommon.module.css";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { signIn } from "../../store/userSlice";
 import { toast } from "react-toastify";
+import useAuthStore from "../../zstore/auth";
 const Login = () => {
   const navigate = useNavigate();
-  const isLoading = useSelector((state) => state.user.isLoading);
-  const dispatch = useDispatch();
+  const isLoading = useAuthStore(state => state.isLoading)
+  const signIn = useAuthStore(state => state.signIn);
   const emailRef = useRef();
   const passwordRef = useRef();
-
   const onFinishHandler = useCallback(() => {
     const email = emailRef.current.input.value;
     const password = passwordRef.current.input.value;
-    dispatch(signIn({ email, password })).then(async (data) => {
+    signIn({ email, password }).then(async (data) => {
       console.log(data);
-      const res = await data.payload;
+      const res = await data;
       if (res.status === "failure") {
         toast.error(res.message)
         return res.message;
       } else if (res.status === "success") {
         toast.success(res.message)
-
         const user = res.data;
         localStorage.setItem("user", JSON.stringify(user));
         if (user && user.role === "admin") {
@@ -36,7 +33,7 @@ const Login = () => {
         return res.message;
       }
     });
-  }, [navigate, dispatch, emailRef, passwordRef]);
+  }, [navigate, emailRef, passwordRef]);
 
   const conditionalLogin = useCallback(() => {
     const user = JSON.parse(localStorage.getItem("user"));

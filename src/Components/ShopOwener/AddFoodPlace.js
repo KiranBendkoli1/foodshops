@@ -25,8 +25,7 @@ import {
 import { InboxOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import classes from "../Home/HomePage.module.css";
-import { uploadFoodShopData } from "../../store/placesSlice";
-import { useDispatch, useSelector } from "react-redux";
+import usePlaceStore from "../../zstore/place";
 
 const { Dragger } = Upload;
 const { BaseLayer } = LayersControl;
@@ -34,19 +33,20 @@ const { BaseLayer } = LayersControl;
 const AddFoodPlace = () => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
+  const { isLoading, uploadFoodShopData } = usePlaceStore((state) => ({
+    isLoading: state.isLoading,
+    uploadFoodShopData: state.uploadFoodShopData,
+  }));
   const [selectPosition, setSelectPositon] = useState([19.997454, 73.789803]);
-
   const myIcon = new Icon({
     iconUrl: markerIcon,
     iconSize: [38, 38],
   });
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   let user = useMemo(() => localStorage.getItem("user"), []);
   user = useMemo(() => JSON.parse(user), [user]);
   const contact = useMemo(() => user.contact, [user]);
   const email = useMemo(() => user.email, [user]);
-  const isLoading = useSelector((state) => state.places.isLoading);
   const [title, setTitle] = useState(user.name);
   const [speciality, setSpeciality] = useState("");
   const [description, setDescription] = useState("");
@@ -54,20 +54,17 @@ const AddFoodPlace = () => {
   const [images, setImages] = useState();
   const [address, setAddress] = useState("");
   const onFinishHandler = () => {
-
-    dispatch(
-      uploadFoodShopData({
-        title,
-        contact,
-        email,
-        speciality,
-        description,
-        selectPosition,
-        address,
-        images,
-        type,
-      })
-    ).then(() => {
+    uploadFoodShopData({
+      title,
+      contact,
+      email,
+      speciality,
+      description,
+      selectPosition,
+      address,
+      images,
+      type,
+    }).then(() => {
       navigate("/ownershome");
     });
   };
@@ -107,7 +104,7 @@ const AddFoodPlace = () => {
               textAlign: "center",
             }}
           >
-            <h2 className={classes.shopname } style={{ textAlign: "center" }}>
+            <h2 className={classes.shopname} style={{ textAlign: "center" }}>
               Add Detail Information of {title}
             </h2>
           </Row>
@@ -313,12 +310,7 @@ const AddFoodPlace = () => {
                   </BaseLayer>
                 </LayersControl>
                 {selectPosition !== null && (
-                  <Marker
-                    position={
-                      selectPosition
-                    }
-                    icon={myIcon}
-                  ></Marker>
+                  <Marker position={selectPosition} icon={myIcon}></Marker>
                 )}
                 <ResetCenterView selectPosition={selectPosition} />
               </MapContainer>

@@ -7,20 +7,19 @@ import sun from "../../assets/icons/brightness.png";
 import moon from "../../assets/icons/moon.png";
 import { Switch } from "antd";
 import { ThemeContext } from "../../context/theme-context";
-import { useDispatch } from "react-redux";
-import { logout } from "../../store/userSlice";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
+import useAuthStore from "../../zstore/auth";
 const Navbar = () => {
   let user = localStorage.getItem("user");
   user = useMemo(() => JSON.parse(user), [user]);
   const { height, width } = useWindowDimensions();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const logout = useAuthStore(state=>state.logout);
   const logoutHandler = useCallback(() => {
-    dispatch(logout()).then(() => {
+    logout().then(() => {
       navigate("/login");
     });
-  }, [dispatch, navigate]);
+  }, [navigate]);
   const loginHandler = useCallback(() => {
     navigate("/login");
   }, [navigate]);

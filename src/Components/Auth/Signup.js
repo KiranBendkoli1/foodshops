@@ -7,14 +7,13 @@ import React, {
 import { Button, Card, Form, Input, Spin, Row, Col } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import classes from "./AuthCommon.module.css";
-import { signUp } from "../../store/userSlice";
-import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import useAuthStore from "../../zstore/auth";
 const Signup = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [userType, setUserType] = useState("");
-  const isLoading = useSelector((state) => state.user.isLoading);
+  const isLoading = useAuthStore(state => state.isLoading);
+  const signUp = useAuthStore(state=>state.signUp);
 
   const nameRef = useRef();
   const emailRef = useRef();
@@ -26,9 +25,9 @@ const Signup = () => {
     const email = emailRef.current.input.value;
     const contact = contactRef.current.input.value;
     const password = passwordRef.current.input.value;
-    dispatch(signUp({ name, email, contact, password, userType })).then(
+    signUp({ name, email, contact, password, userType }).then(
       async (data) => {
-        const res = await data.payload;
+        const res = await data;
         if (res.status === "failure") {
           toast.error(res.message);
         } else if (res.status === "success") {
@@ -40,7 +39,7 @@ const Signup = () => {
         }
       }
     );
-  }, [userType, nameRef, emailRef, contactRef, passwordRef, dispatch, navigate]);
+  }, [userType, nameRef, emailRef, contactRef, passwordRef, navigate]);
 
   const compare = useCallback(
     (user, shopOwner) => {

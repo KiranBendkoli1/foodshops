@@ -1,26 +1,40 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Button, Modal, Form, Input, Row, Col, Skeleton } from "antd";
 import {
   LikeOutlined,
   CommentOutlined,
   DislikeOutlined,
 } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
 import classes from "../Auth/AuthCommon.module.css";
 import { Link } from "react-router-dom";
 import Discounts from "../Admin/Discounts";
-import { updateData, getFoodShopByEmail } from "../../store/placesSlice";
 import ImageCarousel from "../UI/ImageCarousel";
 import veg from "../../assets/icons/icons8-veg-48.png";
 import nonveg from "../../assets/icons/icons8-non-veg-48.png";
 import MapComponent from "../Maps/MapComponent";
 import useModal from "../../hooks/useModal";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
+import usePlaceStore from "../../zstore/place";
 const OwnersHomepage = () => {
+  const {
+    isLoading,
+    foodplace: shop,
+    getFoodShopByEmail,
+    updateData,
+  } = usePlaceStore((state) => ({
+    isLoading: state.isLoading,
+    foodplace: state.foodplace,
+    getFoodShopByEmail: state.getFoodShopByEmail,
+    updateData: state.updateData,
+  }));
+
   const [form] = Form.useForm();
-  const dispatch = useDispatch();
-  // const [inputItemName, setInputItemName] = useState("");
-  // const [inputDiscount, setInputDiscount] = useState("");
   const itemRef = useRef();
   const discountRef = useRef();
   const [width, height] = useWindowDimensions();
@@ -28,21 +42,17 @@ const OwnersHomepage = () => {
     useModal();
   const [isDiscountModalOpen, openDiscountModal, closeDiscountModal] =
     useModal();
-  // const user = useSelector((state) => state.user.user);
   let user = useMemo(() => localStorage.getItem("user"), []);
   user = useMemo(() => JSON.parse(user), [user]);
-
-  const shop = useSelector((state) => state.places.foodplace);
-  const isLoading = useSelector((state) => state.places.isLoading);
   useEffect(() => {
     const email = user.email;
-    dispatch(getFoodShopByEmail({ email }));
+    getFoodShopByEmail({ email });
   }, []);
 
   const handleOk = useCallback(() => {
     const item = itemRef.current.input.value;
     const discount = discountRef.current.input.value;
-    if ( item !== "" && discount !== 0) {
+    if (item !== "" && discount !== 0) {
       const data = {
         index: shop.index,
         id: shop._id,
@@ -50,8 +60,7 @@ const OwnersHomepage = () => {
         image: "",
         discount: { item: item, discount: discount },
       };
-      dispatch(updateData(data)).then(() => {
-      });
+      updateData(data).then(() => {});
     }
     form.resetFields();
   }, []);
@@ -61,8 +70,11 @@ const OwnersHomepage = () => {
         <Skeleton />
       ) : (
         <>
-          <Row style={{ width: "100%", padding: "10px" }} className={classes.text}>
-            <Col xs={24} xl={12} >
+          <Row
+            style={{ width: "100%", padding: "10px" }}
+            className={classes.text}
+          >
+            <Col xs={24} xl={12}>
               <div
                 style={{
                   display: "flex",
@@ -76,21 +88,21 @@ const OwnersHomepage = () => {
                   <p>
                     {shop && shop.type
                       ? shop.type.includes("Veg") && (
-                        <img
-                          src={veg}
-                          alt="veg"
-                          style={{ width: "20px", height: "20px" }}
-                        />
-                      )
+                          <img
+                            src={veg}
+                            alt="veg"
+                            style={{ width: "20px", height: "20px" }}
+                          />
+                        )
                       : ""}{" "}
                     {shop && shop.type
                       ? shop.type.includes("Non Veg") && (
-                        <img
-                          src={nonveg}
-                          alt="non-veg"
-                          style={{ width: "20px", height: "20px" }}
-                        />
-                      )
+                          <img
+                            src={nonveg}
+                            alt="non-veg"
+                            style={{ width: "20px", height: "20px" }}
+                          />
+                        )
                       : ""}
                   </p>
                 </p>
@@ -101,9 +113,18 @@ const OwnersHomepage = () => {
                 </Button>
               ) : (
                 <div>
-                  <p ><u>Speciality:</u> {shop.speciality}</p>
-                  <p style={{ textAlign: "justify", textJustify: "inter-word" }}><u>Description:</u> {shop.description}</p>
-                  <p><u>Address: </u>{shop.address} </p>
+                  <p>
+                    <u>Speciality:</u> {shop.speciality}
+                  </p>
+                  <p
+                    style={{ textAlign: "justify", textJustify: "inter-word" }}
+                  >
+                    <u>Description:</u> {shop.description}
+                  </p>
+                  <p>
+                    <u>Address: </u>
+                    {shop.address}{" "}
+                  </p>
                   <div className={classes.useractions}>
                     <div
                       style={{
@@ -123,7 +144,11 @@ const OwnersHomepage = () => {
                       </p>
                     </div>
                   </div>
-                  <ImageCarousel images={shop.images} width={width < 500 ? width / 1.5 : "500px"} height={width < 500 ? "240px" : "350px"} />
+                  <ImageCarousel
+                    images={shop.images}
+                    width={width < 500 ? width / 1.5 : "500px"}
+                    height={width < 500 ? "240px" : "350px"}
+                  />
                   <h4>Contact Details</h4>
                   <p>
                     Email Address : {user.email} <br />
@@ -137,8 +162,12 @@ const OwnersHomepage = () => {
                 </div>
               )}
             </Col>
-            <Col xs={24} xl={12} style={{ marginTop: width < 500 ? "20px" : "200px" }}>
-              {shop.selectPosition && (
+            <Col
+              xs={24}
+              xl={12}
+              style={{ marginTop: width < 500 ? "20px" : "200px" }}
+            >
+              {shop && shop.selectPosition && (
                 <MapComponent
                   currentPosition={
                     shop !== undefined ? shop.selectPosition : []
@@ -160,7 +189,6 @@ const OwnersHomepage = () => {
             }}
             onCancel={() => closeDiscountModal()}
           >
-
             {shop && shop.discounts !== undefined && (
               <Discounts
                 discounts={shop.discounts}
@@ -197,8 +225,8 @@ const OwnersHomepage = () => {
               >
                 <Input
                   ref={itemRef}
-                // value={inputItemName}
-                // onChange={(e) => setInputItemName(e.target.value)}
+                  // value={inputItemName}
+                  // onChange={(e) => setInputItemName(e.target.value)}
                 />
               </Form.Item>
 
@@ -219,8 +247,8 @@ const OwnersHomepage = () => {
                   max="100"
                   step="5"
                   ref={discountRef}
-                // value={inputDiscount}
-                // onChange={(e) => setInputDiscount(e.target.value)}
+                  // value={inputDiscount}
+                  // onChange={(e) => setInputDiscount(e.target.value)}
                 />
               </Form.Item>
             </Form>
@@ -231,7 +259,8 @@ const OwnersHomepage = () => {
             onOk={() => closeCommentsModal()}
             onCancel={() => closeCommentsModal()}
           >
-            {shop && shop.comments &&
+            {shop &&
+              shop.comments &&
               shop.comments.map((comment) => {
                 return (
                   <p key={comment}>

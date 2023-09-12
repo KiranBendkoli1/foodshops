@@ -1,18 +1,18 @@
 import React, { memo, useCallback, useMemo } from "react";
 import { Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
-import { deleteItem } from "../../store/placesSlice";
-import { useDispatch } from "react-redux";
+import usePlaceStore from "../../zstore/place";
 const Discounts = ({ discounts, id, index }) => {
+  const deleteItem = usePlaceStore(state => state.deleteItem);
   let user = useMemo(() => localStorage.getItem("user"), []);
   user = useMemo(() => JSON.parse(user), [user]);
-  const dispatch = useDispatch();
+
   const deleteButtonHandler = useCallback(
     (item) => {
       const data = { id, index, item };
-      dispatch(deleteItem(data));
+      deleteItem(data);
     },
-    [id, index, dispatch]
+    [id, index]
   );
 
   return (

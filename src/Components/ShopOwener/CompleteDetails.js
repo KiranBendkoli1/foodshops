@@ -14,21 +14,28 @@ import {
 import { RWebShare } from "react-web-share";
 import classes from "../Home/HomePage.module.css";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { getFoodShopById } from "../../store/placesSlice";
 import ImageCarousel from "../UI/ImageCarousel";
 import useModal from "../../hooks/useModal";
-import {
-  addComment,
-  updateDislikes,
-  updateLikes,
-} from "../../store/placesSlice";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
+import usePlaceStore from "../../zstore/place";
 const CompleteDetails = (props) => {
   const { id } = useParams();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const {
+    isLoading,
+    foodplace: data,
+    updateLikes,
+    updateDislikes,
+    addComment,
+    getFoodShopById,
+  } = usePlaceStore((state) => ({
+    isLoading: state.isLoading,
+    foodplace: state.foodplace,
+    updateLikes: state.updateLikes,
+    updateDislikes: state.updateDislikes,
+    addComment: state.addComment,
+    getFoodShopById: state.getFoodShopById,
+  }));
   const [isLikesOpen, openLikesModal, closeLikesModal] = useModal();
   const [isCommentsModalOpen, openCommentsModal, closeCommentsModal] =
     useModal();
@@ -38,22 +45,16 @@ const CompleteDetails = (props) => {
     closeCommentsWarningModal,
   ] = useModal();
   const [width, height] = useWindowDimensions();
-  const isLoading = useSelector((state) => state.places.isLoading);
-  const data = useSelector((state) => state.places.foodplace);
   let user = useMemo(() => localStorage.getItem("user"), []);
   user = useMemo(() => JSON.parse(user), [user]);
 
   const {
-    index,
     liked,
     disliked,
-    image,
     selectPosition,
     images,
-    type,
     description,
     contact,
-    discounts,
     address,
     title,
     likes,
@@ -65,22 +66,22 @@ const CompleteDetails = (props) => {
     if (!user) {
       openLikesModal();
     } else {
-      dispatch(updateLikes({ id, index, likes, dislikes, user }));
+      updateLikes({ id, likes, dislikes, user });
     }
-  }, [id, index, likes, dislikes, user, dispatch, liked, openLikesModal]);
+  }, [id, likes, dislikes, user, liked, openLikesModal]);
   const addDislikeHandler = useCallback(() => {
     if (!user) {
       openLikesModal();
     } else {
-      dispatch(updateDislikes({ id, index, likes, dislikes, user }));
+      updateDislikes({ id, likes, dislikes, user });
     }
-  }, [id, index, likes, dislikes, user, dispatch, openLikesModal]);
+  }, [id, likes, dislikes, user, openLikesModal]);
 
   const postCommentHandler = useCallback(
     (values) => {
-      dispatch(addComment({ id, user, comments, index, values }));
+      addComment({ id, user, comments, values });
     },
-    [id, user, comments, index, dispatch, navigate]
+    [id, user, comments, navigate]
   );
 
   const commentsMap = useMemo(() => {
@@ -97,7 +98,7 @@ const CompleteDetails = (props) => {
     );
   }, [comments]);
   useEffect(() => {
-    dispatch(getFoodShopById({ id }));
+    getFoodShopById({ id });
   }, [id]);
   return (
     <Spin spinning={isLoading}>
@@ -105,14 +106,33 @@ const CompleteDetails = (props) => {
         {!data ? (
           <Spin />
         ) : (
-          <Card style={{ height: "auto", maxWidth: "800px", width: width < 500 ? width : "800px" }}>
-            <ImageCarousel images={images} width={width < 500 ? width / 1.5 : "400px"} height={height / 1.2} />
+          <Card
+            style={{
+              height: "auto",
+              maxWidth: "800px",
+              width: width < 500 ? width : "800px",
+            }}
+          >
+            <ImageCarousel
+              images={images}
+              width={width < 500 ? width / 1.5 : "400px"}
+              height={height / 1.2}
+            />
             <div>
               <h2 className={classes.shopname}>{data?.title || ""}</h2>
-              <p><u>Speciality:</u> {speciality}</p>
-              <p style={{ textAlign: "justify", textJustify: "inter-word" }}><u>Description:</u> {description}</p>
-              <p><u>Contact No:</u> {contact}</p>
-              <p><u>Address: </u>{address}</p>
+              <p>
+                <u>Speciality:</u> {speciality}
+              </p>
+              <p style={{ textAlign: "justify", textJustify: "inter-word" }}>
+                <u>Description:</u> {description}
+              </p>
+              <p>
+                <u>Contact No:</u> {contact}
+              </p>
+              <p>
+                <u>Address: </u>
+                {address}
+              </p>
               <div className={classes.useractions}>
                 <p
                   onClick={addLikeHandler}
@@ -134,7 +154,8 @@ const CompleteDetails = (props) => {
                   className={classes.icons}
                   style={{ fontSize: "120%" }}
                 >
-                  {disliked && disliked.find((e) => user && e === user.email) ? (
+                  {disliked &&
+                  disliked.find((e) => user && e === user.email) ? (
                     <>
                       {dislikes} <DislikeFilled />
                     </>
