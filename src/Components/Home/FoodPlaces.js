@@ -27,7 +27,7 @@ const FoodPlaces = () => {
   }, []);
   useEffect(() => {
     dispatch(fetchPlaces());
-  },[dispatch]);
+  }, [dispatch]);
   return (
     <>
       <Select

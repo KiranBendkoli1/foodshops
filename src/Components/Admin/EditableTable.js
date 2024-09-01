@@ -164,7 +164,7 @@ const EditableTable = () => {
           image: url,
           discount: discountdata,
         };
-        // console.log(data);
+        console.log(data);
         dispatch(updateData(data));
         setData(newData);
         setEditingKey("");
@@ -201,7 +201,7 @@ const EditableTable = () => {
     {
       title: "Image",
       dataIndex: "images",
-      editable: false,
+      editable: true,
       render: (text) => (
         <ImageCarousel images={text} width={"200px"} height={"160px"} />
       ),

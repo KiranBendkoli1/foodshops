@@ -8,7 +8,8 @@ const ThemeContextProvider = ({ children }) => {
   const [theme, setTheme] = useState("light" );
   const toggleTheme = useCallback(() => {
     setTheme(theme === "light" ? "dark" : "light" );
-  },[]);
+    
+  });
   return <ThemeContext.Provider value={{theme, toggleTheme}}>{children}</ThemeContext.Provider>;
 };
 

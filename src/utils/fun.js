@@ -14,7 +14,7 @@ const uploadFoodPlaceData = async (
   title,
   speciality,
   description,
-  address,
+  location,
   contact,
   images,
   type
@@ -32,7 +32,7 @@ const uploadFoodPlaceData = async (
     key: `${x} ${title}`,
     title: title,
     speciality: speciality,
-    address: address,
+    location: location,
     description: description,
     likes: 0,
     dislikes: 0,

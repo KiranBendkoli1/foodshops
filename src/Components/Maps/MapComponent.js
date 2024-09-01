@@ -7,6 +7,7 @@ import {
   TileLayer,
   Marker,
   Popup,
+  useMap,
 } from "react-leaflet";
 import { ResetCenterView } from "../UI/Leaflet";
 import { useParams } from "react-router-dom";

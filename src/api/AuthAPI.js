@@ -1,38 +1,31 @@
 import axios from "axios";
-import { api_url } from "./api";
 
 export const signInApi = async (email, password) => {
   try {
-    const response = await axios.post(
-      `${api_url}/auth/login`,
-      {
-        email,
-        password,
-      }
-    );
+    const response = await axios.post(`http://localhost:5000/auth/login`, {
+      email,
+      password,
+    });
     console.log(response);
     const result = await response.data;
     return result;
   } catch (error) {
-    return error.response.data;
+    console.log(error);
   }
 };
 
 export const signUpApi = async (name, email, contact, password, userType) => {
   try {
-    const response = await axios.post(
-      `${api_url}/auth/register`,
-      {
-        name,
-        email,
-        contact,
-        password,
-        userType,
-      }
-    );
+    const response = await axios.post(`http://localhost:5000/auth/register`, {
+      name,
+      email,
+      contact,
+      password,
+      userType,
+    });
     const result = await response.data;
     return result;
   } catch (error) {
-    return error.response.data;
+    console.log(error);
   }
 };

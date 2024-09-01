@@ -1,6 +1,7 @@
 import React, {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -15,6 +16,8 @@ const Signup = () => {
   const dispatch = useDispatch();
   const [userType, setUserType] = useState("");
   const isLoading = useSelector((state) => state.user.isLoading);
+  // const user = useSelector((state) => state.user.user);
+  // useMemo(() => localStorage.setItem("user", JSON.stringify(user)), [user]);
 
   const nameRef = useRef();
   const emailRef = useRef();
@@ -30,7 +33,7 @@ const Signup = () => {
     // console.log({ name, email, contact, password, userType });
     dispatch(signUp({ name, email, contact, password, userType })).then(
       async (data) => {
-        // console.log(data);
+        console.log(data);
         // console.log(res);
         const res = await data.payload;
         if (res.status === "failure") {
@@ -45,7 +48,7 @@ const Signup = () => {
         }
       }
     );
-  }, [userType, nameRef, emailRef, contactRef, passwordRef, dispatch, navigate]);
+  }, [userType, nameRef, emailRef, contactRef, passwordRef]);
 
   const compare = useCallback(
     (user, shopOwner) => {
@@ -57,7 +60,7 @@ const Signup = () => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.role === "regular") navigate("/");
     if (user && user.role === "shopOwner") navigate("/ownershome");
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     conditionalSignup();

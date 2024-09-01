@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import markerIcon from "../../assets/icons/icons8-location-48.png";
 import { SearchOutlined } from "@ant-design/icons";
 import "leaflet/dist/leaflet.css";
-import { MapContainer, TileLayer, Marker,useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { Icon, latLng } from "leaflet";
 import { Input, List, Avatar, Col, Row, Button } from "antd";
 import axios from "axios";
@@ -68,7 +68,7 @@ const Leaflet = () => {
               };
 
               const queryString = new URLSearchParams(params).toString();
-              // console.log(queryString);
+              console.log(queryString);
               const requestOptions = {
                 method: "GET",
                 redirect: "follow",
@@ -101,7 +101,7 @@ const Leaflet = () => {
           />
         </div>
       </Col>
-      {/* {console.log(selectPositon)} */}
+      {console.log(selectPositon)}
       <Col
         span={12}
         style={{

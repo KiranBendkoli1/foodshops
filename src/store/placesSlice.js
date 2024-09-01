@@ -16,6 +16,7 @@ const initialPlacesState = {
 };
 const getBase64 = (image, cb) => {
   return new Promise((resolve) => {
+    let fileInfo;
     let baseURL = "";
     // Make new FileReader
     let reader = new FileReader();
@@ -24,12 +25,12 @@ const getBase64 = (image, cb) => {
     // on reader load somthing...
     reader.onload = () => {
       // Make a fileInfo Object
-      // console.log("Called", reader);
+      console.log("Called", reader);
       baseURL = reader.result;
-      // console.log(baseURL);
+      console.log(baseURL);
       resolve(baseURL);
     };
-    // console.log(fileInfo);
+    console.log(fileInfo);
   });
 };
 
@@ -43,21 +44,21 @@ export const uploadFoodShopData = createAsyncThunk(
       speciality,
       description,
       selectPosition,
-      address,
+      location,
       images,
       type,
     } = data;
     const imgPromise = Array.from(images, (image) => getBase64(image));
     const imageRes = await Promise.all(imgPromise);
     let x = Math.floor(Math.random() * 100 + 1);
-    // console.log(imageRes);
+    console.log(imageRes);
     try {
       const res = {
         key: `${x} ${title}`,
         title: title,
         email: email,
         speciality: speciality,
-        address: address,
+        address: location,
         description: description,
         selectPosition: selectPosition,
         contact: contact,
@@ -65,7 +66,7 @@ export const uploadFoodShopData = createAsyncThunk(
         images: imageRes,
         postedOn: new Date().toDateString(),
       };
-      // console.log(res);
+      console.log(res);
       const response = await uploadFoodShopDataApi(res);
       const resData = response.data;
       if (response.status === "success") {
@@ -94,7 +95,7 @@ export const getFoodShopByEmail = createAsyncThunk(
   async (data, thunkAPI) => {
     const { email } = data;
     const foodplaceData = await getFoodShopByEmailApi(email);
-    // console.log({ foodplaceData });
+    console.log({ foodplaceData });
     return foodplaceData.data;
   }
 );
@@ -104,7 +105,7 @@ export const updateData = createAsyncThunk(
   "content/updateData",
   async (data, thunkAPI) => {
     const { index, id, values, discount } = data;
-    // // console.log(data);
+    console.log(data);
     let result;
     // thunkAPI.dispatch(fetchPlaces());
     const foodplaces = thunkAPI.getState().places.foodplaces;
@@ -113,7 +114,7 @@ export const updateData = createAsyncThunk(
       const getResponse = await getFoodShopByIdApi(id);
       result = getResponse.data;
       result = { ...result, ...newValues, id: id, index: index };
-      // console.log(result);
+      console.log(result);
 
       if (discount.item !== undefined) {
         result.discounts[result.discounts.length] = {
@@ -121,7 +122,7 @@ export const updateData = createAsyncThunk(
           discount: discount.discount,
         };
       }
-      // // console.log({ newValues });
+      // console.log({ newValues });
       const updatedFoodPlaces = foodplaces.map((place) =>
         place._id === id ? result : place
       );
@@ -131,7 +132,7 @@ export const updateData = createAsyncThunk(
       } else {
         toast.error(response.message);
       }
-      // console.log({ result });
+      console.log({ result });
       return [updatedFoodPlaces, result];
     } catch (error) {
       console.log({ error });
@@ -143,19 +144,19 @@ export const updateData = createAsyncThunk(
 export const deleteItem = createAsyncThunk(
   "content/deleteItem",
   async (data) => {
-    const { id, item } = data;
+    const { id, index, item } = data;
     try {
-      // console.log({ data });
+      console.log({ data });
       const getResponse = await getFoodShopByIdApi(id);
       const result = getResponse.data;
       let discounts = result.discounts;
-      // // console.log({ discounts });
+      // console.log({ discounts });
       discounts = discounts.filter((discount) => discount.item !== item.item);
-      // // console.log({ discounts });
-      await updateFoodShopByIdApi(id, {
+      // console.log({ discounts });
+      const response = await updateFoodShopByIdApi(id, {
         discounts: discounts,
       });
-      // console.log({ index, discounts });
+      console.log({ index, discounts });
       return [id, discounts];
     } catch (error) {
       console.log({ error });
@@ -167,7 +168,7 @@ export const deleteItem = createAsyncThunk(
 export const fetchPlaces = createAsyncThunk("content/fetchPlaces", async () => {
   const response = await getFoodPlacesApi();
   const resData = response.data;
-  // console.log(resData);
+  console.log(resData);
   // const querySnapshot = await getDocs(collection(firestore, "foodshops"));
   const data = [];
   let temp = {};
@@ -177,7 +178,7 @@ export const fetchPlaces = createAsyncThunk("content/fetchPlaces", async () => {
     data.push(temp);
     i++;
   });
-  // // console.log(data);
+  // console.log(data);
   return data;
 });
 
@@ -185,8 +186,8 @@ export const fetchPlaces = createAsyncThunk("content/fetchPlaces", async () => {
 export const updateLikes = createAsyncThunk(
   "content/updateLikes",
   async (data) => {
-    const { id, dislikes, likes, user } = data;
-    // console.log({ data });
+    const { id, index, dislikes, likes, user } = data;
+    console.log({ data });
     try {
       let uLikes = likes,
         uDislikes = dislikes;
@@ -194,7 +195,7 @@ export const updateLikes = createAsyncThunk(
       const result = response.data;
       let liked = result.liked;
       let disliked = result.disliked;
-      // console.log(liked);
+      console.log(liked);
       if (liked.find((e) => e === user.email)) {
         uLikes = likes !== 0 ? likes - 1 : likes;
         liked = liked.filter((e) => e !== user.email);
@@ -207,7 +208,7 @@ export const updateLikes = createAsyncThunk(
         uLikes = likes + 1;
         liked.push(user.email);
       }
-      await updateFoodShopByIdApi(id, {
+      const updateResponse = await updateFoodShopByIdApi(id, {
         likes: uLikes,
         liked: liked,
         dislikes: uDislikes,
@@ -225,8 +226,8 @@ export const updateLikes = createAsyncThunk(
 export const updateDislikes = createAsyncThunk(
   "content/updateDislikes",
   async (data) => {
-    const { id, dislikes, likes, user } = data;
-    // console.log({ data });
+    const { id, index, dislikes, likes, user } = data;
+    console.log({ data });
     try {
       let uDislikes = dislikes,
         uLikes = likes;
@@ -234,21 +235,21 @@ export const updateDislikes = createAsyncThunk(
       const result = response.data;
       let disliked = result.disliked;
       let liked = result.liked;
-      // console.log({ disliked });
+      console.log({ disliked });
       if (disliked.find((e) => e === user.email)) {
-        uDislikes = dislikes !== 0 ? dislikes - 1 : dislikes;
+        uDislikes =dislikes!==0? dislikes - 1: dislikes;
         disliked = disliked.filter((e) => e !== user.email);
       } else if (liked.find((e) => e === user.email)) {
         liked = liked.filter((e) => e !== user.email);
         uDislikes = dislikes + 1;
-        uLikes = likes !== 0 ? likes - 1 : likes;
+        uLikes = likes!==0? likes - 1: likes;
         disliked.push(user.email);
       } else {
         disliked.push(user.email);
         uDislikes = dislikes + 1;
       }
 
-      await updateFoodShopByIdApi(id, {
+      const updateResponse = await updateFoodShopByIdApi(id, {
         likes: uLikes,
         liked: liked,
         dislikes: uDislikes,
@@ -266,14 +267,14 @@ export const updateDislikes = createAsyncThunk(
 export const addComment = createAsyncThunk(
   "content/addComment",
   async (data) => {
-    const { id, user, values } = data;
-    // console.log(data);
+    const { id, user, index, values } = data;
+    console.log(data);
     try {
       const response = await getFoodShopByIdApi(id);
       const result = response.data;
       let comments = result.comments;
       comments.push({ user: user.email, comment: values["comment"] });
-      await updateFoodShopByIdApi(id, {
+      const updateResponse = await updateFoodShopByIdApi(id, {
         comments: comments,
       });
       return [id, comments];
@@ -287,13 +288,13 @@ export const addComment = createAsyncThunk(
 export const deleteDataFromDb = createAsyncThunk(
   "content/delete",
   async (id, thunkAPI) => {
-    // console.log({ id });
+    console.log({ id });
     let foodplaces;
     try {
       await deleteFoodShopByIdApi(id);
       foodplaces = thunkAPI.getState().places.foodplaces;
       foodplaces = foodplaces.filter((place) => place.id !== id);
-      // console.log({ foodplaces });
+      console.log({ foodplaces });
       return foodplaces;
     } catch (error) {
       return ["failed to delete"];
@@ -401,10 +402,6 @@ const placesSlice = createSlice({
     });
     builder.addCase(updateLikes.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.foodplace.likes = action.payload[1];
-      state.foodplace.dislikes = action.payload[2];
-      state.foodplace.liked = action.payload[3];
-      state.foodplace.disliked = action.payload[4];
       state.foodplaces.filter(
         (place) => place._id === action.payload[0]
       )[0].likes = action.payload[1];
@@ -428,10 +425,6 @@ const placesSlice = createSlice({
     });
     builder.addCase(updateDislikes.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.foodplace.likes = action.payload[1];
-      state.foodplace.dislikes = action.payload[2];
-      state.foodplace.liked = action.payload[3];
-      state.foodplace.disliked = action.payload[4];
       state.foodplaces.filter(
         (place) => place._id === action.payload[0]
       )[0].likes = action.payload[1];
@@ -455,7 +448,6 @@ const placesSlice = createSlice({
     });
     builder.addCase(addComment.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.foodplace.comments = action.payload[1];
       state.foodplaces.filter(
         (place) => place._id === action.payload[0]
       )[0].comments = action.payload[1];

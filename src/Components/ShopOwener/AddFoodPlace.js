@@ -52,17 +52,17 @@ const AddFoodPlace = () => {
   const [description, setDescription] = useState("");
   const [type, setType] = useState([]);
   const [images, setImages] = useState();
-  const [address, setAddress] = useState("");
+  const [location, setLocation] = useState("");
   const onFinishHandler = () => {
-    // console.log({ title,
-    //   contact,
-    //   email,
-    //   speciality,
-    //   description,
-    //   selectPosition,
-    //   address,
-    //   images,
-    //   type,})
+    console.log({ title,
+      contact,
+      email,
+      speciality,
+      description,
+      selectPosition,
+      location,
+      images,
+      type,})
     dispatch(
       uploadFoodShopData({
         title,
@@ -71,7 +71,7 @@ const AddFoodPlace = () => {
         speciality,
         description,
         selectPosition,
-        address,
+        location,
         images,
         type,
       })
@@ -155,11 +155,11 @@ const AddFoodPlace = () => {
                   </Form.Item>
                   <Form.Item
                     label="Location"
-                    name="address"
+                    name="location"
                     rules={[
                       {
                         required: true,
-                        message: "Please input address",
+                        message: "Please input location",
                       },
                     ]}
                   >
@@ -180,7 +180,7 @@ const AddFoodPlace = () => {
                           const queryString = new URLSearchParams(
                             params
                           ).toString();
-                          // console.log(queryString);
+                          console.log(queryString);
 
                           const res = await axios(
                             `${NOMINATIM_BASE_URL}${queryString}`
@@ -286,8 +286,8 @@ const AddFoodPlace = () => {
                       <List.Item
                         key={item.place_id}
                         onClick={() => {
-                          // console.log({ item });
-                          setAddress(item.display_name);
+                          console.log({ item });
+                          setLocation(item.display_name);
                           setSelectPositon([item.lat, item.lon]);
                         }}
                       >

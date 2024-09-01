@@ -51,7 +51,7 @@ const OwnersHomepage = () => {
       });
     }
     form.resetFields();
-  },[]);
+  });
   // console.log({ shop });
   return (
     <>
@@ -144,7 +144,7 @@ const OwnersHomepage = () => {
                   }
                   mywidth="400px"
                   myheight="340px"
-                  address={shop === undefined ? [] : shop.address}
+                  address={shop === undefined ? [] : shop.location}
                 />
               )}
             </Col>
