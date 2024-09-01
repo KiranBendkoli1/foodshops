@@ -1,7 +1,7 @@
 :root {
   --background: #fff;
   --primary: #1f53ee;
-  --secondary: #fdfdfd;
+  --secondary: #fff;
   --text: #000000;
   --shadow: #aaaaaa;
 }
@@ -9,7 +9,7 @@
 [data-theme="dark"] {
   --background: #373636;
   --primary: #513f93;
-  --secondary: #d5dae9;
+  --secondary: #1f53ee;
   --text: #efe4e4;
   --shadow: rgb(120, 112, 112);
 }

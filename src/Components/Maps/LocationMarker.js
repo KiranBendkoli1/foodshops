@@ -29,6 +29,7 @@ const LocationMarker = () => {
   }, []);
   return position === null ? null : (
     <Marker position={position} icon={myIcon}>
+      {/* {console.log({ position })} */}
       <Popup>You are here</Popup>
     </Marker>
   );

@@ -129,7 +129,7 @@ const EditableTable = () => {
     setEditingKey("");
   };
   const handleDelete = (key, id) => {
-    // console.log(id);
+    console.log(id);
     const newData = data.filter((item) => item.key !== key);
     dispatch(deleteDataFromDb(id));
     setData(newData);
@@ -137,14 +137,14 @@ const EditableTable = () => {
   const save = async (key, id) => {
     try {
       const row = await form.validateFields();
-      // console.log(image);
+      console.log(image);
       const imgRef = ref(storage, `foodshops/${image.name}`);
       const uploadTask = await uploadBytes(imgRef, image);
       let url = await getDownloadURL(uploadTask.ref);
       const discountdata = `${item} | ${discount}`;
       dispatch(extraDataActions.setItem(""));
       dispatch(extraDataActions.setDiscount(""));
-      // console.log({ row });
+      console.log({ row });
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
       if (index > -1) {
@@ -207,8 +207,8 @@ const EditableTable = () => {
       ),
     },
     {
-      title: "Address",
-      dataIndex: "address",
+      title: "Location",
+      dataIndex: "location",
       editable: true,
     },
     {

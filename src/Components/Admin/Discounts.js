@@ -2,13 +2,13 @@ import React, { memo, useCallback } from "react";
 import { Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { deleteItem } from "../../store/placesSlice";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { auth } from "../../config/firebase";
 const Discounts = ({ discounts, id, index }) => {
-  const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
   const deleteButtonHandler = useCallback(
     (item) => {
-      // console.log({ item });
+      console.log({ item });
       const data = { id, index, item };
       dispatch(deleteItem(data));
     },
@@ -17,12 +17,15 @@ const Discounts = ({ discounts, id, index }) => {
 
   return (
     <>
+      {console.log("discounts loaded")}
       {discounts.map((discount, index) => {
         return (
           <div key={index}>
-            <p>{`${discount.item} is at ${discount.discount}% discount`}</p>
-            {console.log(user)}
-            {user && user.email === "admin@admin.com" ? (
+            <p>{`${discount.split("|")[0]} is at ${
+              discount.split("|")[1]
+            }% discount`}</p>
+            {auth.currentUser &&
+            auth.currentUser.email === "admin@gmail.com" ? (
               <></>
             ) : (
               <Button

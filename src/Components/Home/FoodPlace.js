@@ -37,9 +37,8 @@ const FoodPlace = (props) => {
     closeCommentsWarningModal,
   ] = useModal();
   const isLoading = useSelector((state) => state.places.isLoading);
-  let user = useMemo(() => localStorage.getItem("user"), []);
-  user = useMemo(() => JSON.parse(user), [user]);
-  // console.log(user);
+  let user = useMemo(() => auth.currentUser, []);
+  user = useMemo(() => user && user.email, [user]);
   const navigate = useNavigate();
   const {
     index,
@@ -51,7 +50,7 @@ const FoodPlace = (props) => {
     images,
     type,
     discounts,
-    address,
+    location,
     title,
     likes,
     speciality,
@@ -62,7 +61,7 @@ const FoodPlace = (props) => {
     navigate(`/details/${id}`);
   }, [id, navigate]);
   const addLikeHandler = useCallback(() => {
-    // console.log({ liked });
+    console.log({ liked });
     if (!user) {
       openLikesModal();
     } else {
@@ -82,23 +81,25 @@ const FoodPlace = (props) => {
       dispatch(addComment({ id, user, comments, index, values }));
       navigate("/");
     },
-    [id, user, comments, index, dispatch, navigate]
+    [id, user, comments, index,dispatch, navigate]
   );
   const discountsMap = useMemo(() => {
     return discounts.map((discount) => {
       return (
         <div key={discount}>
-          <p>{`${discount.item} is at ${discount.discount} discount`}</p>
+          <p>{`${discount.split("|")[0]} is at ${
+            discount.split("|")[1]
+          } discount`}</p>
         </div>
       );
     });
   }, [discounts]);
 
   const commentsMap = useMemo(() => {
-    return comments.map((comment, index) => {
+    return comments.map((comment) => {
       return (
-        <p key={index}>
-          <b>{comment.user}</b> {comment.comment}
+        <p key={comment}>
+          <b>{comment.split("|")[0]}</b> {comment.split("|")[1]}
           <br />
         </p>
       );
@@ -127,37 +128,24 @@ const FoodPlace = (props) => {
           <div>
             {type
               ? type.includes("Veg") && (
-                  <img
-                    src={veg}
-                    alt="veg"
-                    style={{ width: "20px", height: "20px" }}
-                  />
+                  <img src={veg} alt="veg" style={{ width: "20px", height: "20px" }} />
                 )
               : ""}{" "}
             {type
               ? type.includes("Non Veg") && (
-                  <img
-                    src={nonveg}
-                    alt="non-veg"
-                    style={{ width: "20px", height: "20px" }}
-                  />
+                  <img src={nonveg} alt="non-veg" style={{ width: "20px", height: "20px" }} />
                 )
               : ""}
           </div>
         </div>
         <div className={classes.center} style={{ marginTop: "20px" }}>
-          <img
-            src={image ? image : images[0]}
-            alt="post"
-            width="260px"
-            height={"250px"}
-          />
+          <img src={image ? image : images[0]} alt="post" width="260px" height={"250px"} />
         </div>
         <p>Speciality: {speciality}</p>
-        <p>Address: {address}</p>
+        <p>Address: {location}</p>
         <div className={classes.useractions}>
           <p onClick={addLikeHandler} style={{ fontSize: "120%" }}>
-            {liked.find((e) => user && e === user.email) ? (
+            {liked.find((e) => e === user) ? (
               <>
                 {likes} <LikeFilled />
               </>
@@ -168,7 +156,7 @@ const FoodPlace = (props) => {
             )}
           </p>
           <p onClick={addDislikeHandler} style={{ fontSize: "120%" }}>
-            {disliked.find((e) => user && e === user.email) ? (
+            {disliked.find((e) => e === user) ? (
               <>
                 {dislikes} <DislikeFilled />
               </>
@@ -197,7 +185,7 @@ const FoodPlace = (props) => {
               style={{ fontSize: "120%" }}
               onClick={() => {
                 navigate(
-                  `/gotomap/${selectPosition[0]}/${selectPosition[1]}/${address}`
+                  `/gotomap/${selectPosition[0]}/${selectPosition[1]}/${location}`
                 );
               }}
             >
@@ -242,7 +230,7 @@ const FoodPlace = (props) => {
         onOk={closeOfferModal}
         onCancel={closeOfferModal}
       >
-        {!discounts.length && <p>No offers yet</p>}
+        {discounts.length === 0 && <p>No offers yet</p>}
         {discountsMap}
       </Modal>
 

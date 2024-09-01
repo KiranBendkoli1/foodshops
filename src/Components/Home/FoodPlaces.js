@@ -14,7 +14,7 @@ const FoodPlaces = () => {
     [foodplaces]
   );
   const locations = useMemo(
-    () => foodplaces.map((place) => place.address),
+    () => foodplaces.map((place) => place.location),
     [foodplaces]
   );
   const searchableItems = useMemo(
@@ -57,7 +57,7 @@ const FoodPlaces = () => {
           .filter(
             (foodplace) =>
               foodplace.title.toLowerCase().includes(search.toLowerCase()) ||
-              foodplace.address.toLowerCase().includes(search.toLowerCase())
+              foodplace.location.toLowerCase().includes(search.toLowerCase())
           )
           .map((foodplace) => {
             return (
