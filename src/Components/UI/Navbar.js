@@ -9,11 +9,9 @@ import { Switch } from "antd";
 import { ThemeContext } from "../../context/theme-context";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/userSlice";
-import useWindowDimensions from "../../hooks/useWindowDimensions";
 const Navbar = () => {
   let user = localStorage.getItem("user");
   user = useMemo(() => JSON.parse(user), [user]);
-  const { height, width } = useWindowDimensions();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const logoutHandler = useCallback(() => {
@@ -25,50 +23,45 @@ const Navbar = () => {
     navigate("/login");
   }, [navigate]);
   const themeContext = useContext(ThemeContext);
-  const widthBasedResponse = (mobile, web) => {
-    return width < 500 ? mobile : web;
-  }
   return (
     <>
-      <h1 className={classes.title}>FoodPlaces</h1>
+      <h1 className={classes.title}>Food Places</h1>
       <p style={{ display: "flex" }}>
         <Switch
-          size={widthBasedResponse("small", "default")}
           style={{ margin: "5px" }}
           onChange={themeContext.toggleTheme}
-          checkedChildren={<img src={sun} width={widthBasedResponse("15px", "19px")} height={widthBasedResponse("15px", "19px")} />}
-          unCheckedChildren={<img src={moon} width={widthBasedResponse("15px", "19px")} height={widthBasedResponse("15px", "19px")} />}
+          checkedChildren={<img src={sun} width={"19px"} height={"19px"} />}
+          unCheckedChildren={<img src={moon} width={"17px"} height={"17px"} />}
           defaultChecked
         />
-
-        <Menu
-          // mode={widthBasedResponse("vertical","horizontal")}
-          inlineCollapsed={widthBasedResponse(true, false)}
-          mode="horizontal"
-          className={classes.navmenu}
-          style={{ float: "right" }}
-        >
-          {user && <>
+        {user && (
+          <Menu
+            mode="horizontal"
+            className={classes.navmenu}
+            style={{ float: "right" }}
+          >
             <Menu.Item key="">{user ? user.email : ""}</Menu.Item>
             <Menu.Item key="Logout">
               {user && user.email ? (
-                <Button onClick={logoutHandler} icon={<LogoutOutlined />}>
-                  {widthBasedResponse("", "Logout")}
+                <Button onClick={logoutHandler}>
+                  <LogoutOutlined />
+                  Logout
                 </Button>
               ) : (
-                <Button onClick={loginHandler} icon={<LoginOutlined />}>
-                  {widthBasedResponse("", "Login/SignUp")}
+                <Button onClick={loginHandler}>
+                  <LoginOutlined />
+                  Login/SignUp
                 </Button>
               )}
-            </Menu.Item></>}
-          {!user && (
-            <Menu.Item>
-              <Button onClick={loginHandler} icon={<LoginOutlined />}>
-                {widthBasedResponse("", "Login/SignUp")}
-              </Button>
             </Menu.Item>
-          )}
-        </Menu>
+          </Menu>
+        )}
+        {!user && (
+          <Button onClick={loginHandler}>
+            <LoginOutlined />
+            Login/SignUp
+          </Button>
+        )}
       </p>
     </>
   );
