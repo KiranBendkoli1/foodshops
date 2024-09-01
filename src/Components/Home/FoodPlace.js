@@ -37,6 +37,7 @@ const FoodPlace = (props) => {
   const isLoading = useSelector((state) => state.places.isLoading);
   let user = useMemo(() => localStorage.getItem("user"), []);
   user = useMemo(() => JSON.parse(user), [user]);
+  // console.log(user);
   const navigate = useNavigate();
   const {
     index,

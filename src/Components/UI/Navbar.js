@@ -10,6 +10,8 @@ import { ThemeContext } from "../../context/theme-context";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/userSlice";
 const Navbar = () => {
+  // const user = useSelector((state) => state.user.user);
+
   let user = localStorage.getItem("user");
   user = useMemo(() => JSON.parse(user), [user]);
   const navigate = useNavigate();

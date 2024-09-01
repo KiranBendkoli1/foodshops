@@ -22,16 +22,21 @@ const Signup = () => {
   const contactRef = useRef();
 
   const onFinishHandler = useCallback(() => {
+    // console.log("Submit executed");
     const name = nameRef.current.input.value;
     const email = emailRef.current.input.value;
     const contact = contactRef.current.input.value;
     const password = passwordRef.current.input.value;
+    // console.log({ name, email, contact, password, userType });
     dispatch(signUp({ name, email, contact, password, userType })).then(
       async (data) => {
+        // console.log(data);
+        // console.log(res);
         const res = await data.payload;
         if (res.status === "failure") {
           toast.error(res.message);
         } else if (res.status === "success") {
+          // console.log(user);
           toast.success(res.message);
           const user = res.data;
           localStorage.setItem("user", JSON.stringify(user));
@@ -118,7 +123,7 @@ const Signup = () => {
                 },
               ]}
             >
-              <Input ref={nameRef} name="name" htmlFor="name" placeholder="name" />
+              <Input ref={nameRef} />
             </Form.Item>
             <Form.Item
               label="Email Address: "
@@ -130,7 +135,7 @@ const Signup = () => {
                 },
               ]}
             >
-              <Input type="email" name="email" htmlFor="email" ref={emailRef} placeholder="email" />
+              <Input type="email" htmlType="email" ref={emailRef} />
             </Form.Item>
             <Form.Item
               label="Contact Number: "
@@ -142,7 +147,7 @@ const Signup = () => {
                 },
               ]}
             >
-              <Input type="text" name="contact" htmlFor="contact" ref={contactRef} placeholder="contact" />
+              <Input type="text" htmlType="text" ref={contactRef} />
             </Form.Item>
             <Form.Item
               label="Password"
@@ -156,13 +161,12 @@ const Signup = () => {
             >
               <Input.Password
                 type="password"
+                htmlType="password"
                 ref={passwordRef}
-                name="password" htmlFor="password"
-                placeholder="password"
               />
             </Form.Item>
             <Form.Item className={classes.button}>
-              <Button type="primary"  htmlType="submit" loading={isLoading}>
+              <Button type="primary" htmlType="submit" loading={isLoading}>
                 SIGNUP
               </Button>{" "}
               <br />

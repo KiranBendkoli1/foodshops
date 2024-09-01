@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Marker, Popup, useMapEvent } from "react-leaflet";
+// import markerIcon from "../../assets/icons/icons8-location-48.png";
 import yourLocation from "../../assets/icons/location_icon-icons.com_50109.png"
 import { Icon } from "leaflet";
+// import {  } from "leaflet";
 const LocationMarker = () => {
   const myIcon = new Icon({
     iconUrl: yourLocation,

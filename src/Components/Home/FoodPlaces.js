@@ -72,5 +72,3 @@ const FoodPlaces = () => {
 };
 
 export default FoodPlaces;
-
-

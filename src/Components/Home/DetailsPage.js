@@ -20,6 +20,7 @@ const DetailsPage = (props) => {
 
   useEffect(() => {
     dispatch(getFoodShopById({ id }));
+    // console.log({ data });
   }, []);
   return (
     <>

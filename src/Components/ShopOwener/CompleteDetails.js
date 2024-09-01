@@ -60,6 +60,7 @@ const CompleteDetails = (props) => {
     dislikes,
   } = data;
   const addLikeHandler = useCallback(() => {
+    // console.log({ liked });
     if (!user) {
       openLikesModal();
     } else {
