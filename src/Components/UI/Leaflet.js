@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import markerIcon from "../../assets/icons/icons8-location-48.png";
 import { SearchOutlined } from "@ant-design/icons";
 import "leaflet/dist/leaflet.css";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import { Icon, latLng } from "leaflet";
 import { Input, List, Avatar, Col, Row, Button } from "antd";
 import axios from "axios";
@@ -18,7 +18,7 @@ export function ResetCenterView(props) {
         animate: true,
       });
     }
-  }, [selectPositon]);
+  }, [selectPositon, map]);
 }
 
 const Leaflet = () => {
@@ -68,10 +68,6 @@ const Leaflet = () => {
               };
 
               const queryString = new URLSearchParams(params).toString();
-              const requestOptions = {
-                method: "GET",
-                redirect: "follow",
-              };
               const res = await axios(`${NOMINATIM_BASE_URL}${queryString}`);
               setData(res.data);
             }}

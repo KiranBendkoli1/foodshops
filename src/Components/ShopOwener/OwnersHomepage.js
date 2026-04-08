@@ -36,7 +36,7 @@ const OwnersHomepage = () => {
   useEffect(() => {
     dispatch(getUserData(data));
     dispatch(getFoodShopById(idData));
-  }, []);
+  }, [dispatch, data, idData]);
 
   const handleOk = useCallback(() => {
     if (inputItemName !== "" && inputDiscount !== 0) {
@@ -53,7 +53,7 @@ const OwnersHomepage = () => {
       });
     }
     form.resetFields();
-  });
+  }, [inputItemName, inputDiscount, shop, dispatch, form]);
 
   return (
     <>

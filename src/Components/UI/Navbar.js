@@ -17,10 +17,10 @@ const Navbar = () => {
       localStorage.removeItem("role");
       navigate("/login");
     });
-  }, []);
+  }, [navigate]);
   const loginHandler = useCallback(() => {
     navigate("/login");
-  }, []);
+  }, [navigate]);
   const themeContext = useContext(ThemeContext);
   return (
     <>
@@ -28,8 +28,8 @@ const Navbar = () => {
       <p style={{ display: "flex" }}>
         <Switch
           onChange={themeContext.toggleTheme}
-          checkedChildren={<img src={sun} width={"19px"} height={"19px"} />}
-          unCheckedChildren={<img src={moon} width={"17px"} height={"17px"} />}
+          checkedChildren={<img src={sun} width={"19px"} height={"19px"} alt="Sun Mode" />}
+          unCheckedChildren={<img src={moon} width={"17px"} height={"17px"} alt="Moon Mode" />}
           defaultChecked
         />
         {userEmail && (

@@ -113,7 +113,7 @@ const EditableTable = () => {
   useEffect(() => {
     dispatch(fetchPlaces());
     setData(fetchedData);
-  }, [dispatch]);
+  }, [dispatch, fetchedData]);
 
   const edit = (record) => {
     form.setFieldsValue({
@@ -247,7 +247,7 @@ const EditableTable = () => {
               Save
             </Typography.Link>
             <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
+              <a href="#!">Cancel</a>
             </Popconfirm>
           </span>
         ) : (
@@ -269,7 +269,7 @@ const EditableTable = () => {
             title="Sure to delete?"
             onConfirm={() => handleDelete(record.key, record.id)}
           >
-            <a>Delete</a>
+            Delete
           </Popconfirm>
         ) : null,
     },
@@ -282,17 +282,18 @@ const EditableTable = () => {
       ...col,
       onCell: (record) => {
         return {
-        record,
-        inputType:
-          col.dataIndex === "image"
-            ? "file"
-            : col.dataIndex === "likes" && "dislikes"
-            ? "number"
-            : "text",
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }},
+          record,
+          inputType:
+            col.dataIndex === "image"
+              ? "file"
+              : col.dataIndex === "likes" && "dislikes"
+                ? "number"
+                : "text",
+          dataIndex: col.dataIndex,
+          title: col.title,
+          editing: isEditing(record),
+        }
+      },
     };
   });
   return (

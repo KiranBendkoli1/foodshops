@@ -64,7 +64,7 @@ const FoodPlace = (props) => {
     } else {
       dispatch(updateLikes({ id, index, likes, dislikes, user }));
     }
-  }, [id, index, likes, dislikes, user, dispatch, liked, openLikesModal]);
+  }, [id, index, likes, dislikes, user, dispatch, openLikesModal]);
   const addDislikeHandler = useCallback(() => {
     if (!user) {
       openLikesModal();

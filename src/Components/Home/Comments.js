@@ -2,7 +2,7 @@ import { Input, Card, Form, Button, Modal } from "antd";
 import { SendOutlined } from "@ant-design/icons";
 import React, { useEffect, useState } from "react";
 import classes from "./HomePage.module.css";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addComment } from "../../store/placesSlice";
 import ImageCarousel from "../UI/ImageCarousel";
@@ -12,10 +12,9 @@ const Comments = (props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let user = localStorage.getItem("email");
-  const flag = user ? true : false;
   const foodplaces = useSelector((state) => state.places.foodplaces);
   const data = foodplaces.filter((data) => id === data.id)[0];
-  const { index, comments, image, title, images } = data;
+  const { index, comments, title, images } = data;
   useEffect(() => {
   }, []);
   const postCommentHandler = (values) => {
