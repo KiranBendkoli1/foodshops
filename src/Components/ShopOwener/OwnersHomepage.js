@@ -25,13 +25,14 @@ const OwnersHomepage = () => {
     useModal();
   const [isDiscountModalOpen, openDiscountModal, closeDiscountModal] =
     useModal();
-  const email = useSelector((state) => state.user.email);
+  const storedEmail = localStorage.getItem("email");
+  const email = useSelector((state) => state.user.email) || storedEmail;
   const name = useSelector((state) => state.user.name);
   const contact = useSelector((state) => state.user.contact);
   const shop = useSelector((state) => state.places.foodplace);
   const isLoading = useSelector((state) => state.user.isLoading);
-  const data = useMemo(() => ({ email: email, colname: "shopOwners" }), []);
-  const idData = useMemo(() => ({ id: email }), []);
+  const data = useMemo(() => ({ email: storedEmail, colname: "shopOwners" }), [storedEmail]);
+  const idData = useMemo(() => ({ id: storedEmail }), [storedEmail]);
   useEffect(() => {
     dispatch(getUserData(data));
     dispatch(getFoodShopById(idData));
@@ -39,7 +40,6 @@ const OwnersHomepage = () => {
 
   const handleOk = useCallback(() => {
     if (inputItemName !== "" && inputDiscount !== 0) {
-      console.log(`${inputItemName}|${inputDiscount}`);
       const data = {
         index: shop.index,
         id: shop.id,
@@ -120,7 +120,7 @@ const OwnersHomepage = () => {
                         {shop.dislikes} <DislikeOutlined />{" "}
                       </p>
                       <p onClick={openCommentsModal}>
-                        {data.comments?.length} <CommentOutlined />
+                        {shop.comments?.length || 0} <CommentOutlined />
                       </p>
                     </div>
                   </div>
@@ -229,7 +229,7 @@ const OwnersHomepage = () => {
             onOk={() => closeCommentsModal()}
             onCancel={() => closeCommentsModal()}
           >
-            {shop.comments &&
+            {shop !== undefined && shop.comments &&
               shop.comments.map((comment) => {
                 return (
                   <p key={comment}>

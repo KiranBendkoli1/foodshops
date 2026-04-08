@@ -5,24 +5,18 @@ import classes from "./HomePage.module.css";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addComment } from "../../store/placesSlice";
-import { auth } from "../../config/firebase";
 import ImageCarousel from "../UI/ImageCarousel";
 
 const Comments = (props) => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  let user = auth.currentUser;
-  if (user) {
-    user = user.email;
-  }
-  console.log({ user });
+  let user = localStorage.getItem("email");
   const flag = user ? true : false;
   const foodplaces = useSelector((state) => state.places.foodplaces);
   const data = foodplaces.filter((data) => id === data.id)[0];
   const { index, comments, image, title, images } = data;
   useEffect(() => {
-    console.log(data);
   }, []);
   const postCommentHandler = (values) => {
     dispatch(addComment({ id, user, comments, index, values }));

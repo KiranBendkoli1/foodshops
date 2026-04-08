@@ -1,11 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
-import { auth, firestore } from "../config/firebase";
+import supabase from "../config/supabase";
+
 const initialUserState = {
   name: "",
   email: "",
@@ -15,61 +10,65 @@ const initialUserState = {
 };
 
 export const signUp = createAsyncThunk("content/signup", async (data) => {
-  const { name, email, contact, password, userType } = data;
+  const { name, shopName, email, contact, password, userType } = data;
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    console.log("User created successfully");
-    await setDoc(doc(firestore, "roles", email), {
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email: email,
-      role: userType,
+      password: password,
     });
-    if (userType === "regular") {
-      const docRef = await setDoc(doc(firestore, "users", email), {
+    if (authError) throw authError;
+
+
+    const { error } = await supabase.from("profiles").insert([
+      {
+        id: authData.user.id,
+        email: email,
         name: name,
-        email: email,
-        date: new Date().toDateString(),
-      });
-      console.log(docRef.id);
-    } else if (userType === "shopOwner") {
-      const docRef = await setDoc(doc(firestore, "shopOwners", email), {
-        shopname: name,
-        email: email,
-        contact: contact,
-        date: new Date().toDateString(),
-      });
-      console.log(docRef.id);
+        shopname: userType === "shopOwner" ? shopName : null,
+        contact: userType === "shopOwner" ? contact : null,
+        role: userType,
+      },
+    ]);
+    if (error) {
+      console.error("Profile insert error", error);
+      throw error;
     }
-    return [name, email, contact];
+    
+    const finalName = userType === "shopOwner" ? shopName : name;
+    return [finalName, email, contact];
   } catch (error) {
-    console.log(error);
   }
 });
 
 export const signIn = createAsyncThunk("content/signIn", async (data) => {
   const { email, password } = data;
   try {
-    await signInWithEmailAndPassword(auth, email, password);
-    // const res = await getDoc(doc(firestore, "roles", email));
-    console.log("User Logged In");
-    // return res.data().role;
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+    if (error) throw error;
   } catch (error) {
-    console.log(error);
   }
 });
 
 export const logout = createAsyncThunk("content/logout", async () => {
-  await signOut(auth);
-  console.log("User logged out");
+  await supabase.auth.signOut();
 });
 
 export const getUserData = createAsyncThunk(
   "content/getUserData",
   async (data) => {
-    const { email, colname } = data;
-    const res = await getDoc(doc(firestore, colname, email));
-    const resData = res.data();
-    console.log(resData);
-    return [resData.shopname, resData.email, resData.contact];
+    const { email } = data;
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("email", email)
+      .single();
+      
+    if (error) throw error;
+    const shopName = profile.shopname || profile.name;
+    return [shopName, profile.email, profile.contact];
   }
 );
 
@@ -106,13 +105,15 @@ const userSlice = createSlice({
     });
     builder.addCase(signUp.fulfilled, (state, action) => {
       state.isLoading = false;
-      // state.name = action.payload[0];
-      // state.email = action.payload[1];
-      // state.contact = action.payload[2];
+      if (action.payload) {
+        state.name = action.payload[0];
+        state.email = action.payload[1];
+        state.contact = action.payload[2];
+      }
     });
     builder.addCase(signUp.rejected, (state, action) => {
       state.isLoading = false;
-      // state.error = action.error.message;
+      state.error = action.error?.message;
     });
     builder.addCase(signIn.pending, (state) => {
       state.isLoading = true;

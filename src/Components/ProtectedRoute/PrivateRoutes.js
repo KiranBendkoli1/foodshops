@@ -1,8 +1,7 @@
-import React, { useMemo } from "react";
-import { auth } from "../../config/firebase";
+import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 const PrivateRoutes = () => {
-  const user = useMemo(() => auth.currentUser, []);
+  const user = localStorage.getItem("email");
   return user ? <Outlet /> : <Navigate to={"/login"} />;
 };
 

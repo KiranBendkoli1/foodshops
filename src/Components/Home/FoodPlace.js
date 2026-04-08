@@ -20,7 +20,6 @@ import {
   updateDislikes,
   updateLikes,
 } from "../../store/placesSlice";
-import { auth } from "../../config/firebase";
 import { RWebShare } from "react-web-share";
 import veg from "../../assets/icons/icons8-veg-48.png";
 import nonveg from "../../assets/icons/icons8-non-veg-48.png";
@@ -37,8 +36,7 @@ const FoodPlace = (props) => {
     closeCommentsWarningModal,
   ] = useModal();
   const isLoading = useSelector((state) => state.places.isLoading);
-  let user = useMemo(() => auth.currentUser, []);
-  user = useMemo(() => user && user.email, [user]);
+  let user = localStorage.getItem("email");
   const navigate = useNavigate();
   const {
     index,
@@ -61,7 +59,6 @@ const FoodPlace = (props) => {
     navigate(`/details/${id}`);
   }, [id, navigate]);
   const addLikeHandler = useCallback(() => {
-    console.log({ liked });
     if (!user) {
       openLikesModal();
     } else {
@@ -84,7 +81,7 @@ const FoodPlace = (props) => {
     [id, user, comments, index,dispatch, navigate]
   );
   const discountsMap = useMemo(() => {
-    return discounts.map((discount) => {
+    return (discounts || []).map((discount) => {
       return (
         <div key={discount}>
           <p>{`${discount.split("|")[0]} is at ${
@@ -96,7 +93,7 @@ const FoodPlace = (props) => {
   }, [discounts]);
 
   const commentsMap = useMemo(() => {
-    return comments.map((comment) => {
+    return (comments || []).map((comment) => {
       return (
         <p key={comment}>
           <b>{comment.split("|")[0]}</b> {comment.split("|")[1]}
@@ -145,7 +142,7 @@ const FoodPlace = (props) => {
         <p>Address: {location}</p>
         <div className={classes.useractions}>
           <p onClick={addLikeHandler} style={{ fontSize: "120%" }}>
-            {liked.find((e) => e === user) ? (
+            {(liked || []).find((e) => e === user) ? (
               <>
                 {likes} <LikeFilled />
               </>
@@ -156,7 +153,7 @@ const FoodPlace = (props) => {
             )}
           </p>
           <p onClick={addDislikeHandler} style={{ fontSize: "120%" }}>
-            {disliked.find((e) => e === user) ? (
+            {(disliked || []).find((e) => e === user) ? (
               <>
                 {dislikes} <DislikeFilled />
               </>
@@ -230,7 +227,7 @@ const FoodPlace = (props) => {
         onOk={closeOfferModal}
         onCancel={closeOfferModal}
       >
-        {discounts.length === 0 && <p>No offers yet</p>}
+        {!(discounts || []).length && <p>No offers yet</p>}
         {discountsMap}
       </Modal>
 
@@ -243,7 +240,7 @@ const FoodPlace = (props) => {
       >
         <div className={classes["comments-card"]}>
           <h2>{title}</h2>
-          <ImageCarousel images={images} />
+          <ImageCarousel images={images || []} />
           <div>
             <h2>Comments...</h2>
             {commentsMap}

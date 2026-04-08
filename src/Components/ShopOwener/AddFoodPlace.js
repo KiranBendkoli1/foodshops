@@ -43,9 +43,9 @@ const AddFoodPlace = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const name = useSelector((state) => state.user.name);
-  const email = useSelector((state) => state.user.email);
+  const email = useSelector((state) => state.user.email) || localStorage.getItem("email");
   const isLoading = useSelector((state) => state.places.isLoading);
-  const [title, setTitle] = useState(name);
+  const [title, setTitle] = useState(name || "");
   const [speciality, setSpeciality] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState([]);
@@ -65,22 +65,19 @@ const AddFoodPlace = () => {
     ).then(() => {
       navigate("/ownershome");
     });
-    console.log(images);
   };
 
   const props = {
     name: "file",
     accept: "image/*",
     multiple: true,
+    beforeUpload: () => false,
     onChange(info) {
-      console.log({ info });
       const images = info.fileList;
       const newImages = images.map((img) => img.originFileObj);
       setImages(newImages);
-      console.log({ images });
     },
     onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
     },
   };
 
@@ -106,7 +103,7 @@ const AddFoodPlace = () => {
             }}
           >
             <h2 className={classes.myheader} style={{ textAlign: "center" }}>
-              Add Detail Information of {title}
+              Add Detail Information of {name || "your shop"}
             </h2>
           </Row>
           <Row>
@@ -167,12 +164,10 @@ const AddFoodPlace = () => {
                           const queryString = new URLSearchParams(
                             params
                           ).toString();
-                          console.log(queryString);
 
                           const res = await axios(
                             `${NOMINATIM_BASE_URL}${queryString}`
                           );
-                          console.log(res.data);
                           setData(res.data);
                         }}
                       >
@@ -273,7 +268,6 @@ const AddFoodPlace = () => {
                       <List.Item
                         key={item.place_id}
                         onClick={() => {
-                          console.log({ item });
                           setLocation(item.display_name);
                           setSelectPositon([item.lat, item.lon]);
                         }}
@@ -286,7 +280,7 @@ const AddFoodPlace = () => {
                     )}
                   />
                 </InfiniteScroll>
-                {console.log(selectPosition)}
+                {}
               </div>
               <MapContainer
                 center={selectPosition}

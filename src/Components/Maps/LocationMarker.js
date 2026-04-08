@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Marker, Popup, useMapEvent } from "react-leaflet";
-// import markerIcon from "../../assets/icons/icons8-location-48.png";
 import yourLocation from "../../assets/icons/location_icon-icons.com_50109.png"
 import { Icon } from "leaflet";
-// import {  } from "leaflet";
 const LocationMarker = () => {
   const myIcon = new Icon({
     iconUrl: yourLocation,
@@ -16,7 +14,6 @@ const LocationMarker = () => {
     },
     locationFound(e) {
       setPosition(e.latlng);
-      console.log(e.latlng);
       map.flyTo(e.latlng, map.getZoom());
     },
   });
@@ -24,12 +21,11 @@ const LocationMarker = () => {
     navigator.geolocation.getCurrentPosition(
       (location) =>
         setPosition([location.coords.latitude, location.coords.longitude]),
-      (error) => console.log(error)
+      (error) => console.error(error)
     );
   }, []);
   return position === null ? null : (
     <Marker position={position} icon={myIcon}>
-      {/* {console.log({ position })} */}
       <Popup>You are here</Popup>
     </Marker>
   );

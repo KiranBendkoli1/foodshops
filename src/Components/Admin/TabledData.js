@@ -3,8 +3,7 @@ import { Button, Table, Form, Input } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { updateData } from "../../utils/fun";
 import { fetchPlaces } from "../../store/placesSlice";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import {storage} from '../../config/firebase'
+import supabase from "../../config/supabase";
 const TabledData = () => {
   const dispatch = useDispatch();
   const data = useSelector((state) => state.places.foodplaces);
@@ -24,7 +23,7 @@ const TabledData = () => {
       key: "title",
       dataIndex: "title",
       render: (text, record) => {
-        // console.log(record.key);
+        // 
         if (editRow === record.key) {
           return (
             <Form.Item
@@ -163,7 +162,6 @@ const TabledData = () => {
               onClick={() => {
                 setEditRow(record.key);
                 setId(record.id);
-                console.log({ record });
                 form.setFieldsValue({
                   key: record.key,
                   title: record.title,
@@ -188,19 +186,29 @@ const TabledData = () => {
   ];
 
   const onFinish = async (values) => {
-    console.log({ values });
-    const imgRef = ref(storage, `foodshops/${image.name}`);
-    const uploadTask = await uploadBytes(imgRef, image);
-    const url = await getDownloadURL(uploadTask.ref);
+    let url = "";
+
+    if (image) {
+      const safeShopname = (values.title || "default").replace(/\s+/g, "_");
+      const safeImageName = image.name.replace(/\s+/g, "_");
+      const imagePath = `${safeShopname}/${Date.now()}-${safeImageName}`;
+
+      const { data, error } = await supabase.storage
+        .from("foodshops")
+        .upload(imagePath, image);
+
+      if (!error) {
+        url = supabase.storage.from("foodshops").getPublicUrl(data.path).data.publicUrl;
+      }
+    }
+
     updateData(id, values, url);
     const updatedDataSource = [...dataSource];
-    console.log({updatedDataSource})
     const temp = updatedDataSource.splice(editRow, 1, {
       ...values,
-      image: url.toString(),
+      image: url || values.image,
       key: editRow,
     });
-    console.log({temp})
     setDataSource(updatedDataSource);
     setEditRow(null);
     setId("");

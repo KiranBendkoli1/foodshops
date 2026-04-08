@@ -1,54 +1,56 @@
-import { auth, firestore } from "../config/firebase";
-import { getDoc, setDoc, doc } from "firebase/firestore";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
+import supabase from "../config/supabase";
 
 const signUp = async (name, email, contact, password, userType) => {
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    console.log("User created successfully");
-    await setDoc(doc(firestore, "roles", email), {
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email: email,
-      role: userType,
+      password: password,
     });
-    if (userType === "regular") {
-      const docRef = await setDoc(doc(firestore, "users", email), {
-        name: name,
+    if (authError) throw authError;
+
+
+    const { error } = await supabase.from("profiles").insert([
+      {
+        id: authData.user.id,
         email: email,
-        date: new Date().toDateString(),
-      });
-      console.log(docRef.id);
-    } else if (userType === "shopOwner") {
-      const docRef = await setDoc(doc(firestore, "shopOwners", email), {
-        shopname: name,
-        email: email,
-        contact: contact,
-        date: new Date().toDateString(),
-      });
-      console.log(docRef.id);
-    }
+        name: userType === "regular" ? name : null,
+        shopname: userType === "shopOwner" ? name : null,
+        contact: userType === "shopOwner" ? contact : null,
+        role: userType,
+        created_at: new Date().toISOString(),
+      },
+    ]);
+    if (error) throw error;
   } catch (error) {
-    console.log(error);
   }
 };
 
 const signIn = async (email, password) => {
   try {
-    await signInWithEmailAndPassword(auth, email, password);
-    const res = await getDoc(doc(firestore, "roles", email));
-    console.log("User Logged In");
-    return res.data();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+    if (error) throw error;
+
+    const { data: profile, error: dbError } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("email", email)
+      .single();
+
+    if (dbError) throw dbError;
+
+    return profile;
   } catch (error) {
-    console.log(error);
   }
 };
 
 const logout = async () => {
-  await signOut(auth);
-  console.log("User logged out");
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+  } else {
+  }
 };
 
 export { signUp, signIn, logout };

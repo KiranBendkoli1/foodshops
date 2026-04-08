@@ -2,51 +2,30 @@ import React, { useCallback,useEffect, useState } from "react";
 import { Button, Card, Form, Input, Spin, Row, Col } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import classes from "./AuthCommon.module.css";
-import { userActions, signUp } from "../../store/userSlice";
+import { signUp } from "../../store/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { auth } from "../../config/firebase";
+
 const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [userType, setUserType] = useState("");
-  const email = useSelector((state) => state.user.email);
-  const name = useSelector((state) => state.user.name);
-  const contact = useSelector((state) => state.user.contact);
   const isLoading = useSelector((state) => state.user.isLoading);
-  const [password, setPassword] = useState("");
 
-  const emailChangeHandler = useCallback((event) => {
-    dispatch(userActions.setEmail(event.target.value));
-  }, [dispatch]);
-  const passwordChangeHandler = useCallback((event) => {
-    setPassword(event.target.value);
-  }, [dispatch]);
-  const nameChangeHandler = useCallback((event) => {
-    dispatch(userActions.setName(event.target.value));
-  }, [dispatch]);
-  const contactChangeHandler = useCallback((event) => {
-    dispatch(userActions.setContact(event.target.value));
-  }, [dispatch]);
-
-  const onFinishHandler = useCallback(() => {
-    console.log("Submit executed");
-    console.log({ name, email, contact, password, userType });
-    dispatch(signUp({ name, email, contact, password, userType })).then(() => {
+  const onFinishHandler = useCallback((values) => {
+    const { name, shopName, email, contact, password } = values;
+    dispatch(signUp({ name, shopName, email, contact, password, userType })).then(() => {
       localStorage.setItem("role", userType);
+      localStorage.setItem("email", email);
       if (userType === "regular") navigate("/");
       if (userType === "shopOwner") navigate("/ownershome");
     });
-    setPassword("");
-  }, [userType, name, email, contact, password]);
-
-  const compare = useCallback((user, shopOwner) => {
-    return userType === "regular" ? user : shopOwner;
-  }, [userType]);
+  }, [userType, dispatch, navigate]);
   const conditionalSignup = useCallback(() => {
     const type = localStorage.getItem("role");
-    if (auth.currentUser && type === "regular" && auth.currentUser)
+    const userEmail = localStorage.getItem("email");
+    if (userEmail && type === "regular")
       navigate("/");
-    if (auth.currentUser && type === "shopOwner") navigate("/ownershome");
+    if (userEmail && type === "shopOwner") navigate("/ownershome");
   },[]);
 
   useEffect(() => {
@@ -90,7 +69,7 @@ const Signup = () => {
       ) : (
         <Card bordered={true} className={classes.card}>
           <h2 className={classes.heading}>
-            SignUp Page for {compare("User", "FoodShop Owner")}
+            SignUp Page for {userType === "regular" ? "User" : "FoodShop Owner"}
           </h2>
 
           <Form
@@ -104,7 +83,7 @@ const Signup = () => {
             onFinish={onFinishHandler}
           >
             <Form.Item
-              label={compare("Full Name:", "Foodshop Name: ")}
+              label="Full Name: "
               name="name"
               rules={[
                 {
@@ -113,8 +92,24 @@ const Signup = () => {
                 },
               ]}
             >
-              <Input onChange={nameChangeHandler} value={name} />
+              <Input />
             </Form.Item>
+            
+            {userType === "shopOwner" && (
+              <Form.Item
+                label="Foodshop Name:"
+                name="shopName"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your foodshop name!",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            )}
+
             <Form.Item
               label="Email Address: "
               name="email"
@@ -125,13 +120,9 @@ const Signup = () => {
                 },
               ]}
             >
-              <Input
-                onChange={emailChangeHandler}
-                type="email"
-                htmlType="email"
-                value={email}
-              />
+              <Input type="email" htmlType="email" />
             </Form.Item>
+            
             <Form.Item
               label="Contact Number: "
               name="contact"
@@ -142,13 +133,9 @@ const Signup = () => {
                 },
               ]}
             >
-              <Input
-                onChange={contactChangeHandler}
-                type="number"
-                htmlType="number"
-                value={contact}
-              />
+              <Input type="number" htmlType="number" />
             </Form.Item>
+
             <Form.Item
               label="Password"
               name="password"
@@ -159,12 +146,7 @@ const Signup = () => {
                 },
               ]}
             >
-              <Input.Password
-                onChange={passwordChangeHandler}
-                type="password"
-                htmlType="password"
-                value={password}
-              />
+              <Input.Password type="password" htmlType="password" />
             </Form.Item>
             <Form.Item className={classes.button}>
               <Button type="primary" htmlType="submit" loading={isLoading}>

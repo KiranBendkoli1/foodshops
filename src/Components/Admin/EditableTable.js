@@ -10,8 +10,7 @@ import {
 } from "antd";
 import ImageCarousel from "../UI/ImageCarousel";
 import { useDispatch, useSelector } from "react-redux";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { storage } from "../../config/firebase";
+import supabase from "../../config/supabase";
 import { extraDataActions } from "../../store/extraDataSlice";
 import {
   fetchPlaces,
@@ -129,7 +128,6 @@ const EditableTable = () => {
     setEditingKey("");
   };
   const handleDelete = (key, id) => {
-    console.log(id);
     const newData = data.filter((item) => item.key !== key);
     dispatch(deleteDataFromDb(id));
     setData(newData);
@@ -137,14 +135,17 @@ const EditableTable = () => {
   const save = async (key, id) => {
     try {
       const row = await form.validateFields();
-      console.log(image);
-      const imgRef = ref(storage, `foodshops/${image.name}`);
-      const uploadTask = await uploadBytes(imgRef, image);
-      let url = await getDownloadURL(uploadTask.ref);
+      let url = image;
+      if (image && image.name) {
+        const imagePath = `${Date.now()}-${image.name}`;
+        const { data, error } = await supabase.storage.from("foodshops").upload(imagePath, image);
+        if (!error && data) {
+          url = data.path;
+        }
+      }
       const discountdata = `${item} | ${discount}`;
       dispatch(extraDataActions.setItem(""));
       dispatch(extraDataActions.setDiscount(""));
-      console.log({ row });
       const newData = [...data];
       const index = newData.findIndex((item) => key === item.key);
       if (index > -1) {
@@ -164,7 +165,6 @@ const EditableTable = () => {
           image: url,
           discount: discountdata,
         };
-        console.log(data);
         dispatch(updateData(data));
         setData(newData);
         setEditingKey("");
@@ -174,7 +174,6 @@ const EditableTable = () => {
         setEditingKey("");
       }
     } catch (errInfo) {
-      console.log("Validate Failed:", errInfo);
     }
   };
   const columns = [
@@ -226,7 +225,7 @@ const EditableTable = () => {
       dataIndex: "discounts",
       editable: false,
       render: (discounts, data) => {
-        // console.log({ data });
+        // 
         return (
           <Discounts discounts={discounts} index={data.index} id={data.id} />
         );

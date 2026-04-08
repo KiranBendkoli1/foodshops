@@ -4,19 +4,20 @@ import { LoginOutlined, LogoutOutlined } from "@ant-design/icons";
 import classes from "../Home/HomePage.module.css";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../utils/auth";
-import { auth } from "../../config/firebase";
 import sun from "../../assets/icons/brightness.png";
 import moon from "../../assets/icons/moon.png";
 import { Switch } from "antd";
 import { ThemeContext } from "../../context/theme-context";
 const Navbar = () => {
-  const user = auth.currentUser;
+  const userEmail = localStorage.getItem("email");
   const navigate = useNavigate();
   const logoutHandler = useCallback(() => {
     logout().then(() => {
+      localStorage.removeItem("email");
+      localStorage.removeItem("role");
       navigate("/login");
     });
-  },[]);
+  }, []);
   const loginHandler = useCallback(() => {
     navigate("/login");
   }, []);
@@ -31,14 +32,13 @@ const Navbar = () => {
           unCheckedChildren={<img src={moon} width={"17px"} height={"17px"} />}
           defaultChecked
         />
-        {console.log(themeContext.theme)}
-        {user && (
+        {userEmail && (
           <Menu
             mode="horizontal"
             className={classes.navmenu}
             style={{ float: "right" }}
           >
-            <Menu.Item key="">{user ? user.email : ""}</Menu.Item>
+            <Menu.Item key="">{userEmail}</Menu.Item>
             <Menu.Item key="Logout">
               {" "}
               <Button onClick={logoutHandler}>
@@ -48,7 +48,7 @@ const Navbar = () => {
             </Menu.Item>
           </Menu>
         )}
-        {!user && (
+        {!userEmail && (
           <Button onClick={loginHandler}>
             <LoginOutlined />
             Login/SignUp

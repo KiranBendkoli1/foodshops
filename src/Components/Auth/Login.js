@@ -3,8 +3,7 @@ import { Button, Card, Form, Input } from "antd";
 import classes from "./AuthCommon.module.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { auth, firestore } from "../../config/firebase";
-import { getDoc, doc } from "firebase/firestore";
+import supabase from "../../config/supabase";
 import { userActions, signIn } from "../../store/userSlice";
 const Login = () => {
   const navigate = useNavigate();
@@ -15,18 +14,19 @@ const Login = () => {
 
   const onFinishHandler = useCallback(() => {
     dispatch(signIn({ email, password })).then(async () => {
-      console.log({email, password})
-      const res = await getDoc(doc(firestore, "roles", email));
-      localStorage.setItem("role", res.data().role);
-      if (email === "admin@gmail.com") {
-        navigate("/admin");
-      } else if (res.data().role === "regular") {
-        navigate("/");
-      } else if (res.data().role === "shopOwner") {
-        navigate("/ownershome");
+      const { data: profile } = await supabase.from("profiles").select("role").eq("email", email).single();
+      if (profile) {
+        localStorage.setItem("role", profile.role);
+        localStorage.setItem("email", email);
+        if (email === "admin@gmail.com") {
+          navigate("/admin");
+        } else if (profile.role === "regular") {
+          navigate("/");
+        } else if (profile.role === "shopOwner") {
+          navigate("/ownershome");
+        }
       }
     });
-    console.log(email);
   }, [navigate, dispatch,email, password]);
 
   const emailChangeHandler = useCallback((event) => {
@@ -36,13 +36,14 @@ const Login = () => {
     setPassword(event.target.value);
   }, []);
   const conditionalLogin = useCallback(() => {
-    if (auth.currentUser) {
+    const userEmail = localStorage.getItem("email");
+    if (userEmail) {
       const userRole = localStorage.getItem("role");
-      if (auth.currentUser.email === "admin@gmail.com") {
+      if (userEmail === "admin@gmail.com") {
         navigate("/admin");
-      } else if (auth.currentUser && userRole === "regular") {
+      } else if (userRole === "regular") {
         navigate("/");
-      } else if (auth.currentUser && userRole === "shopOwner") {
+      } else if (userRole === "shopOwner") {
         navigate("/ownershome");
       }
     }
@@ -55,7 +56,7 @@ const Login = () => {
     <div className={`${classes.centerdiv} ${classes.container}`}>
       <Card bordered={true} className={classes.card}>
         <h2 className={classes.heading}>Login Page</h2>
-        {console.log(window.innerHeight)}
+        {}
         <Form
           labelCol={{
             span: 8,

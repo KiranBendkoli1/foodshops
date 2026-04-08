@@ -41,7 +41,7 @@ const Leaflet = () => {
   //   };
 
   //   const queryString = new URLSearchParams(params).toString();
-  //   console.log(queryString);
+  //   
   //   const requestOptions = {
   //     method: "GET",
   //     redirect: "follow",
@@ -68,13 +68,11 @@ const Leaflet = () => {
               };
 
               const queryString = new URLSearchParams(params).toString();
-              console.log(queryString);
               const requestOptions = {
                 method: "GET",
                 redirect: "follow",
               };
               const res = await axios(`${NOMINATIM_BASE_URL}${queryString}`);
-              console.log(res.data);
               setData(res.data);
             }}
           >
@@ -101,7 +99,7 @@ const Leaflet = () => {
           />
         </div>
       </Col>
-      {console.log(selectPositon)}
+      {}
       <Col
         span={12}
         style={{

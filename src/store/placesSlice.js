@@ -1,16 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import {
-  collection,
-  getDocs,
-  doc,
-  addDoc,
-  deleteDoc,
-  updateDoc,
-  getDoc,
-  setDoc,
-} from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { firestore, storage } from "../config/firebase";
+import supabase from "../config/supabase";
+
 const initialPlacesState = {
   foodplaces: [],
   foodplace: {},
@@ -19,11 +9,19 @@ const initialPlacesState = {
 };
 
 /// helping function
-const uploadImage = async (image) => {
-  const imgRef = ref(storage, `foodshops/${Date.now()}-${image.name}`);
-  const uploadTask = await uploadBytes(imgRef, image);
-  const url = await getDownloadURL(uploadTask.ref);
-  return url;
+const uploadImage = async (image, shopname) => {
+  const safeShopname = shopname.replace(/\s+/g, '_');
+  const safeImageName = image.name.replace(/\s+/g, '_');
+  const imagePath = `${safeShopname}/${Date.now()}-${safeImageName}`;
+  const { data, error } = await supabase.storage
+    .from("foodshops")
+    .upload(imagePath, image);
+
+  if (error) {
+    console.error("Error uploading image:", error);
+    return null;
+  }
+  return data.path;
 };
 
 export const uploadFoodShopData = createAsyncThunk(
@@ -38,42 +36,39 @@ export const uploadFoodShopData = createAsyncThunk(
       images,
       type,
     } = data;
-    console.log(data);
     const name = thunkAPI.getState().user.name;
     const contact = thunkAPI.getState().user.contact;
-    const imgPromise = Array.from(images, (image) => uploadImage(image));
+    const imgPromise = Array.from(images, (image) => uploadImage(image, name || "default"));
     const imageRes = await Promise.all(imgPromise);
 
-    // images.forEach((file) => {
-    //   imgArray.push(url);
-    // });
-    console.log({ imageRes });
-    let x = Math.floor(Math.random() * 100 + 1);
-
     const res = {
-      key: `${x} ${name}`,
+      owner_email: email,
       title: name,
-      email: email,
       speciality: speciality,
       location: location,
       description: description,
-      selectPosition: selectPosition,
-      likes: 0,
-      dislikes: 0,
+      select_position: selectPosition,
       contact: contact,
-      liked: [],
-      discounts: [],
-      disliked: [],
-      comments: [],
       type: type,
-      images: imageRes,
-      postedOn: new Date().toDateString(),
+      image_paths: imageRes.filter(Boolean),
+      posted_on: new Date().toDateString(),
     };
-    console.log(res);
     try {
-      const docRef = await setDoc(doc(firestore, "foodshops", email), res);
-      console.log(docRef.id);
-      return { ...res, id: docRef.id };
+      const { data: dbData, error } = await supabase.from("foodshops").insert([res]).select();
+      if (error) throw error;
+      const createdItem = dbData[0];
+      return {
+        ...createdItem,
+        comments: [],
+        liked: [],
+        disliked: [],
+        discounts: [],
+        images: (createdItem.image_paths || []).map(
+          (p) => supabase.storage.from("foodshops").getPublicUrl(p).data.publicUrl
+        ),
+        likes: 0,
+        dislikes: 0
+      };
     } catch (error) {
       console.error(error);
     }
@@ -86,7 +81,6 @@ export const getFoodShopById = createAsyncThunk(
     await thunkAPI.dispatch(fetchPlaces());
     const foodplaces = thunkAPI.getState().places.foodplaces;
     const foodplaceData = foodplaces.filter((place) => place.id === id)[0];
-    console.log({ foodplaceData });
     return foodplaceData;
   }
 );
@@ -96,33 +90,43 @@ export const updateData = createAsyncThunk(
   "content/updateData",
   async (data, thunkAPI) => {
     const { index, id, values, image, discount } = data;
-    console.log(data);
     let result;
-    let discounts;
-    thunkAPI.dispatch(fetchPlaces());
     try {
       let newValues = { ...values };
-      const shopdata = await getDoc(doc(firestore, "foodshops", id));
-      result = shopdata.data();
-      result = { ...result, id: id, index: index };
+      const { data: shopdata, error: shopError } = await supabase
+        .from("foodshops")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (shopError) throw shopError;
+
+      result = shopdata;
+      result = { ...result, index };
+      let discounts = shopdata.discounts || [];
       if (discount.trim() !== "|") {
-        discounts = shopdata.data().discounts;
         discounts.push(discount);
         newValues = { ...newValues, discounts: discounts };
         result = { ...result, discounts: discounts };
       }
       if (image !== "") {
-        newValues = { ...newValues, image: image };
+        let image_paths = shopdata.image_paths || [];
+        image_paths.push(image);
+        newValues = { ...newValues, image_paths };
+        result = { ...result, image_paths };
       }
-      result = {...result, ...newValues};
-      console.log({ newValues });
-      updateDoc(doc(firestore, "foodshops", id), result).then(() => {
-        console.log("Updated Successfully", { result });
-      });
-      console.log({ result });
+
+      result = {
+        ...result,
+        ...newValues,
+        images: (result.image_paths || []).map(
+          (p) => supabase.storage.from("foodshops").getPublicUrl(p).data.publicUrl
+        )
+      };
+
+      await supabase.from("foodshops").update(newValues).eq("id", id);
       return [index, result];
     } catch (error) {
-      console.log({ error });
     }
   }
 );
@@ -133,36 +137,57 @@ export const deleteItem = createAsyncThunk(
   async (data) => {
     const { id, index, item } = data;
     try {
-      console.log({ data });
-      const mydoc = await getDoc(doc(firestore, "foodshops", id));
-      let discounts = mydoc.data().discounts;
-      console.log({ discounts });
+      const { data: shopdata } = await supabase.from("foodshops").select("discounts").eq("id", id).single();
+      let discounts = shopdata.discounts || [];
       discounts = discounts.filter((discount) => discount !== item);
-      console.log({ discounts });
-      await updateDoc(doc(firestore, "foodshops", id), {
-        discounts: discounts,
-      });
-      console.log({ index, discounts });
+      await supabase.from("foodshops").update({ discounts }).eq("id", id);
       return [index, discounts];
     } catch (error) {
-      console.log({ error });
     }
   }
 );
 
 // fetch data
 export const fetchPlaces = createAsyncThunk("content/fetchPlaces", async () => {
-  const querySnapshot = await getDocs(collection(firestore, "foodshops"));
-  const data = [];
-  let temp = {};
-  let i = 0;
-  querySnapshot.forEach((doc) => {
-    temp = doc.data();
-    temp = { ...temp, id: doc.id, index: i };
-    data.push(temp);
-    i++;
-  });
-  return data;
+  const { data: shops, error } = await supabase
+    .from("foodshops")
+    .select(`
+      *,
+      foodshop_comments ( id, user_email, comment_text, created_at ),
+      foodshop_interactions ( id, user_email, type )
+    `);
+
+  if (error) throw error;
+
+  const shopsWithImages = await Promise.all(
+    shops.map(async (shop, i) => {
+      const comments = (shop.foodshop_comments || []).map(
+        (c) => `${c.user_email} | ${c.comment_text}`
+      );
+      const liked = (shop.foodshop_interactions || [])
+        .filter((int) => int.type === "like")
+        .map((int) => int.user_email);
+      const disliked = (shop.foodshop_interactions || [])
+        .filter((int) => int.type === "dislike")
+        .map((int) => int.user_email);
+
+      return {
+        ...shop,
+        id: shop.id,
+        index: i,
+        comments,
+        liked,
+        disliked,
+        images: (shop.image_paths || []).map(
+          (p) => supabase.storage.from("foodshops").getPublicUrl(p).data.publicUrl
+        ),
+        likes: liked.length,
+        dislikes: disliked.length,
+      };
+    })
+  );
+
+  return shopsWithImages;
 });
 
 // update likes
@@ -170,35 +195,32 @@ export const updateLikes = createAsyncThunk(
   "content/updateLikes",
   async (data) => {
     const { id, index, dislikes, likes, user } = data;
-    console.log({ data });
     try {
-      let uLikes = likes,
-        uDislikes = dislikes;
-      const shopdata = await getDoc(doc(firestore, "foodshops", id));
-      let liked = shopdata.data().liked;
-      let disliked = shopdata.data().disliked;
-      console.log(liked);
-      if (liked.find((e) => e === user)) {
+      let uLikes = likes, uDislikes = dislikes;
+      const { data: interactions, error } = await supabase.from("foodshop_interactions").select("user_email, type").eq("foodshop_id", id);
+      if (error) throw error;
+
+      let liked = interactions.filter(i => i.type === 'like').map(i => i.user_email);
+      let disliked = interactions.filter(i => i.type === 'dislike').map(i => i.user_email);
+
+      if (liked.includes(user)) {
         uLikes = likes - 1;
-        liked = liked.filter((e) => e !== user);
-      } else if (disliked.find((e) => e === user)) {
-        disliked = disliked.filter((e) => e !== user);
+        liked = liked.filter(e => e !== user);
+        await supabase.from("foodshop_interactions").delete().match({ foodshop_id: id, user_email: user, type: 'like' });
+      } else if (disliked.includes(user)) {
+        disliked = disliked.filter(e => e !== user);
         uLikes = likes + 1;
         uDislikes = dislikes - 1;
         liked.push(user);
+        await supabase.from("foodshop_interactions").update({ type: 'like' }).match({ foodshop_id: id, user_email: user });
       } else {
         uLikes = likes + 1;
         liked.push(user);
+        await supabase.from("foodshop_interactions").insert({ foodshop_id: id, user_email: user, type: 'like' });
       }
-      await updateDoc(doc(firestore, "foodshops", id), {
-        likes: uLikes,
-        liked: liked,
-        dislikes: uDislikes,
-        disliked: disliked,
-      });
+
       return [index, uLikes, uDislikes, liked, disliked];
     } catch (error) {
-      console.log({ error });
       return error;
     }
   }
@@ -209,37 +231,32 @@ export const updateDislikes = createAsyncThunk(
   "content/updateDislikes",
   async (data) => {
     const { id, index, dislikes, likes, user } = data;
-    console.log({ data });
     try {
-      let uDislikes = dislikes,
-        uLikes = likes;
-      const shopdata = await getDoc(doc(firestore, "foodshops", id));
-      let disliked = shopdata.data().disliked;
-      let liked = shopdata.data().liked;
-      console.log({ disliked });
-      if (disliked.find((e) => e === user)) {
+      let uDislikes = dislikes, uLikes = likes;
+      const { data: interactions, error } = await supabase.from("foodshop_interactions").select("user_email, type").eq("foodshop_id", id);
+      if (error) throw error;
+
+      let liked = interactions.filter(i => i.type === 'like').map(i => i.user_email);
+      let disliked = interactions.filter(i => i.type === 'dislike').map(i => i.user_email);
+
+      if (disliked.includes(user)) {
         uDislikes = dislikes - 1;
-        disliked = disliked.filter((e) => e !== user);
-      } else if (liked.find((e) => e === user)) {
-        liked = liked.filter((e) => e !== user);
+        disliked = disliked.filter(e => e !== user);
+        await supabase.from("foodshop_interactions").delete().match({ foodshop_id: id, user_email: user, type: 'dislike' });
+      } else if (liked.includes(user)) {
+        liked = liked.filter(e => e !== user);
         uDislikes = dislikes + 1;
         uLikes = likes - 1;
         disliked.push(user);
+        await supabase.from("foodshop_interactions").update({ type: 'dislike' }).match({ foodshop_id: id, user_email: user });
       } else {
-        disliked.push(user);
         uDislikes = dislikes + 1;
+        disliked.push(user);
+        await supabase.from("foodshop_interactions").insert({ foodshop_id: id, user_email: user, type: 'dislike' });
       }
-      // console.log({ disliked });
-      // console.log({ liked });
-      await updateDoc(doc(firestore, "foodshops", id), {
-        likes: uLikes,
-        liked: liked,
-        dislikes: uDislikes,
-        disliked: disliked,
-      });
+
       return [index, uLikes, uDislikes, liked, disliked];
     } catch (error) {
-      console.log({ error });
       return error;
     }
   }
@@ -250,33 +267,26 @@ export const addComment = createAsyncThunk(
   "content/addComment",
   async (data) => {
     const { id, user, index, values } = data;
-    console.log(data);
     try {
-      const shopdata = await getDoc(doc(firestore, "foodshops", id));
-      let comments = shopdata.data().comments;
-      comments.push(`${user} | ${values["comment"]}`);
-      await updateDoc(doc(firestore, "foodshops", id), {
-        comments: comments,
-      });
+      await supabase.from("foodshop_comments").insert({ foodshop_id: id, user_email: user, comment_text: values["comment"] });
+      const { data: commentsData } = await supabase.from("foodshop_comments").select("*").eq("foodshop_id", id);
+      let comments = commentsData.map(c => `${c.user_email} | ${c.comment_text}`);
       return [index, comments];
     } catch (error) {
-      console.log({ error });
       return error;
     }
   }
 );
+
 // delete
 export const deleteDataFromDb = createAsyncThunk(
   "content/delete",
   async (id, thunkAPI) => {
-    // const { id } = data;
-    console.log({ id });
     let foodplaces;
     try {
-      await deleteDoc(doc(firestore, "foodshops", id));
+      await supabase.from("foodshops").delete().eq("id", id);
       foodplaces = thunkAPI.getState().places.foodplaces;
       foodplaces = foodplaces.filter((place) => place.id !== id);
-      console.log({ foodplaces });
       return foodplaces;
     } catch (error) {
       return ["failed to delete"];
