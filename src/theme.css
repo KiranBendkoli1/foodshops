@@ -1,21 +1,73 @@
 :root {
-  --background: #fff;
-  --primary: #1f53ee;
-  --secondary: #fff;
-  --text: #000000;
-  --shadow: #aaaaaa;
+  /* Layout */
+  --max-width: 1280px;
+
+  /* Brand Colors - Standard Cyan Profile from Template */
+  --primary: #00687a;
+  --primary-container: #06b6d4;
+  --on-primary: #ffffff;
+  --secondary: #50616b;
+  --secondary-container: #d3e5f1;
+  --tertiary: #8c5000;
+  --tertiary-container: #e89337;
+  
+  /* Semantic Backgrounds - Light Profile */
+  --background: #f5fafc;
+  --surface: #f5fafc;
+  --surface-container: #e9eff1;
+  --surface-container-low: #eff4f7;
+  --surface-border: #dee3e6;
+  
+  /* Semantic Text - Light Profile */
+  --text-primary: #171d1e;
+  --text-secondary: #3d494c;
+  --text-outline: #6d797d;
+
+  /* Helpers */
+  --primary-gradient: linear-gradient(135deg, #00687a 0%, #06b6d4 100%);
+  --glass-bg: rgba(245, 250, 252, 0.8);
+  --glass-border: rgba(222, 227, 230, 0.5);
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 [data-theme="dark"] {
-  --background: #373636;
-  --primary: #513f93;
-  --secondary: #1f53ee;
-  --text: #efe4e4;
-  --shadow: rgb(120, 112, 112);
+  /* Brand Colors - Dark Profile */
+  --primary: #4cd7f6;
+  --primary-container: #004e5c;
+  --on-primary: #003640;
+  --secondary: #b7c9d5;
+  --secondary-container: #384953;
+  --tertiary: #ffb873;
+  --tertiary-container: #6a3b00;
+
+  /* Semantic Backgrounds - Dark Profile */
+  --background: #020617;
+  --surface: #0f172a;
+  --surface-container: #1e293b;
+  --surface-container-low: #1c2426;
+  --surface-border: rgba(51, 65, 85, 0.5);
+
+  /* Semantic Text - Dark Profile */
+  --text-primary: #ecf2f4;
+  --text-secondary: #94a3b8;
+  --text-outline: #6d797d;
+
+  /* Helpers */
+  --primary-gradient: linear-gradient(135deg, #00687a 0%, #06b6d4 100%);
+  --glass-bg: rgba(15, 23, 42, 0.8);
+  --glass-border: rgba(51, 65, 85, 0.5);
+  --shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

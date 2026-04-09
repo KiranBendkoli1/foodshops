@@ -1,0 +1,169 @@
+.authPage {
+  min-height: calc(100vh - 400px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.signupCard {
+  width: 100%;
+  max-width: 630px;
+  background-color: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+}
+
+.selectionContent, .formContent {
+  padding: 3rem 2.5rem;
+}
+
+.title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  text-align: center;
+  letter-spacing: -0.025em;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.roleGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 640px) {
+  .roleGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.roleCard {
+  background-color: var(--surface-container-low);
+  border: 1px solid var(--surface-border);
+  padding: 2rem 1.5rem;
+  border-radius: 1.25rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.roleCard:hover {
+  border-color: var(--primary);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px var(--secondary-container);
+}
+
+.roleIcon {
+  width: 3.5rem;
+  height: 3.5rem;
+  background-color: var(--secondary-container);
+  color: var(--primary);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.roleIcon span {
+  font-size: 1.75rem;
+}
+
+.roleCard h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.roleCard p {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.loginHint {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.loginHint a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.backBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.backBtn:hover {
+  color: var(--primary);
+}
+
+.form {
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.form :global(.ant-form-item-label > label) {
+  color: var(--text-secondary) !important;
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+.input {
+  background-color: var(--surface-container-low) !important;
+  border-color: var(--surface-border) !important;
+  color: var(--text-primary) !important;
+  border-radius: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+}
+
+.signupBtn {
+  height: 3.5rem !important;
+  border-radius: 0.75rem !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  background: var(--primary-gradient) !important;
+  border: none !important;
+  margin-top: 1rem;
+  box-shadow: 0 10px 15px -3px var(--secondary-container) !important;
+}
+
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: var(--text-secondary);
+  font-style: italic;
+}

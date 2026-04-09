@@ -1,73 +1,59 @@
-import React, { useCallback, useMemo, useState } from "react";
-import FoodPlace from "./FoodPlace";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { Col, Row, Select, Space } from "antd";
 import { fetchPlaces } from "../../store/placesSlice";
-const { Option } = Select;
+import FoodPlace from "./FoodPlace";
+import HomeHero from "./HomeHero";
+import classes from "./FoodPlaces.module.css";
 
 const FoodPlaces = () => {
   const [search, setSearch] = useState("");
-  let foodplaces = useSelector((state) => state.places.foodplaces);
-  const names = useMemo(
-    () => foodplaces.map((place) => place.title),
-    [foodplaces]
-  );
-  const locations = useMemo(
-    () => foodplaces.map((place) => place.location),
-    [foodplaces]
-  );
-  const searchableItems = useMemo(
-    () => names.concat(locations),
-    [names, locations]
-  );
   const dispatch = useDispatch();
-  const handleChange = useCallback((value) => {
-    setSearch(value.toString());
-  }, []);
+  const { foodplaces, isLoading } = useSelector((state) => state.places);
+
   useEffect(() => {
     dispatch(fetchPlaces());
   }, [dispatch]);
+
+  const filteredPlaces = useMemo(() => {
+    return foodplaces.filter(
+      (place) =>
+        place.title.toLowerCase().includes(search.toLowerCase()) ||
+        place.location.toLowerCase().includes(search.toLowerCase()) ||
+        place.speciality.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [foodplaces, search]);
+
   return (
-    <>
-      <Select
-        align={"center"}
-        mode="multiple"
-        style={{
-          width: "50%",
-          marginTop: "12px",
-          marginBottom: "10px",
-        }}
-        placeholder="select location"
-        onChange={handleChange}
-        optionLabelProp="label"
-      >
-        {searchableItems.map((item) => {
-          return (
-            <>
-              <Option value={item} label={item}>
-                <Space>{item}</Space>
-              </Option>
-            </>
-          );
-        })}
-      </Select>
-      <Row align={"center"}>
-        {foodplaces
-          .filter(
-            (foodplace) =>
-              foodplace.title.toLowerCase().includes(search.toLowerCase()) ||
-              foodplace.location.toLowerCase().includes(search.toLowerCase())
-          )
-          .map((foodplace) => {
-            return (
-              <Col key={foodplace.id}>
-                <FoodPlace foodplace={foodplace} key={foodplace.id} />
-              </Col>
-            );
-          })}
-      </Row>
-    </>
+    <div className={classes.container}>
+      <HomeHero onSearch={setSearch} />
+      
+      <div className={classes.discoveryHeader}>
+        <h2 className={classes.sectionTitle}>Discover culinary gems</h2>
+        <div className={classes.filterBadges}>
+          <button className={classes.activeBadge}>All Cuisines</button>
+          <button className={classes.badge}>Japanese</button>
+          <button className={classes.badge}>Italian</button>
+          <button className={classes.badge}>Vegan</button>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className={classes.loader}>Discovering the best places for you...</div>
+      ) : (
+        <div className={classes.grid}>
+          {filteredPlaces.map((place, index) => (
+            <FoodPlace key={place.id} foodplace={place} index={index} />
+          ))}
+        </div>
+      )}
+
+      {filteredPlaces.length === 0 && !isLoading && (
+        <div className={classes.noResults}>
+           <span className="material-symbols-outlined">search_off</span>
+           <p>No culinary gems found for "{search}"</p>
+        </div>
+      )}
+    </div>
   );
 };
 

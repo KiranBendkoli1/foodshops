@@ -1,0 +1,105 @@
+.container {
+  width: 100%;
+}
+
+.discoveryHeader {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .discoveryHeader {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.sectionTitle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.filterBadges {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .filterBadges {
+    width: auto;
+    overflow-x: visible;
+    padding-bottom: 0;
+  }
+}
+
+.badge, .activeBadge {
+  padding: 0.5rem 1.25rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.badge {
+  background-color: var(--card-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--card-border);
+}
+
+.badge:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.activeBadge {
+  background-color: var(--primary-color);
+  color: #fff;
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 4px 10px rgba(6, 182, 212, 0.2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  width: 100%;
+}
+
+.loader {
+  padding: 4rem;
+  text-align: center;
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.noResults {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+  color: var(--text-secondary);
+  gap: 1rem;
+}
+
+.noResults i {
+  font-size: 4rem;
+  opacity: 0.3;
+}
+
+.noResults p {
+  font-size: 1.125rem;
+}

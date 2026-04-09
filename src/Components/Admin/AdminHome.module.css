@@ -1,0 +1,117 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  width: 100%;
+}
+
+.header {
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.tableSection {
+  background-color: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 1.25rem;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+}
+
+.tableHeader {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--surface-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tableTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.exportButton {
+  background-color: transparent;
+  border: 1px solid var(--surface-border);
+  color: var(--text-primary);
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.exportButton:hover {
+  background-color: var(--surface-container);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.tableContainer {
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+/* Customizing Ant Design Table inside our container */
+.tableContainer :global(.ant-table) {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+.tableContainer :global(.ant-table-thead > tr > th) {
+  background: var(--surface-container-low) !important;
+  color: var(--text-secondary) !important;
+  border-bottom: 1px solid var(--surface-border) !important;
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+.tableContainer :global(.ant-table-tbody > tr > td) {
+  border-bottom: 1px solid var(--surface-border) !important;
+  padding: 1.25rem 1rem !important;
+  color: var(--text-primary) !important;
+}
+
+.tableContainer :global(.ant-table-row:hover > td) {
+  background: var(--secondary-container) !important;
+  opacity: 0.8;
+}
+
+.tableContainer :global(.ant-pagination-item-active) {
+  border-color: var(--primary) !important;
+  background: var(--primary) !important;
+}
+
+.tableContainer :global(.ant-pagination-item-active a) {
+  color: var(--on-primary) !important;
+}

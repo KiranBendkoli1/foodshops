@@ -1,0 +1,104 @@
+.authPage {
+  min-height: calc(100vh - 400px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 440px;
+  background-color: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+}
+
+.cardContent {
+  padding: 3rem 2.5rem;
+}
+
+.title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  text-align: center;
+  letter-spacing: -0.025em;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.form :global(.ant-form-item-label > label) {
+  color: var(--text-secondary) !important;
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+.input {
+  background-color: var(--surface-container-low) !important;
+  border-color: var(--surface-border) !important;
+  color: var(--text-primary) !important;
+  border-radius: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+}
+
+.input:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 2px var(--secondary-container) !important;
+}
+
+.options {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.forgotLink {
+  color: var(--primary);
+  font-size: 0.875rem;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.forgotLink:hover {
+  text-decoration: underline;
+}
+
+.loginBtn {
+  height: 3.5rem !important;
+  border-radius: 0.75rem !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  background: var(--primary-gradient) !important;
+  border: none !important;
+  box-shadow: 0 10px 15px -3px var(--secondary-container) !important;
+}
+
+.signupPrompt {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.signupPrompt a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.signupPrompt a:hover {
+  text-decoration: underline;
+}

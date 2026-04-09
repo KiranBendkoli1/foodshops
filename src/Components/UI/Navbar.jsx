@@ -1,16 +1,15 @@
 import React, { memo, useCallback, useContext } from "react";
-import { Button, Menu } from "antd";
-import { LoginOutlined, LogoutOutlined } from "@ant-design/icons";
-import classes from "../Home/HomePage.module.css";
+import { Dropdown } from "antd";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../utils/auth";
-import sun from "../../assets/icons/brightness.png";
-import moon from "../../assets/icons/moon.png";
-import { Switch } from "antd";
 import { ThemeContext } from "../../context/theme-context";
+import classes from "./Navbar.module.css";
+
 const Navbar = () => {
   const userEmail = localStorage.getItem("email");
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useContext(ThemeContext);
+
   const logoutHandler = useCallback(() => {
     logout().then(() => {
       localStorage.removeItem("email");
@@ -18,44 +17,71 @@ const Navbar = () => {
       navigate("/login");
     });
   }, [navigate]);
+
   const loginHandler = useCallback(() => {
     navigate("/login");
   }, [navigate]);
-  const themeContext = useContext(ThemeContext);
+
+  const userMenuItems = [
+    {
+      key: 'email',
+      label: <span className={classes.userEmail}>{userEmail}</span>,
+      disabled: true,
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: 'logout',
+      label: (
+        <div onClick={logoutHandler} className={classes.logoutItem}>
+          <span className="material-symbols-outlined">logout</span>
+          <span>Logout</span>
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <>
-      <h1 className={classes.title}>Food Places</h1>
-      <p style={{ display: "flex" }}>
-        <Switch
-          onChange={themeContext.toggleTheme}
-          checkedChildren={<img src={sun} width={"19px"} height={"19px"} alt="Sun Mode" />}
-          unCheckedChildren={<img src={moon} width={"17px"} height={"17px"} alt="Moon Mode" />}
-          defaultChecked
+    <div className={classes.lightContainer}>
+      <div className={classes.searchBar}>
+        <span className={`material-symbols-outlined ${classes.searchIcon}`}>search</span>
+        <input 
+          type="text" 
+          placeholder="Search culinary gems..." 
+          className={classes.searchInput}
         />
-        {userEmail && (
-          <Menu
-            mode="horizontal"
-            className={classes.navmenu}
-            style={{ float: "right" }}
-          >
-            <Menu.Item key="">{userEmail}</Menu.Item>
-            <Menu.Item key="Logout">
-              {" "}
-              <Button onClick={logoutHandler}>
-                <LogoutOutlined />
-                Logout
-              </Button>
-            </Menu.Item>
-          </Menu>
-        )}
-        {!userEmail && (
-          <Button onClick={loginHandler}>
-            <LoginOutlined />
-            Login/SignUp
-          </Button>
-        )}
-      </p>
-    </>
+      </div>
+
+      <button className={classes.iconButton}>
+        <span className="material-symbols-outlined">notifications</span>
+      </button>
+
+      <button 
+        className={classes.themeToggle} 
+        onClick={toggleTheme}
+        aria-label="Toggle Theme"
+      >
+        <span className="material-symbols-outlined">
+          {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+        </span>
+      </button>
+
+      {userEmail ? (
+        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" arrow>
+          <div className={classes.userBadge}>
+            <div className={classes.userAvatar}>
+              <span className="material-symbols-outlined">person</span>
+            </div>
+            <span className={classes.userName}>{userEmail.split('@')[0]}</span>
+          </div>
+        </Dropdown>
+      ) : (
+        <button className={classes.loginBtn} onClick={loginHandler}>
+          Sign In
+        </button>
+      )}
+    </div>
   );
 };
 
