@@ -33,7 +33,7 @@ function App() {
       }}
     >
       <div data-theme={themeContext.theme}>
-        <BrowserRouter basename={process.env.PUBLIC_URL}>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
           <Header className={classes.header}>
             <Navbar />
           </Header>
