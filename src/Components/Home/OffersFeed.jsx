@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import classes from './OffersFeed.module.css';
 import Seo from '../SEO/Seo';
+import { optimizeImageUrl } from '../../utils/image';
 
 const OffersFeed = () => {
   const foodplaces = useSelector((state) => state.places.foodplaces);
@@ -20,7 +21,7 @@ const OffersFeed = () => {
           offers.push({
             placeId: place.id,
             placeTitle: place.title,
-            placeImage: place.images?.[0],
+            placeImage: optimizeImageUrl(place.images?.[0], { width: 640, quality: 60 }),
             code: parts[0],
             value: parts[1],
             expiry: parts[2] || 'No Expiry',
@@ -73,7 +74,14 @@ const OffersFeed = () => {
         {filteredOffers.map((offer, i) => (
           <div key={i} className={`${classes.card} ${offer.isExpired ? classes.expired : ''}`}>
             <div className={classes.imageWrapper}>
-              <img src={offer.placeImage} alt={offer.placeTitle} />
+              <img
+                src={offer.placeImage}
+                alt={offer.placeTitle}
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                referrerPolicy="no-referrer"
+              />
               <div className={classes.discountBadge}>{offer.value}</div>
             </div>
             <div className={classes.cardContent}>

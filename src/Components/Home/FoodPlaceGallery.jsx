@@ -1,10 +1,18 @@
 import React from 'react';
 import classes from './FoodPlace.module.css';
 
-const FoodPlaceGallery = ({ mainImage, title, type, rating = "4.8", onClick }) => {
+const FoodPlaceGallery = ({ mainImage, title, type, rating = "4.8", onClick, prioritizeImage = false }) => {
   return (
     <div className={classes.imageContainer} onClick={onClick}>
-      <img src={mainImage} alt={title} className={classes.image} />
+      <img
+        src={mainImage}
+        alt={title}
+        className={classes.image}
+        loading={prioritizeImage ? "eager" : "lazy"}
+        decoding="async"
+        fetchPriority={prioritizeImage ? "high" : "low"}
+        referrerPolicy="no-referrer"
+      />
       <div className={classes.ratingBadge}>
         <span className="material-symbols-outlined">star</span>
         <span className={classes.ratingText}>{rating}</span>

@@ -56,6 +56,8 @@
   border: 1px solid var(--surface-border);
   padding: 2rem 1.5rem;
   border-radius: 1.25rem;
+  appearance: none;
+  width: 100%;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -86,7 +88,7 @@
   font-size: 1.75rem;
 }
 
-.roleCard h3 {
+.roleCard h2 {
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--text-primary);

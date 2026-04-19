@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { lazy, Suspense, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { updateLikes, updateDislikes } from '../../store/placesSlice';
@@ -6,11 +6,13 @@ import useModal from '../../hooks/useModal';
 
 import FoodPlaceGallery from './FoodPlaceGallery';
 import FoodPlaceActions from './FoodPlaceActions';
-import AuthModal from '../Auth/AuthModal';
-import OffersModal from './Modals/OffersModal';
-import ReviewModal from './Modals/ReviewModal';
-import CommentsModal from './Modals/CommentsModal';
 import { LocationOnOutline } from '../UI/Icons';
+import { optimizeImageUrl } from '../../utils/image';
+const AuthModal = lazy(() => import('../Auth/AuthModal'));
+const OffersModal = lazy(() => import('./Modals/OffersModal'));
+const ReviewModal = lazy(() => import('./Modals/ReviewModal'));
+const CommentsModal = lazy(() => import('./Modals/CommentsModal'));
+
 
 import classes from './FoodPlace.module.css';
 
@@ -40,7 +42,10 @@ const FoodPlace = ({ foodplace, index }) => {
     dispatch(updateDislikes({ id, index, likes, dislikes, user }));
   }, [user, id, index, likes, dislikes, dispatch, openAuthModal]);
 
-  const mainImage = image || (images && images[0]) || 'https://via.placeholder.com/400x300';
+  const mainImage = optimizeImageUrl(
+    image || (images && images[0]) || 'https://via.placeholder.com/400x300',
+    { width: 720, quality: 65 }
+  );
   
   const shareData = useMemo(() => ({
     text: `Check out ${title}`,
@@ -69,6 +74,7 @@ const FoodPlace = ({ foodplace, index }) => {
         title={title}
         type={type}
         rating={avgRating > 0 ? avgRating : "New"}
+        prioritizeImage={index === 0}
         onClick={() => navigate(`/details/${id}`)}
       />
 
@@ -102,38 +108,48 @@ const FoodPlace = ({ foodplace, index }) => {
         />
       </div>
 
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        onClose={closeAuthModal} 
-        title="Interactions require sign in"
-      />
+      <Suspense fallback={null}>
+        {isAuthModalOpen && (
+          <AuthModal
+            isOpen={isAuthModalOpen}
+            onClose={closeAuthModal}
+            title="Interactions require sign in"
+          />
+        )}
 
-      <OffersModal 
-        isOpen={isOffersModalOpen}
-        onClose={closeOffersModal}
-        title={title}
-        discounts={discounts}
-      />
+        {isOffersModalOpen && (
+          <OffersModal
+            isOpen={isOffersModalOpen}
+            onClose={closeOffersModal}
+            title={title}
+            discounts={discounts}
+          />
+        )}
 
-      <CommentsModal 
-        isOpen={isCommentsModalOpen}
-        onClose={closeCommentsModal}
-        title={title}
-        id={id}
-        index={index}
-        comments={comments}
-        userEmail={user}
-      />
+        {isCommentsModalOpen && (
+          <CommentsModal
+            isOpen={isCommentsModalOpen}
+            onClose={closeCommentsModal}
+            title={title}
+            id={id}
+            index={index}
+            comments={comments}
+            userEmail={user}
+          />
+        )}
 
-      <ReviewModal 
-        isOpen={isReviewModalOpen}
-        onClose={closeReviewModal}
-        title={title}
-        id={id}
-        index={index}
-        reviews={comments}
-        userEmail={user}
-      />
+        {isReviewModalOpen && (
+          <ReviewModal
+            isOpen={isReviewModalOpen}
+            onClose={closeReviewModal}
+            title={title}
+            id={id}
+            index={index}
+            reviews={comments}
+            userEmail={user}
+          />
+        )}
+      </Suspense>
     </div>
   );
 };

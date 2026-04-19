@@ -1,27 +1,23 @@
-import { useContext, useEffect } from "react";
-import Login from "./Components/Auth/Login";
-import Signup from "./Components/Auth/Signup";
+import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HomePage from "./Components/Home/HomePage";
-import OffersFeed from "./Components/Home/OffersFeed";
-import AddFoodPlace from "./Components/ShopOwener/AddFoodPlace";
 import CustomLayout from "./Components/UI/CustomLayout";
-import { ConfigProvider, theme } from "antd";
-import Comments from "./Components/Home/Comments";
-import AdminHome from "./Components/Admin/AdminHome";
 import { useDispatch } from "react-redux";
 import { fetchPlaces } from "./store/placesSlice";
-import OwnersHomepage from "./Components/ShopOwener/OwnersHomepage";
-import CompleteDetails from "./Components/ShopOwener/CompleteDetails";
-import MapComponent from "./Components/Maps/MapComponent";
-import PrivateRoutes from "./Components/ProtectedRoute/PrivateRoutes";
-import { ThemeContext } from "./context/theme-context";
 import "./index.css";
 
-const { defaultAlgorithm, darkAlgorithm } = theme;
+const HomePage = lazy(() => import("./Components/Home/HomePage"));
+const OffersFeed = lazy(() => import("./Components/Home/OffersFeed"));
+const Login = lazy(() => import("./Components/Auth/Login"));
+const Signup = lazy(() => import("./Components/Auth/Signup"));
+const Comments = lazy(() => import("./Components/Home/Comments"));
+const CompleteDetails = lazy(() => import("./Components/ShopOwener/CompleteDetails"));
+const PrivateRoutes = lazy(() => import("./Components/ProtectedRoute/PrivateRoutes"));
+const AdminHome = lazy(() => import("./Components/Admin/AdminHome"));
+const OwnersHomepage = lazy(() => import("./Components/ShopOwener/OwnersHomepage"));
+const AddFoodPlace = lazy(() => import("./Components/ShopOwener/AddFoodPlace"));
+const MapComponent = lazy(() => import("./Components/Maps/MapComponent"));
 
 function App() {
-  const themeContext = useContext(ThemeContext);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -29,17 +25,9 @@ function App() {
   }, [dispatch]);
 
   return (
-    <ConfigProvider
-      theme={{
-        algorithm:
-          themeContext.theme === "dark" ? darkAlgorithm : defaultAlgorithm,
-        token: {
-          colorPrimary: '#06b6d4',
-        },
-      }}
-    >
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
-        <CustomLayout>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <CustomLayout>
+        <Suspense fallback={<div className="pageLoader">Loading...</div>}>
           <Routes>
             <Route exact path="/" element={<HomePage />} />
             <Route exact path="/offers" element={<OffersFeed />} />
@@ -58,9 +46,9 @@ function App() {
               />
             </Route>
           </Routes>
-        </CustomLayout>
-      </BrowserRouter>
-    </ConfigProvider>
+        </Suspense>
+      </CustomLayout>
+    </BrowserRouter>
   );
 }
 

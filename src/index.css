@@ -28,3 +28,12 @@ code {
   /* display: flex;
   flex:1; */
 }
+
+.pageLoader {
+  min-height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
