@@ -11,6 +11,7 @@ import Discounts from "../Admin/Discounts";
 
 import OwnerStats from "./OwnerStats";
 import OwnerShopCard from "./OwnerShopCard";
+import Seo from "../SEO/Seo";
 
 const OwnersHomepage = () => {
   const [form] = Form.useForm();
@@ -52,9 +53,28 @@ const OwnersHomepage = () => {
     form.resetFields();
   }, [inputItemName, inputDiscount, shop, dispatch, form]);
 
-  if (isLoading) return <div className={classes.loading}><Skeleton active /></div>;
+  if (isLoading) {
+    return (
+      <>
+        <Seo
+          title="Owner dashboard"
+          description="Food Shops owner dashboard."
+          noindex
+        />
+        <div className={classes.loading}>
+          <Skeleton active />
+        </div>
+      </>
+    );
+  }
 
   return (
+    <>
+      <Seo
+        title="Owner dashboard"
+        description="Manage your Food Shops listing, offers, and reviews."
+        noindex
+      />
     <div className={classes.container}>
       <header className={classes.header}>
         <div>
@@ -153,6 +173,7 @@ const OwnersHomepage = () => {
         </div>
       </Modal>
     </div>
+    </>
   );
 };
 

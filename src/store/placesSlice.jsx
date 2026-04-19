@@ -80,7 +80,7 @@ export const getFoodShopById = createAsyncThunk(
     const { id } = data;
     await thunkAPI.dispatch(fetchPlaces());
     const foodplaces = thunkAPI.getState().places.foodplaces;
-    const foodplaceData = foodplaces.filter((place) => place.id === id)[0];
+    const foodplaceData = foodplaces.filter((place) => String(place.id) === String(id))[0];
     return foodplaceData;
   }
 );

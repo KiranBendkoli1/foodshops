@@ -1,15 +1,23 @@
 .hero {
   position: relative;
-  min-height: 400px;
+  min-height: 320px;
   display: flex;
   align-items: center;
-  padding: 0 3rem;
-  border-radius: 1rem;
+  padding: 0 1.5rem;
+  border-radius: 1.5rem;
   overflow: hidden;
-  margin-bottom: 4rem;
-  background: linear-gradient(rgba(2, 6, 23, 0.4), rgba(2, 6, 23, 0.4)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=1200&q=80');
+  margin-bottom: 2rem;
+  background: linear-gradient(rgba(2, 6, 23, 0.5), rgba(2, 6, 23, 0.5)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=1200&q=80');
   background-size: cover;
   background-position: center;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    min-height: 450px;
+    padding: 0 4rem;
+    margin-bottom: 4rem;
+  }
 }
 
 .heroContent {
@@ -19,12 +27,19 @@
 }
 
 .title {
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: 800;
   line-height: 1.1;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   color: #fff;
   letter-spacing: -0.025em;
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+  }
 }
 
 .highlight {

@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import supabase from "../../config/supabase";
 import { userActions, signIn } from "../../store/userSlice";
+import Seo from "../SEO/Seo";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -57,6 +58,11 @@ const Login = () => {
   }, [conditionalLogin]);
 
   return (
+    <>
+      <Seo
+        title="Sign in"
+        description="Sign in to Food Shops to save favourites, comment on places, and manage your listings."
+      />
     <div className={classes.authPage}>
       <div className={classes.loginCard}>
         <div className={classes.cardContent}>
@@ -85,7 +91,7 @@ const Login = () => {
               name="password"
               rules={[{ required: true, message: "Enter your password!" }]}
             >
-              <Input.Password
+              <Input
                 onChange={passwordChangeHandler}
                 placeholder="••••••••"
                 className={classes.input}
@@ -113,6 +119,7 @@ const Login = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -5,7 +5,7 @@ import classes from "./HomePage.module.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addComment } from "../../store/placesSlice";
-import ImageCarousel from "../UI/ImageCarousel";
+import Seo from "../SEO/Seo";
 
 const Comments = (props) => {
   const { id } = useParams();
@@ -34,9 +34,16 @@ const Comments = (props) => {
   };
 
   return (
+    <>
+      <Seo
+        title={`${title} — reviews & comments`}
+        rawTitle
+        description={`Read and add comments for ${title} on Food Shops.`}
+        image={images?.[0]}
+      />
     <Card className={classes["comments-card"]}>
       <h2>{title}</h2>
-      <ImageCarousel images={images} />
+      <img src={images?.[0]} alt={title} style={{ width: '100%', borderRadius: '12px', marginBottom: '1rem' }} />
       <div>
         <h2>Comments...</h2>
         {comments.map((comment, index) => {
@@ -85,6 +92,7 @@ const Comments = (props) => {
         <p>For Commenting Here you need to login first </p>
       </Modal>
     </Card>
+    </>
   );
 };
 

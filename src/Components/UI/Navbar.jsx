@@ -44,21 +44,12 @@ const Navbar = () => {
 
   return (
     <div className={classes.lightContainer}>
-      <div className={classes.searchBar}>
-        <span className={`material-symbols-outlined ${classes.searchIcon}`}>search</span>
-        <input 
-          type="text" 
-          placeholder="Search culinary gems..." 
-          className={classes.searchInput}
-        />
-      </div>
-
       <button className={classes.iconButton}>
         <span className="material-symbols-outlined">notifications</span>
       </button>
 
-      <button 
-        className={classes.themeToggle} 
+      <button
+        className={classes.themeToggle}
         onClick={toggleTheme}
         aria-label="Toggle Theme"
       >

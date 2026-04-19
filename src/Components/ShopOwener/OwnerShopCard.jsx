@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button } from 'antd';
-import ImageCarousel from "../UI/ImageCarousel";
 import classes from './OwnersHomepage.module.css';
 
 const OwnerShopCard = ({ shop, contact, onManageOffers }) => {
@@ -13,7 +12,11 @@ const OwnerShopCard = ({ shop, contact, onManageOffers }) => {
       
       <div className={classes.detailsBody}>
         <div className={classes.imageGallery}>
-          <ImageCarousel images={shop.images || []} />
+          <img 
+            src={shop.images?.[0] || 'https://via.placeholder.com/400x300'} 
+            alt={shop.title} 
+            className={classes.singleImage} 
+          />
         </div>
         
         <div className={classes.infoList}>

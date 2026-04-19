@@ -2,9 +2,16 @@ import React from 'react';
 import EditableTable from './EditableTable';
 import StatCard from '../UI/StatCard';
 import classes from './AdminHome.module.css';
+import Seo from '../SEO/Seo';
 
 const AdminHome = () => {
   return (
+    <>
+      <Seo
+        title="Admin"
+        description="Food Shops administration dashboard."
+        noindex
+      />
     <div className={classes.dashboard}>
       <header className={classes.header}>
         <h1 className={classes.title}>Admin Control Center</h1>
@@ -55,6 +62,7 @@ const AdminHome = () => {
         </div>
       </section>
     </div>
+    </>
   );
 };
 

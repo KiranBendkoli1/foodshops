@@ -10,8 +10,30 @@ const FoodPlaceGallery = ({ mainImage, title, type, rating = "4.8", onClick }) =
         <span className={classes.ratingText}>{rating}</span>
       </div>
       <div className={classes.typeBadges}>
-        {type && type.includes('Veg') && <span className={classes.vegBadge}>Veg</span>}
-        {type && type.includes('Non Veg') && <span className={classes.nonVegBadge}>Non-Veg</span>}
+        {(() => {
+          let types = [];
+          if (Array.isArray(type)) types = type;
+          else if (typeof type === 'string') {
+            try {
+              const parsed = JSON.parse(type);
+              types = Array.isArray(parsed) ? parsed : [parsed];
+            } catch {
+              types = [type];
+            }
+          }
+          
+          return types.map(t => {
+            if (typeof t !== 'string') return null;
+            const nt = t.toLowerCase().replace('-', ' ');
+            if (nt.includes('non veg')) {
+              return <span key="non-veg" className={classes.nonVegBadge}>Non-Veg</span>;
+            }
+            if (nt.includes('veg')) {
+              return <span key="veg" className={classes.vegBadge}>Veg</span>;
+            }
+            return null;
+          });
+        })()}
       </div>
     </div>
   );

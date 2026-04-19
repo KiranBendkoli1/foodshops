@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import classes from "./Signup.module.css";
 import { signUp } from "../../store/userSlice";
 import { useDispatch, useSelector } from "react-redux";
+import Seo from "../SEO/Seo";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -33,19 +34,32 @@ const Signup = () => {
   }, [conditionalSignup]);
 
   if (isLoading) {
-    return <div className={classes.loader}>Preparing your account...</div>;
+    return (
+      <>
+        <Seo
+          title="Create account"
+          description="Create a Food Shops account to discover places or list your restaurant."
+        />
+        <div className={classes.loader}>Preparing your account...</div>
+      </>
+    );
   }
 
   return (
+    <>
+      <Seo
+        title="Create account"
+        description="Join Food Shops as a diner or shop owner to explore listings or publish your food place."
+      />
     <div className={classes.authPage}>
       <div className={classes.signupCard}>
         {userType === "" ? (
           <div className={classes.selectionContent}>
             <h1 className={classes.title}>Choose Your Experience</h1>
             <p className={classes.subtitle}>How would you like to use Food Finder?</p>
-            
+
             <div className={classes.roleGrid}>
-              <div 
+              <div
                 className={classes.roleCard}
                 onClick={() => setUserType("regular")}
               >
@@ -56,7 +70,7 @@ const Signup = () => {
                 <p>Find the best food shops and explore culinary gems near you.</p>
               </div>
 
-              <div 
+              <div
                 className={classes.roleCard}
                 onClick={() => setUserType("shopOwner")}
               >
@@ -67,83 +81,84 @@ const Signup = () => {
                 <p>List your restaurant and reach thousands of food enthusiasts.</p>
               </div>
             </div>
-            
+
             <p className={classes.loginHint}>
-               Already have an account? <Link to="/login">Sign in</Link>
+              Already have an account? <Link to="/login">Sign in</Link>
             </p>
           </div>
         ) : (
           <div className={classes.formContent}>
-             <button className={classes.backBtn} onClick={() => setUserType("")}>
-               <span className="material-symbols-outlined">arrow_back</span>
-             </button>
-             
-             <h1 className={classes.title}>
-               {userType === "regular" ? "Join as a Diner" : "Join as an Owner"}
-             </h1>
-             <p className={classes.subtitle}>Tell us a bit about yourself to get started.</p>
+            <button className={classes.backBtn} onClick={() => setUserType("")}>
+              <span className="material-symbols-outlined">arrow_back</span>
+            </button>
 
-             <Form
-               layout="vertical"
-               onFinish={onFinishHandler}
-               className={classes.form}
-             >
-               <Form.Item
-                 label="Full Name"
-                 name="name"
-                 rules={[{ required: true, message: "Please enter your name" }]}
-               >
-                 <Input placeholder="John Doe" className={classes.input} />
-               </Form.Item>
-               
-               {userType === "shopOwner" && (
-                 <Form.Item
-                   label="Restaurant Name"
-                   name="shopName"
-                   rules={[{ required: true, message: "Please enter your foodshop name" }]}
-                 >
-                   <Input placeholder="The Emerald Plate" className={classes.input} />
-                 </Form.Item>
-               )}
+            <h1 className={classes.title}>
+              {userType === "regular" ? "Join as a Diner" : "Join as an Owner"}
+            </h1>
+            <p className={classes.subtitle}>Tell us a bit about yourself to get started.</p>
 
-               <Form.Item
-                 label="Email Address"
-                 name="email"
-                 rules={[{ required: true, type: "email", message: "Enter a valid email" }]}
-               >
-                 <Input type="email" placeholder="you@example.com" className={classes.input} />
-               </Form.Item>
-               
-               <Form.Item
-                 label="Contact Number"
-                 name="contact"
-                 rules={[{ required: true, message: "Enter your contact number" }]}
-               >
-                 <Input type="number" placeholder="+1 (555) 000-0000" className={classes.input} />
-               </Form.Item>
+            <Form
+              layout="vertical"
+              onFinish={onFinishHandler}
+              className={classes.form}
+            >
+              <Form.Item
+                label="Full Name"
+                name="name"
+                rules={[{ required: true, message: "Please enter your name" }]}
+              >
+                <Input placeholder="John Doe" className={classes.input} />
+              </Form.Item>
 
-               <Form.Item
-                 label="Password"
-                 name="password"
-                 rules={[{ required: true, message: "Choose a secure password" }]}
-               >
-                 <Input.Password placeholder="••••••••" className={classes.input} />
-               </Form.Item>
+              {userType === "shopOwner" && (
+                <Form.Item
+                  label="Restaurant Name"
+                  name="shopName"
+                  rules={[{ required: true, message: "Please enter your foodshop name" }]}
+                >
+                  <Input placeholder="The Emerald Plate" className={classes.input} />
+                </Form.Item>
+              )}
 
-               <Button 
-                 type="primary" 
-                 htmlType="submit" 
-                 loading={isLoading} 
-                 block 
-                 className={classes.signupBtn}
-               >
-                 Create Account
-               </Button>
-             </Form>
+              <Form.Item
+                label="Email Address"
+                name="email"
+                rules={[{ required: true, type: "email", message: "Enter a valid email" }]}
+              >
+                <Input type="email" placeholder="you@example.com" className={classes.input} />
+              </Form.Item>
+
+              <Form.Item
+                label="Contact Number"
+                name="contact"
+                rules={[{ required: true, message: "Enter your contact number" }]}
+              >
+                <Input type="number" placeholder="+1 (555) 000-0000" className={classes.input} />
+              </Form.Item>
+
+              <Form.Item
+                label="Password"
+                name="password"
+                rules={[{ required: true, message: "Choose a secure password" }]}
+              >
+                <Input.Password placeholder="••••••••" className={classes.input} />
+              </Form.Item>
+
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={isLoading}
+                block
+                className={classes.signupBtn}
+              >
+                Create Account
+              </Button>
+            </Form>
           </div>
         )}
       </div>
     </div>
+    </>
   );
 };
 

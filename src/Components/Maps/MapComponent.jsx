@@ -12,6 +12,7 @@ import {
 import { ResetCenterView } from "../UI/Leaflet";
 import { useParams } from "react-router-dom";
 import LocationMarker from "./LocationMarker";
+import Seo from "../SEO/Seo";
 const { BaseLayer } = LayersControl;
 
 const MapComponent = (props) => {
@@ -31,8 +32,25 @@ const MapComponent = (props) => {
     iconUrl: markerIcon,
     iconSize: [38, 38],
   });
+  let mapLabel = address || "Location";
+  if (loc) {
+    try {
+      mapLabel = decodeURIComponent(loc);
+    } catch {
+      mapLabel = loc;
+    }
+  }
+
   return (
     <>
+      {lat && lon ? (
+        <Seo
+          title={`Map · ${mapLabel}`}
+          rawTitle
+          description={`View ${mapLabel} on the Food Shops map.`}
+          noindex
+        />
+      ) : null}
       {/* <p>Destination: {address? address:loc}</p> */}
       <MapContainer
         center={selectPosition}

@@ -26,6 +26,7 @@ import { useNavigate } from "react-router-dom";
 import { uploadFoodShopData } from "../../store/placesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import classes from "./AddFoodPlace.module.css";
+import Seo from "../SEO/Seo";
 
 const { Dragger } = Upload;
 const { BaseLayer } = LayersControl;
@@ -80,9 +81,28 @@ const AddFoodPlace = () => {
     },
   };
 
-  if (isLoading) return <div className={classes.loading}><Spin size="large" /></div>;
+  if (isLoading) {
+    return (
+      <>
+        <Seo
+          title="Add your restaurant"
+          description="Submit a new Food Shops listing."
+          noindex
+        />
+        <div className={classes.loading}>
+          <Spin size="large" />
+        </div>
+      </>
+    );
+  }
 
   return (
+    <>
+      <Seo
+        title="Add your restaurant"
+        description="Create a Food Shops listing with photos, location, and details."
+        noindex
+      />
     <div className={classes.pageContainer}>
       <header className={classes.header}>
         <h1 className={classes.title}>Register Your Restaurant</h1>
@@ -209,6 +229,7 @@ const AddFoodPlace = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

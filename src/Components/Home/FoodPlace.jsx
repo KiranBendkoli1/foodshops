@@ -1,13 +1,15 @@
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { Modal } from 'antd';
 import { updateLikes, updateDislikes } from '../../store/placesSlice';
 import useModal from '../../hooks/useModal';
 
 import FoodPlaceGallery from './FoodPlaceGallery';
 import FoodPlaceActions from './FoodPlaceActions';
 import AuthModal from '../Auth/AuthModal';
+import OffersModal from './Modals/OffersModal';
+import ReviewModal from './Modals/ReviewModal';
+import CommentsModal from './Modals/CommentsModal';
 import { LocationOnOutline } from '../UI/Icons';
 
 import classes from './FoodPlace.module.css';
@@ -26,6 +28,7 @@ const FoodPlace = ({ foodplace, index }) => {
   const [isAuthModalOpen, openAuthModal, closeAuthModal] = useModal();
   const [isOffersModalOpen, openOffersModal, closeOffersModal] = useModal();
   const [isCommentsModalOpen, openCommentsModal, closeCommentsModal] = useModal();
+  const [isReviewModalOpen, openReviewModal, closeReviewModal] = useModal();
 
   const handleLike = useCallback(() => {
     if (!user) return openAuthModal();
@@ -48,19 +51,33 @@ const FoodPlace = ({ foodplace, index }) => {
   const isLiked = liked?.includes(user);
   const isDisliked = disliked?.includes(user);
 
+  const avgRating = useMemo(() => {
+    if (!comments || comments.length === 0) return 0;
+    const ratings = comments.map(c => {
+      const match = c.match(/\[Rating: (\d)\/5\]/);
+      return match ? parseInt(match[1]) : null;
+    }).filter(r => r !== null);
+    
+    if (ratings.length === 0) return 0;
+    return (ratings.reduce((a, b) => a + b, 0) / ratings.length).toFixed(1);
+  }, [comments]);
+
   return (
     <div className={classes.card}>
       <FoodPlaceGallery 
         mainImage={mainImage}
         title={title}
         type={type}
+        rating={avgRating > 0 ? avgRating : "New"}
         onClick={() => navigate(`/details/${id}`)}
       />
 
       <div className={classes.info}>
         <div className={classes.header}>
           <h3 className={classes.title}>{title}</h3>
-          <span className={classes.priceLevel}>$$$</span>
+          <button className={classes.cartButton} onClick={openOffersModal}>
+          <span className="material-symbols-outlined">local_offer</span>
+        </button>
         </div>
         <p className={classes.description}>{speciality}</p>
 
@@ -80,12 +97,9 @@ const FoodPlace = ({ foodplace, index }) => {
           onLike={handleLike}
           onDislike={handleDislike}
           onCommentsClick={openCommentsModal}
+          onRateClick={openReviewModal}
           shareData={shareData}
         />
-        
-        <button className={classes.cartButton} onClick={openOffersModal}>
-          <span className="material-symbols-outlined">local_offer</span>
-        </button>
       </div>
 
       <AuthModal 
@@ -94,24 +108,32 @@ const FoodPlace = ({ foodplace, index }) => {
         title="Interactions require sign in"
       />
 
-      <Modal
-        title={`Offers at ${title}`}
-        open={isOffersModalOpen}
-        footer={null}
-        onCancel={closeOffersModal}
-      >
-        <div className={classes.offersList}>
-          {discounts && discounts.length > 0 ? (
-            discounts.map((d, i) => (
-              <div key={i} className={classes.offerItem}>
-                <strong>{d.split('|')[0]}</strong>: {d.split('|')[1]} Off
-              </div>
-            ))
-          ) : (
-            <p>No active offers at this time.</p>
-          )}
-        </div>
-      </Modal>
+      <OffersModal 
+        isOpen={isOffersModalOpen}
+        onClose={closeOffersModal}
+        title={title}
+        discounts={discounts}
+      />
+
+      <CommentsModal 
+        isOpen={isCommentsModalOpen}
+        onClose={closeCommentsModal}
+        title={title}
+        id={id}
+        index={index}
+        comments={comments}
+        userEmail={user}
+      />
+
+      <ReviewModal 
+        isOpen={isReviewModalOpen}
+        onClose={closeReviewModal}
+        title={title}
+        id={id}
+        index={index}
+        reviews={comments}
+        userEmail={user}
+      />
     </div>
   );
 };

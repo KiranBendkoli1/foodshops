@@ -11,7 +11,13 @@
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 2rem;
+  }
 }
 
 .header {
@@ -67,7 +73,8 @@
   transition: color 0.2s;
 }
 
-.navLinks a:hover, .navLinks a.active {
+.navLinks a:hover,
+.navLinks a.active {
   color: var(--primary);
 }
 

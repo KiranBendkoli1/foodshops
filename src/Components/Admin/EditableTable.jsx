@@ -8,7 +8,6 @@ import {
   Table,
   Typography,
 } from "antd";
-import ImageCarousel from "../UI/ImageCarousel";
 import { useDispatch, useSelector } from "react-redux";
 import supabase from "../../config/supabase";
 import { extraDataActions } from "../../store/extraDataSlice";
@@ -202,7 +201,7 @@ const EditableTable = () => {
       dataIndex: "images",
       editable: true,
       render: (text) => (
-        <ImageCarousel images={text} width={"200px"} height={"160px"} />
+        <img src={text?.[0]} alt="shop" style={{ width: '80px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
       ),
     },
     {

@@ -1,0 +1,30 @@
+.stars {
+  display: flex;
+  gap: 4px;
+  color: #fbbf24; /* Amber 400 */
+}
+
+.star {
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+
+.star.interactive {
+  cursor: pointer;
+}
+
+.star.interactive:hover {
+  transform: scale(1.2);
+}
+
+.star.filled {
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .star {
+  color: #64748b;
+}
+
+[data-theme="dark"] .star.filled {
+  color: #f59e0b;
+}

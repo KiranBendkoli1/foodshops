@@ -3,6 +3,7 @@ import Login from "./Components/Auth/Login";
 import Signup from "./Components/Auth/Signup";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./Components/Home/HomePage";
+import OffersFeed from "./Components/Home/OffersFeed";
 import AddFoodPlace from "./Components/ShopOwener/AddFoodPlace";
 import CustomLayout from "./Components/UI/CustomLayout";
 import { ConfigProvider, theme } from "antd";
@@ -41,6 +42,7 @@ function App() {
         <CustomLayout>
           <Routes>
             <Route exact path="/" element={<HomePage />} />
+            <Route exact path="/offers" element={<OffersFeed />} />
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/signup" element={<Signup />} />
             <Route exact path="/comments/:id" element={<Comments />} />

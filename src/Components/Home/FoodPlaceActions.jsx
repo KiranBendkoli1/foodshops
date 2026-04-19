@@ -12,6 +12,7 @@ const FoodPlaceActions = ({
   onLike, 
   onDislike, 
   onCommentsClick,
+  onRateClick,
   shareData 
 }) => {
   return (
@@ -36,6 +37,10 @@ const FoodPlaceActions = ({
         <button className={classes.actionButton} onClick={onCommentsClick}>
           <ChatBubbleOutline />
           <span>{commentsCount}</span>
+        </button>
+
+        <button className={classes.actionButton} onClick={onRateClick} title="Rate restaurant">
+          <span className="material-symbols-outlined" style={{fontSize: '1.25rem'}}>stars</span>
         </button>
         
         <RWebShare data={shareData}>
