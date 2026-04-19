@@ -10,7 +10,6 @@ import classes from "./CompleteDetails.module.css";
 import foodPlaceClasses from '../Home/FoodPlace.module.css';
 import Seo from "../SEO/Seo";
 import { DEFAULT_DESCRIPTION } from "../../seo/constants";
-import { optimizeImageUrl } from "../../utils/image";
 
 const CompleteDetails = () => {
   const { id } = useParams();
@@ -23,10 +22,7 @@ const CompleteDetails = () => {
   }, [id, dispatch]);
 
 
-  const mainImage = optimizeImageUrl(
-    data.images && data.images.length > 0 ? data.images[0] : (data.image ?? ''),
-    { width: 1200, quality: 72 }
-  );
+  const mainImage = data.images && data.images.length > 0 ? data.images[0] : (data.image ?? '');
 
   const formattedType = Array.isArray(data.type)
     ? [...new Set(data.type.filter(t => typeof t === 'string' && t.trim() !== ''))].join(', ')
@@ -71,14 +67,7 @@ const CompleteDetails = () => {
       />
       <header className={classes.hero}>
         <div className={classes.heroImageWrapper}>
-          <img
-            src={mainImage}
-            alt={data.title}
-            className={classes.heroImage}
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-          />
+          <img src={mainImage} alt={data.title} className={classes.heroImage} />
           <div className={classes.imageOverlay} />
         </div>
 
@@ -147,14 +136,7 @@ const CompleteDetails = () => {
               {
                 data.images && data.images.length > 0 ? (
                   data.images.map((image, index) => (
-                    <img
-                      key={index}
-                      src={optimizeImageUrl(image, { width: 900, quality: 65 })}
-                      alt={`gallery-${index}`}
-                      className={classes.galleryImage}
-                      loading="lazy"
-                      decoding="async"
-                    />
+                    <img key={index} src={image} alt={`gallery-${index}`} className={classes.galleryImage} />
                   ))
                 ) : (
                   <p className={classes.noImages}>No images available</p>

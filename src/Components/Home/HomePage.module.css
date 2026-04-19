@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
 @import '../../theme.css';
 body {
   height: 100%;
@@ -21,7 +22,7 @@ body {
 }
 
 .title {
-  font-family: "Inter", sans-serif;
+  font-family: "Poppins";
   color: var(--secondary);
 }
 .navmenu{

@@ -59,29 +59,27 @@ const Signup = () => {
             <p className={classes.subtitle}>How would you like to use Food Finder?</p>
 
             <div className={classes.roleGrid}>
-              <button
-                type="button"
+              <div
                 className={classes.roleCard}
                 onClick={() => setUserType("regular")}
               >
                 <div className={classes.roleIcon}>
                   <span className="material-symbols-outlined">search</span>
                 </div>
-                <h2>Diner</h2>
+                <h3>Diner</h3>
                 <p>Find the best food shops and explore culinary gems near you.</p>
-              </button>
+              </div>
 
-              <button
-                type="button"
+              <div
                 className={classes.roleCard}
                 onClick={() => setUserType("shopOwner")}
               >
                 <div className={classes.roleIcon}>
                   <span className="material-symbols-outlined">storefront</span>
                 </div>
-                <h2>Business Owner</h2>
+                <h3>Business Owner</h3>
                 <p>List your restaurant and reach thousands of food enthusiasts.</p>
-              </button>
+              </div>
             </div>
 
             <p className={classes.loginHint}>
